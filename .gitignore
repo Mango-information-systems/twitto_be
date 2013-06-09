@@ -1,3 +1,4 @@
 twitto_private
 archive
 site/__MACOSX/
+sql/ddl/create-twitto-db.sql
