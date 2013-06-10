@@ -12,7 +12,7 @@
 $(window).load(function() {
 $('#isotope-container').isotope({
 // options
-itemSelector : '.category',
+itemSelector : '.user',
 layoutMode : 'fitRows'
 });
 });
@@ -23,11 +23,10 @@ layoutMode : 'fitRows'
 @stop
  
 @section('main')
+<h2>{{ $category->category_name }}</h2>
 <div class="row-fluid" id="isotope-container">
-	@foreach ($categories as $key => $category)
-	<div class="category">
-		<h2>{{ $category->category_name }}</h2>
-		@foreach ($category->twusers as $key_user => $user)
+	@foreach ($users as $key_user => $user)
+	<div class="user">
 		<div class="media">
 			<a href="#" class="pull-left">
 				<img src="{{ $user->profile_image_url }}" @if($key_user == 0) width="73" height="73"  @endif class="img-rounded" /><br/>
@@ -43,10 +42,9 @@ layoutMode : 'fitRows'
 					<span class="badge badge-inverse">{{ $user->followers_count }}</span>
 					<span class="badge badge-default">{{ $user->friends_count }}</span>
 				</p>
-				<p><?php echo substr($user->description, 0, 50); ?></p>
+				<p>{{ $user->description }}</p>
 			</div>
 		</div>
-		@endforeach
 	</div>
 	@endforeach
 </div>

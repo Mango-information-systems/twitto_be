@@ -61,7 +61,7 @@
 /* End: Recommended Isotope styles */
 
 
-.category {
+.category, .user {
 	max-width: 300px;
 	min-width: 300px;
 	padding: 10px;
