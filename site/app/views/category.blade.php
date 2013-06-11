@@ -41,6 +41,7 @@ layoutMode : 'fitRows'
 				<p>
 					<span class="badge badge-inverse">{{ $user->followers_count }}</span>
 					<span class="badge badge-default">{{ $user->friends_count }}</span>
+					<i class="icon-map-marker"></i> {{ $user->location }}
 				</p>
 				<p>{{ $user->description }}</p>
 			</div>
