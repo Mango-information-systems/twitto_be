@@ -78,7 +78,7 @@
 			<hr>
 
 			<footer>
-				<p>&copy; <a href="http://mango-is.com/" target="_blank">Mango Information systems 2013</a></p>
+				<p>&copy; <a href="http://mango-is.com/" target="_blank"><img src="{{ URL::asset('assets/img/mango-information-systems-square-logo-23x23.png') }}" /> Mango Information systems 2013</a></p>
 			</footer>
 
 		</div><!--/.fluid-container-->
