@@ -1,27 +1,4 @@
 @extends('_layouts.default')
-
-{{-- Web site Title --}}
-@section('title')
-{{ $page_title }}
-@parent
-@stop
-
-{{-- New Laravel 4 Feature in use --}}
-@section('inline-javascript')
-@parent
-$(window).load(function() {
-$('#isotope-container').isotope({
-// options
-itemSelector : '.category',
-layoutMode : 'fitRows'
-});
-});
-@stop
-
-@section('sidebar')
-@include('sidebar')
-@stop
- 
 @section('main')
 <div class="row-fluid" id="isotope-container">
 	@foreach ($categories as $key => $category)
@@ -52,6 +29,25 @@ layoutMode : 'fitRows'
 	</div>
 	@endforeach
 </div>
+@stop
 
+{{-- Web site Title --}}
+@section('title')
+{{ $page_title }}
+@parent
+@stop
+{{-- New Laravel 4 Feature in use --}}
+@section('inline-javascript')
+@parent
+$(window).load(function() {
+$('#isotope-container').isotope({
+// options
+itemSelector : '.category',
+layoutMode : 'fitRows'
+});
+});
+@stop
 
+@section('sidebar')
+@include('sidebar')
 @stop
