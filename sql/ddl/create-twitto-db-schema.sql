@@ -83,11 +83,10 @@ CREATE TABLE IF NOT EXISTS `location` (
   `admin_area_5` varchar(255) COMMENT 'name of admin area 5',
   `admin_area_5_type` varchar(255) COMMENT 'type of admin area 1 (most likely city)',
   `postal_code` varchar(255) COMMENT 'postal code',
-  PRIMARY KEY (`location_id`)
+  PRIMARY KEY (`location_id`),
+  UNIQUE KEY `location_name` (`location_name`,`location_type`,`admin_area_1`)
 )
 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'locations hierarchy dimension table, populated using geonames responses using Open MapQuest API';
-
-alter table `location` add unique index(`location_name`, `location_type`, `admin_area_1`);
 
 CREATE TABLE IF NOT EXISTS `fact_influence` (
   `tw_id` int(20) NOT NULL COMMENT 'Twitter user Id (numeric)',
@@ -96,11 +95,11 @@ CREATE TABLE IF NOT EXISTS `fact_influence` (
   `b_score` int(20) NOT NULL COMMENT 'twitto influence score',
   `kred_score` int(20) NOT NULL COMMENT 'Kred influence score',
   `kred_outreach` int(20) NOT NULL COMMENT 'Kred outreach score',
-  `last_update` datetime COMMENT 'timestamp of last update of the kred score',
+  `last_update` datetime NULL COMMENT 'timestamp of last update of the kred score',
   PRIMARY KEY (`tw_id`)
 )
 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci 
-COMMENT='influence fact table, measuring influence of twitter users from Kred, and from twitto''s users rating';
+COMMENT='rankings fact table, measuring influence of twitter users from Kred and from twitto''s users rating, also storing main category and location. To be used in main page';
 
 CREATE TABLE IF NOT EXISTS `fact_category` (
   `tw_id` int(20) NOT NULL COMMENT 'Twitter user Id (numeric)',
