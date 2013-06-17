@@ -3,3 +3,4 @@ site/__MACOSX/
 site/app/config/database.php 
 sql/ddl/create-twitto-db.sql
 twitto_private
+*params.json*
