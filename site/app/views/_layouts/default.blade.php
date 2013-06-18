@@ -89,6 +89,7 @@
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="{{ URL::asset('assets/js/jquery-2.0.2.min.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/jquery.isotope.min.js') }}"></script>
+		@if(!Config::get('app.debug'))
 		<script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -98,6 +99,7 @@
 			ga('create', 'UA-25766439-4', 'twitto.be');
 			ga('send', 'pageview');
 		</script>
+		@endif
 
 
         <script lang="text/javascript">
