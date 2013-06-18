@@ -71,7 +71,10 @@
                     @show
 				</div><!--/span-->
 				<div class="span9">
-					<h1>Belgian users of twitter, categorized and ranked by their Kred influence score</h1>
+					<h1>
+						@section('h1-title')
+						@show
+					</h1>
 					@yield('main')
 				</div><!--/span-->
 			</div><!--/row-->

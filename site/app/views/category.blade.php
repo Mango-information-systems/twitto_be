@@ -1,6 +1,6 @@
 @extends('_layouts.default') 
 @section('main')
-<h2>{{ $category->category_name }}</h2>
+<h1></h1>
 <div class="row-fluid" id="isotope-container">
 	@foreach ($users as $key_user => $user)
 	<div class="user">
@@ -31,6 +31,12 @@
 {{-- Web site Title --}}
 @section('title')
 {{ $page_title }}
+@parent
+@stop
+
+{{-- h1 --}}
+@section('h1-title')
+Top Belgian twitter influencers in "{{ $category->category_name }}"
 @parent
 @stop
 

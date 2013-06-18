@@ -36,6 +36,13 @@
 {{ $page_title }}
 @parent
 @stop
+
+{{-- h1 --}}
+@section('h1-title')
+Belgian users of twitter, categorized and ranked by their Kred influence score
+@parent
+@stop
+
 {{-- New Laravel 4 Feature in use --}}
 @section('inline-javascript')
 @parent
