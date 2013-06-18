@@ -6,7 +6,7 @@
 	<div class="user">
 		<div class="media">
 			<a href="#" class="pull-left">
-				<img src="{{ $user->profile_image_url }}" @if($key_user == 0) width="73" height="73"  @endif class="img-rounded" /><br/>
+				<img src="{{ $user->profile_image_url }}" width="48" height="48" class="img-rounded" alt="{{ $user->screen_name }}" title="{{ $user->screen_name }}" /><br/>
 			</a>
 			<div class="media-body">
 				<div class="pull-right">
