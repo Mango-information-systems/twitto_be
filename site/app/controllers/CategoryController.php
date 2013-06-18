@@ -4,8 +4,7 @@ class CategoryController extends BaseController {
 
 	public function getCategory($categorySlug) {
 
-		$categories = DB::table('category')->orderBy('sorting_order')->get();
-
+		$categories = Category::orderBy('sorting_order', 'asc')->get();
 		// Get category data
 		$category = Category::where('category_id', '=', $categorySlug)->first();
 

@@ -13,7 +13,7 @@ class HomeController extends BaseController {
 
 		//$categories = Category::with('twusers')->orderBy('sorting_order')->get();
 		// Above was causing error 500. Investigate!
-		$categories = DB::table('category')->orderBy('sorting_order')->get();
+		$categories = Category::orderBy('sorting_order', 'asc')->get();
 
 		// Dirty walkaround. I dont know what to do to limit the result while
 		// using eager loading.
