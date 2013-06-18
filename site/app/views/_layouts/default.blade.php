@@ -14,6 +14,7 @@
 		<!-- Le styles -->
 		<link href="{{ URL::asset('assets/css/amelia-bootstrap.min.css') }}" rel="stylesheet">
 		<link href="{{ URL::asset('assets/css/custom.css') }}" rel="stylesheet">
+		<link href="{{ URL::asset('assets/css/feedback.css') }}" rel="stylesheet">
 		<style type="text/css">
 			body {
 				padding-top: 60px;
@@ -87,11 +88,30 @@
 
 		</div><!--/.fluid-container-->
 
+
+		<div class="feedback">
+			<a id="feedback_button">Feedback</a>
+
+			<div class="well form" style="margin-bottom: 0 !important;">
+				<h2>Please Send Us Your Feedback</h2>
+				<div class="status"></div>
+				<form>
+					<input type="text" name="email" id="email" placeholder="Email (optional)" />
+					<textarea name="feedback_text" id="feedback_text" placeholder="Message (mandatory)"></textarea>
+					<input type="hidden" name="honey" value="" id="honey" />
+					<button type="submit" name="submit_form" id="submit_form" class="btn">Send</button>
+				</form>
+
+			</div>
+		</div>
+
+
 		<!-- Le javascript
 		================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="{{ URL::asset('assets/js/jquery-2.0.2.min.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/jquery.isotope.min.js') }}"></script>
+		<script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
 		@if(!Config::get('app.debug'))
 		<script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
