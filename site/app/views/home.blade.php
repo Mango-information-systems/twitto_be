@@ -3,7 +3,7 @@
 <div class="row-fluid" id="isotope-container">
 	@foreach ($categories as $key => $category)
 	<div class="category">
-		<h2>{{ $category->category_name }}</h2>
+		<h2><a href="{{{ URL::to('category/' . $category->category_id ) }}}">{{ $category->category_name }}</a></h2>
 		@foreach ($users[$category->category_id] as $key_user => $user)
 		<div class="media">
 			<a href="#" class="pull-left">
@@ -26,6 +26,7 @@
 			</div>
 		</div>
 		@endforeach
+		<span class="pull-right"><a href="{{{ URL::to('category/' . $category->category_id ) }}}">Read more...</a></span>
 	</div>
 	@endforeach
 </div>
