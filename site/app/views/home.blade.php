@@ -3,11 +3,11 @@
 <div class="row-fluid" id="isotope-container">
 	@foreach ($categories as $key => $category)
 	<div class="category">
-		<h2>{{ $category->category_name }}</h2>
+		<h2><a href="{{{ URL::to('category/' . $category->category_id ) }}}">{{ $category->category_name }}</a></h2>
 		@foreach ($users[$category->category_id] as $key_user => $user)
 		<div class="media">
 			<a href="#" class="pull-left">
-				<img src="{{ $user->profile_image_url }}" @if($key_user == 0) width="73" height="73"  @endif class="img-rounded" /><br/>
+				<img src="{{ $user->profile_image_url }}" width="48" height="48" class="img-rounded" alt="{{ $user->screen_name }}" title="{{ $user->screen_name }}" /><br/>
 			</a>
 			<div class="media-body">
 				<div class="pull-right">
@@ -26,6 +26,7 @@
 			</div>
 		</div>
 		@endforeach
+		<span class="pull-right"><a href="{{{ URL::to('category/' . $category->category_id ) }}}">Read more...</a></span>
 	</div>
 	@endforeach
 </div>
@@ -36,6 +37,13 @@
 {{ $page_title }}
 @parent
 @stop
+
+{{-- h1 --}}
+@section('h1-title')
+Belgian users of twitter, categorized and ranked by their Kred influence score
+@parent
+@stop
+
 {{-- New Laravel 4 Feature in use --}}
 @section('inline-javascript')
 @parent

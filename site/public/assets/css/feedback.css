@@ -1,0 +1,48 @@
+/* 
+    Document   : feedback
+    Created on : Jun 18, 2013, 11:01:17 PM
+    Author     : Panos
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.feedback{
+	position:fixed;
+	right:0;
+	bottom:0;
+}
+.feedback a {
+	display:block;
+	height:20px;
+	width:100px;
+	text-align:center;
+	background: #DD4814;
+	border:1px solid #fff;
+	outline:1px solid #DD4814;
+	padding:5px;
+	float:right;
+	cursor:pointer;
+
+	/*Font*/
+	color:#FFF;
+	font-weight:bold;
+	font-size:18px;
+}
+
+.feedback .form{
+	clear:both;
+	height:350px;
+	width:450px;
+	border:1px solid #DD4814;
+	background-color:#fff;
+	padding:15px;
+	display: none;
+}
+.feedback .form textarea{
+	height:170px;
+	width:400px;
+	padding:5px;
+}
+.feedback .status{
+	font-size:16px;
+}
