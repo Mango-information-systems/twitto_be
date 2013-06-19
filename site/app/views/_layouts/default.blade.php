@@ -93,14 +93,16 @@
 			<a id="feedback_button">Feedback</a>
 
 			<div class="well form" style="margin-bottom: 0 !important;">
-				<h2>Please Send Us Your Feedback</h2>
-				<div class="status"></div>
-				<form>
-					<input type="text" name="email" id="email" placeholder="Email (optional)" />
-					<textarea name="feedback_text" id="feedback_text" placeholder="Message (mandatory)"></textarea>
-					<input type="hidden" name="honey" value="" id="honey" />
-					<button type="submit" name="submit_form" id="submit_form" class="btn">Send</button>
-				</form>
+				<h4>Please Send Us Your Feedback</h4>
+				<?php 
+					echo Form::open(array('url' => 'feedback', 'method' => 'post', 'class' => 'ajax', 'data-replace' => '.feedback-status', 'data-spinner' => '.feedback-status'));
+					echo Form::email('email', null, array('placeholder' => 'Email (optional)', 'id' => 'email'));
+					echo Form::textarea('feedback_text', null, array('placeholder' => 'Message (mandatory)', 'id' => 'feedback_text'));
+					echo Form::hidden('honey', null, array('id' => 'honey'));
+					echo Form::button('Send', array('name' => 'submit_form', 'id' => 'submit_form', 'class' => 'btn pull-right', 'type' => 'submit'));
+					?>
+				<?php echo Form::close();?>
+				<div class="feedback-status"></div>
 
 			</div>
 		</div>
@@ -112,6 +114,10 @@
 		<script src="{{ URL::asset('assets/js/jquery-2.0.2.min.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/jquery.isotope.min.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
+		<script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
+		<script src="{{ URL::asset('assets/js/bootstrap-ajax.js') }}"></script>
+
+
 		@if(!Config::get('app.debug'))
 		<script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
