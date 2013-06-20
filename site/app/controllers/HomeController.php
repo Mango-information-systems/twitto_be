@@ -8,7 +8,9 @@ class HomeController extends BaseController {
 	|--------------------------------------------------------------------------
 	*/
 	public function index(){
-        $page_title = 'Home';
+        $page_title = '90000+ Belgian tweeters ranked by influence';
+        $page_desc = 'twitto.be lets you explore the Belgian twitter users community.';
+
         $categorySlug = -1;
 
 		//$categories = Category::with('twusers')->orderBy('sorting_order')->get();
@@ -22,7 +24,7 @@ class HomeController extends BaseController {
 			$users[$category->category_id] = $_category->twusers()->take(5)->get();
 		}
 
-		return View::make('home', compact('page_title', 'categories', 'categorySlug', 'users'));
+		return View::make('home', compact('page_title', 'page_desc', 'categories', 'categorySlug', 'users'));
 	}
 
 	public function feedback() {
