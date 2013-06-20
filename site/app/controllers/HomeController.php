@@ -25,4 +25,42 @@ class HomeController extends BaseController {
 		return View::make('home', compact('page_title', 'categories', 'categorySlug', 'users'));
 	}
 
+	public function feedback() {
+
+		$input = Input::all();
+		$input['feedback_text'] = trim($input['feedback_text']);
+		$input['honey'] = trim($input['feedback_text']);
+		
+		$rules = [
+			'email' => 'email',
+			'feedback_text' => 'required',
+			'honey' => 'min:0|max:0'
+		];
+
+		$validation = Validator::make($input, $rules);
+
+		$response = [
+			"error" => ['html' => '<div class="feedback-status">Please fill in the required fields</div>'],
+			"error_too_soon" => ['html' => '<div class="feedback-status">You have already sent your feedback.<br/> Please try again in 20 seconds.</div>'],
+			"success" => ['html' => '<div class="feedback-status">Thank you for your message</div>'],
+		];
+
+		if ($validation->fails()) {
+			return Response::json($response["error"], 200);
+		} else {
+			if (Session::has('feedbackpost') && ( (time() - Session::get('feedbackpost') ) <= 20)) {
+				// less then 20 seconds since last post
+				return Response::json($response["error_too_soon"], 200);
+			} else {
+				//Set time that the email was sent
+				Session::put('feedbackpost', time());
+
+				Mail::send('emails.feedback', $input, function($m) {
+							$m->to('panagiotis.synetos@gmail.com', 'John Smith')->subject('Twitto - Feedback - ' . date("Y-m-d H:i:s"));
+						});
+				return Response::json($response["success"], 200);
+			}
+		}
+	}
+
 }
