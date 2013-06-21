@@ -1,7 +1,7 @@
 @extends('_layouts.default')
 @section('main')
 <div class="row-fluid">
-<h2 id="intro">Intro</h2>
+<h2 id="intro">Intro <small> What is twitto.be all about</small></h2>
 <p>
     Twitto.be is a directory referencing Belgian users of twitter. It was launched in June 2013, and features are progressively rolled out.</p>
 <p>
@@ -20,9 +20,9 @@
 </ul>
 
 
-<h2 id="history">History<small> where the idea came from</small></h2>
+<h2 id="history">History<small> Where the idea came from</small></h2>
 <p>
-    Twitto.be was a reaction to <a href="https://twitter.com/vinch01" target="_blank">@vinch01</a> <a href="http://www.vinch.be/blog/2013/05/12/recherche-repreneurs-pour-le-projet-klout-be/" target="_blank">announcing he is planning on retiring klout.be service</a> he had launched. While working on <a href="http://tribalytics.com" target="_blank">tribalytics</a>, a tool analyzing twitter followers population, we extracted an important number of twitter accounts, many of which were from Belgian users. Knowing about who is using twitter in Belgium is a recurring question, and we felt like having an exhaustive public directory, available for free, would be something valuable.
+    Twitto.be was a reaction to <a href="https://twitter.com/vinch01" target="_blank">@vinch01</a> announcing <a href="http://www.vinch.be/blog/2013/05/12/recherche-repreneurs-pour-le-projet-klout-be/" target="_blank">he is planning on retiring klout.be service</a> he had launched. While working on <a href="http://tribalytics.com" target="_blank">tribalytics</a>, a tool analyzing twitter followers population, we extracted an important number of twitter accounts, many of which were from Belgian users. Knowing about who is using twitter in Belgium is a recurring question, and we felt like having an exhaustive public directory, available for free, would be something valuable.
 </p>
 <p>
     From the 600000+ twitter accounts of our database, we analyzed location field, and could reliably identify 90000+ of them as matching with a location in Belgium. This was the initial dataset visible in twitto.
@@ -46,7 +46,7 @@
 
 {{-- h1 --}}
 @section('h1-title')
-About<small> what is twitto.be all about</small>
+About
 @stop
 
 
