@@ -14,12 +14,12 @@ class StaticController extends BaseController {
 
 	public function about(){
         $page_title = 'About';
-        $page_desc = 'twitto.be privacy policy';
+        $page_desc = 'what is twitto.be all about';
 		$categorySlug = -1;
 
         $categories = Category::orderBy('sorting_order', 'asc')->get();
 
-
+		
 		return View::make('about', compact('page_title', 'page_desc', 'categories', 'categorySlug'));
 	}
 
