@@ -16,9 +16,10 @@ class CategoryController extends BaseController {
 		// Get category users
 		$users = $category->twusers()->take(100)->get();
 
-		$page_title = $category->category_name;
+		$page_title = "Top Belgian influencers in $category->category_name category";
+		$page_desc = "Ranking Belgian twitter users belonging to $category->category_name category according to their Kred social influence score";
 
-		return View::make('category', compact('page_title', 'category', 'users', 'categories', 'categorySlug'));
+		return View::make('category', compact('page_title', 'page_desc', 'category', 'users', 'categories', 'categorySlug'));
 	}
 
 }

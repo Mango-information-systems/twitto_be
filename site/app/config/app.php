@@ -182,4 +182,6 @@ return array(
 
 	),
 
+	'reviseddate' => '2013-06-20',
+
 );

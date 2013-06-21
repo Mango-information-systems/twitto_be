@@ -2,14 +2,12 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>
-            @section('title')
-			- Twitto.be
-			@show
-        </title>
+		<title>@yield('title') - Twitto.be</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
+		<meta name="description" content="@yield('description')">
+		<meta name="author" content="Mango Information Systems SPRL">
+		<meta name="language" content="en">
+		<meta name="revised" content="{{ Config::get('app.reviseddate') }}" scheme="YYYY-MM-DD">
 
 		<!-- Le styles -->
 		<link href="{{ URL::asset('assets/css/amelia-bootstrap.min.css') }}" rel="stylesheet">
@@ -83,7 +81,15 @@
 			<hr>
 
 			<footer>
-				<p>&copy; <a href="http://mango-is.com/" target="_blank"><img src="{{ URL::asset('assets/img/mango-information-systems-square-logo-23x23.png') }}" /> Mango Information systems 2013</a></p>
+				<p>
+					<a href="http://mango-is.com/" target="_blank">Fork me on Github</a>
+					|
+					<a href="{{ URL::to('privacy') }}">Privacy Policy</a>
+					|
+					<a href="{{ URL::to('about') }}">About</a>
+					|
+					&copy; <a href="http://mango-is.com/" target="_blank"><img src="{{ URL::asset('assets/img/mango-information-systems-square-logo-23x23.png') }}" /> Mango Information systems 2013</a>
+				</p>
 			</footer>
 
 		</div><!--/.fluid-container-->

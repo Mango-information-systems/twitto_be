@@ -19,6 +19,9 @@ Route::model('category', 'Category');
 
 Route::post('feedback', 'HomeController@feedback');
 
+Route::get('privacy', 'StaticController@privacy');
+Route::get('about', 'StaticController@about');
+
 # Categories - Second to last set, match slug
 Route::get('category/{categorySlug}', 'CategoryController@getCategory');
 

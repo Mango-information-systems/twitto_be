@@ -31,7 +31,11 @@
 {{-- Web site Title --}}
 @section('title')
 {{ $page_title }}
-@parent
+@stop
+
+{{-- Page description --}}
+@section('description')
+{{ $page_desc }}
 @stop
 
 {{-- h1 --}}
