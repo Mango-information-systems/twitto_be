@@ -105,7 +105,7 @@
 					echo Form::open(array('url' => 'feedback', 'method' => 'post', 'class' => 'ajax', 'data-replace' => '.feedback-status', 'data-spinner' => '.feedback-status'));
 					echo Form::email('email', null, array('placeholder' => 'Email (optional)', 'id' => 'email'));
 					echo Form::textarea('feedback_text', null, array('placeholder' => 'Message (mandatory)', 'id' => 'feedback_text'));
-					echo Form::hidden('honey', null, array('id' => 'honey'));
+					echo Form::text('welcome_check', 'null', array('id' => 'welcome_check'));
 					echo Form::button('Send', array('name' => 'submit_form', 'id' => 'submit_form', 'class' => 'btn pull-right', 'type' => 'submit'));
 					?>
 				<?php echo Form::close();?>
