@@ -31,12 +31,12 @@ class HomeController extends BaseController {
 
 		$input = Input::all();
 		$input['feedback_text'] = trim($input['feedback_text']);
-		$input['honey'] = trim($input['honey']);
+		$input['welcome_check'] = trim($input['welcome_check']);
 
 		$rules = [
 			'email' => 'email',
 			'feedback_text' => 'required',
-			'honey' => 'min:0|max:0'
+			'welcome_check' => 'min:0|max:0'
 		];
 
 		$validation = Validator::make($input, $rules);
