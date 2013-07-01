@@ -60,7 +60,7 @@ class HomeController extends BaseController {
 
 				try {
 					Mail::send('emails.feedback', $input, function($m) {
-								$m->to('panagiotis.synetos@gmail.com', 'John Smith')->subject('Twitto - Feedback - ' . date("Y-m-d H:i:s"));
+								$m->to('contact@twitto.be', 'twitto.be team')->subject('Twitto.be feedback - ' . date("d-m-Y H:i:s"));
 							});
 					return Response::json($response["success"], 200);
 
