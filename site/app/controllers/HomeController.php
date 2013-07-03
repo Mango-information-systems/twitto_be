@@ -27,6 +27,22 @@ class HomeController extends BaseController {
 		return View::make('home', compact('page_title', 'page_desc', 'categories', 'categorySlug', 'users'));
 	}
 
+	public function version03(){
+        $page_title = '90000+ Belgian tweeters ranked by influence';
+        $page_desc = 'twitto.be lets you explore the Belgian twitter users community.';
+
+        $categorySlug = -1;
+
+		$categories = Category::orderBy('sorting_order', 'asc')->get();
+
+		$_user = new Twuser();
+		$users = $_user->getUsersCategory(100);
+
+		$users_json = json_encode($users);
+
+		return View::make('version03home', compact('page_title', 'page_desc', 'categories', 'categorySlug', 'users', 'users_json'));
+	}
+
 	public function feedback() {
 
 		$input = Input::all();

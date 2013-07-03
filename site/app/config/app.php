@@ -114,6 +114,7 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
         'Way\Generators\GeneratorsServiceProvider',
+		'Juy\Profiler\Providers\ProfilerServiceProvider',
 
 	),
 
@@ -179,9 +180,11 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
+		'Profiler'      => 'Juy\Profiler\Facades\Profiler',
 
 	),
 
 	'reviseddate' => '2013-06-20',
+	'profiler' => true,
 
 );
