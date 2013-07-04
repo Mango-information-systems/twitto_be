@@ -1,8 +1,7 @@
 @extends('_layouts.version03')
 @section('main')
-<div class="row-fluid">
-	<div id="myGrid" style="width:100%;height:500px;"></div>
-</div>
+<div id="myGrid" style="width:100%;height:500px;"></div>
+<button id="loadmore" class="btn btn-large">Load more...</button>
 @stop
 
 {{-- Web site Title --}}
@@ -36,26 +35,43 @@ Belgian users of twitter, categorized and ranked by their Kred influence score
 		enableCellNavigation: true,
 		enableColumnReorder: false,
 		rowHeight: 55,
-fullWidthRows: true,
-forceFitColumns: true
+		fullWidthRows: true,
+		forceFitColumns: true
 	};
 
+	dataView = new Slick.Data.DataView({ inlineFilters: true });
+
+
 	$(function () {
-		var data = [];
-		for (var i = 0; i < 500; i++) {
-			data[i] = {
-				rank: "Task " + i,
-				profile_image_url: "5 days",
-				name: Math.round(Math.random() * 100),
-				description: "01/01/2009",
-				category_name: "01/05/2009",
-				kred_score: (i % 5 == 0)
-			};
-		}
+		var data = <?php echo $users_json; ?>;
 
-var skata = <?php echo $users_json; ?>;
+		dataView = new Slick.Data.DataView({ inlineFilters: true });
+		grid = new Slick.Grid("#myGrid", dataView, columns, options);
+		dataView.beginUpdate();
+		dataView.setItems(data);
+		dataView.endUpdate();
+		grid.render();
 
-		grid = new Slick.Grid("#myGrid", skata, columns, options);
+
+		// wire up model events to drive the grid
+		dataView.onRowCountChanged.subscribe(function (e, args) {
+			grid.updateRowCount();
+			grid.render();
+		});
+
+		dataView.onRowsChanged.subscribe(function (e, args) {
+			grid.invalidateRows(args.rows);
+			grid.render();
+		});
+
+		// When user clicks button, fetch data via Ajax, and bind it to the dataview.
+		$('#loadmore').click(function() {
+			$.getJSON('/users/page/2', function(data) {
+				dataView.beginUpdate();
+				dataView.setItems(data);
+				dataView.endUpdate();
+			});
+		});
 
 	})
 @stop

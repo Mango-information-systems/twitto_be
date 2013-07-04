@@ -22,4 +22,19 @@ class CategoryController extends BaseController {
 		return View::make('category', compact('page_title', 'page_desc', 'category', 'users', 'categories', 'categorySlug'));
 	}
 
+	public function getUsersCategory($pageNumber) {
+
+		$recordsNumber = 5;
+		$offset = $recordsNumber * $pageNumber;
+
+		$_user = new Twuser();
+		$users = $_user->getUsersCategory($recordsNumber, $offset);
+
+		$users_json = json_encode($users);
+
+		echo $users_json;
+		die;
+
+	}
+
 }

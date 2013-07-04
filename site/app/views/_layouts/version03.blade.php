@@ -127,6 +127,7 @@
 		<script src="{{ URL::asset('assets/js/jquery.event.drag-2.2.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/slick.formatters.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/slick.core.js') }}"></script>
+		<script src="{{ URL::asset('assets/js/slick.dataview.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/slick.grid.js') }}"></script>
 
 
