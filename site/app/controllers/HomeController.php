@@ -8,34 +8,15 @@ class HomeController extends BaseController {
 	|--------------------------------------------------------------------------
 	*/
 	public function index(){
-        $page_title = '90000+ Belgian tweeters ranked by influence';
-        $page_desc = 'twitto.be lets you explore the Belgian twitter users community.';
+		$page_title = '90000+ Belgian tweeters ranked by influence';
+		$page_desc = 'twitto.be lets you explore the Belgian twitter users community.';
+		$h1_title = 'Belgian users of twitter, categorized and ranked by their Kred influence score';
 
-        $categorySlug = -1;
-
-		//$categories = Category::with('twusers')->orderBy('sorting_order')->get();
-		// Above was causing error 500. Investigate!
-		$categories = Category::orderBy('sorting_order', 'asc')->get();
-
-		// Dirty walkaround. I dont know what to do to limit the result while
-		// using eager loading.
-		foreach ($categories as $category){
-			$_category = Category::where('category_id', '=', $category->category_id)->first();
-			$users[$category->category_id] = $_category->twusers()->take(5)->get();
-		}
-
-		return View::make('home', compact('page_title', 'page_desc', 'categories', 'categorySlug', 'users'));
-	}
-
-	public function version03(){
-        $page_title = '90000+ Belgian tweeters ranked by influence';
-        $page_desc = 'twitto.be lets you explore the Belgian twitter users community.';
-
-        $categorySlug = -1;
+		$category_id = 0;
 
 		$categories = Category::orderBy('sorting_order', 'asc')->get();
 
-		return View::make('version03home', compact('page_title', 'page_desc', 'categories', 'categorySlug'));
+		return View::make('home', compact('page_title', 'page_desc','h1_title', 'categories', 'category_id'));
 	}
 
 	public function feedback() {

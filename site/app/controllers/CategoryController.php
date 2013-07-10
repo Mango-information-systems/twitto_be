@@ -2,41 +2,36 @@
 
 class CategoryController extends BaseController {
 
-	public function getCategory($categorySlug) {
-
+	public function getCategory($category_id) {
 		$categories = Category::orderBy('sorting_order', 'asc')->get();
 		// Get category data
-		$category = Category::where('category_id', '=', $categorySlug)->first();
+		$category = Category::where('category_id', '=', $category_id)->first();
 
 		// Check if category exists
 		if (is_null($category)) {
 			return App::abort(404);
 		}
 
-		// Get category users
-		$users = $category->twusers()->take(100)->get();
 
 		$page_title = "Top Belgian influencers in $category->category_name category";
 		$page_desc = "Ranking Belgian twitter users belonging to $category->category_name category according to their Kred social influence score";
+		$h1_title = "Top Belgian twitter influencers in \"$category->category_name\"";
 
-		return View::make('category', compact('page_title', 'page_desc', 'category', 'users', 'categories', 'categorySlug'));
+		return View::make('category', compact('page_title', 'page_desc', 'h1_title', 'category', 'categories', 'category_id'));
 	}
 
-	public function getUsersCategory() {
+	public function jsonUsersCategory() {
 
 		$input = Input::all();
-		$total_rows = 200;
 
-		$records_number = $input["perPage"] ?: 10;
-		$page_number = $input["currentPage"] ?: 1;
+		$records_number = (isset($input["perPage"]) ? $input["perPage"] : 10);
+		$page_number = (isset($input["currentPage"]) ? $input["currentPage"] : 1);
+		$category_id = (isset($input["category_id"]) ? $input["category_id"] : 0);
 
 		$offset = $records_number * $page_number;
 
 		$_user = new Twuser();
-		$users = $_user->getUsersCategory($records_number, $offset);
-
-		//$users_json = json_encode($users);
-
+		$users = $_user->getUsersCategory($records_number, $offset, $category_id);
 
 		$return_array = array(
 
@@ -66,48 +61,7 @@ class CategoryController extends BaseController {
 			);
 		}
 
-		echo json_encode($return_array);
-		die;
-
-	}
-
-	public function getUsersCategoryTest() {
-
-		$total_rows = 200;
-		$per_page = $_POST["perPage"] ?: 10;
-		$current_page = $_POST["currentPage"] ?: 1;
-
-		$sort = array(array( "column_0", "desc" ), array( "column_2", "asc" ));
-		$filter = array("column_0" => "foo");
-
-		$example = array(
-
-			"totalRows"   => $total_rows,
-			"perPage"     => $per_page,
-			"sort"        => $sort,
-			"filter"      => $filter,
-			"currentPage" => $current_page,
-			"data"        => array(),
-
-			"posted"      => $_POST
-
-		);
-
-		for($i = 1; $i <= $per_page; $i++) {
-			$current_row = ($current_page * $per_page) - $per_page + $i;
-			if($current_row > $total_rows) break;
-
-			$example["data"][] = array(
-				"column_0"  => "row: " . $current_row . " column 1 " . rand(0,100),
-				"column_1"  => "<img src='http://www.dtwitto.be/assets/img/mango-information-systems-square-logo-23x23.png'/>",
-				"column_2"  => "row: " . $current_row . " column 3 " . rand(0,100),
-				"column_3"  => "row: " . $current_row . " column 4 " . rand(0,100),
-			);
-		}
-
-// header('Content-type: text/json');
-		echo json_encode($example);
-		die;
+		return Response::json($return_array, 200);
 
 	}
 

@@ -3,7 +3,7 @@
         <li class="nav-header">Categories</li>
         @foreach ($categories as $key => $category)
         <li><a href="{{{ URL::to('category/' . $category->category_id ) }}}" 
-               @if($category->category_id == $categorySlug)
+               @if($category->category_id == $category_id)
 			   class="active"
                @endif
                >

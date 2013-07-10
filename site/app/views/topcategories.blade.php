@@ -1,6 +1,6 @@
 <div class="well sidebar-nav">
 	@foreach ($categories as $key => $category)
-		<a href="{{{ URL::to('category/' . $category->category_id ) }}}" class="btn btn-large">{{ $category->category_name }} <i class="icon-th-large"></i></a>
+		<a href="{{{ URL::to('category/' . $category->category_id ).'/'.Str::slug($category->category_name) }}}" class="btn btn-large <?php echo(($category->category_id == $category_id) ? " btn-inverse" :"sex"); ?> ">{{ $category->category_name }} <i class="icon-th-large"></i></a>
 	@endforeach
 
 	<form class="form-search pull-right">
