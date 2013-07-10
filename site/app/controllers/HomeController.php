@@ -35,12 +35,7 @@ class HomeController extends BaseController {
 
 		$categories = Category::orderBy('sorting_order', 'asc')->get();
 
-		$_user = new Twuser();
-		$users = $_user->getUsersCategory(100);
-
-		$users_json = json_encode($users);
-
-		return View::make('version03home', compact('page_title', 'page_desc', 'categories', 'categorySlug', 'users', 'users_json'));
+		return View::make('version03home', compact('page_title', 'page_desc', 'categories', 'categorySlug'));
 	}
 
 	public function feedback() {
