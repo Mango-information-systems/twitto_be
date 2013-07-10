@@ -28,7 +28,7 @@ class CategoryController extends BaseController {
 		$page_number = (isset($input["currentPage"]) ? $input["currentPage"] : 1);
 		$category_id = (isset($input["category_id"]) ? $input["category_id"] : 0);
 
-		$offset = $records_number * $page_number;
+		$offset = $records_number * ($page_number-1);
 
 		$_user = new Twuser();
 		$users = $_user->getUsersCategory($records_number, $offset, $category_id);

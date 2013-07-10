@@ -20,9 +20,9 @@ class Twuser extends Eloquent {
 			->select('tw_id as id')
 			->remember(10);
 
-		$query = DB::table('tw_user')
-			->join('fact_influence', 'tw_id', '=', 'id')
-			->join('category', 'main_category_id', '=', 'category_id')
+		$query = DB::table('fact_influence')
+			->leftJoin('tw_user', 'tw_id', '=', 'id')
+			->leftJoin('category', 'main_category_id', '=', 'category_id')
 			->skip($skip)
 			->take($howmany)
 			->orderBy('kred_score', 'desc')
