@@ -25,7 +25,7 @@ Route::get('about', 'StaticController@about');
 Route::get('new', array('as' => 'version03', 'uses' => 'HomeController@version03'));
 
 # Json Get users of category / pagination
-Route::get('users/page/{pageNumber}', 'CategoryController@getUsersCategory');
+Route::post('users/category', 'CategoryController@getUsersCategory');
 
 # Categories - Second to last set, match slug
 Route::get('category/{categorySlug}', 'CategoryController@getCategory');

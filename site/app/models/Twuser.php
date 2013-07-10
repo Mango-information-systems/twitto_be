@@ -11,16 +11,31 @@ class Twuser extends Eloquent {
 	}
 
 	public function getUsersCategory($howmany, $skip = 0){
-		return DB::table('tw_user')
+
+		$return_array = [];
+
+		$query_all = DB::table('tw_user')
+			->join('fact_influence', 'tw_id', '=', 'id')
+			->join('category', 'main_category_id', '=', 'category_id')
+			->select('tw_id as id')
+			->remember(10);
+
+
+
+		$query = DB::table('tw_user')
 			->join('fact_influence', 'tw_id', '=', 'id')
 			->join('category', 'main_category_id', '=', 'category_id')
 			->orderBy('kred_score', 'desc')
 			->skip($skip)
 			->take($howmany)
 			->select('tw_id as id','screen_name', 'description',
-				'category_name', 'profile_image_url',
+				'category_name','main_category_id', 'profile_image_url',
 				'kred_score', 'name')
+			->remember(10)
 			->get();
 
+		$return_array['row_num'] = $query_all->count();
+		$return_array['data'] = $query;
+		return $return_array;
 	}
 }

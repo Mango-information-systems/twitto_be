@@ -36,7 +36,7 @@ class HomeController extends BaseController {
 		$categories = Category::orderBy('sorting_order', 'asc')->get();
 
 		$_user = new Twuser();
-		$users = $_user->getUsersCategory(5);
+		$users = $_user->getUsersCategory(100);
 
 		$users_json = json_encode($users);
 

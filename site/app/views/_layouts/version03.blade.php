@@ -122,13 +122,8 @@
 		<script src="{{ URL::asset('assets/js/jquery-2.0.2.min.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/jquery.isotope.min.js') }}"></script>
 		<script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
-		<script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
-		<script src="{{ URL::asset('assets/js/bootstrap-ajax.js') }}"></script>
-		<script src="{{ URL::asset('assets/js/jquery.event.drag-2.2.js') }}"></script>
-		<script src="{{ URL::asset('assets/js/slick.formatters.js') }}"></script>
-		<script src="{{ URL::asset('assets/js/slick.core.js') }}"></script>
-		<script src="{{ URL::asset('assets/js/slick.dataview.js') }}"></script>
-		<script src="{{ URL::asset('assets/js/slick.grid.js') }}"></script>
+		<script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
+		<script src="{{ URL::asset('assets/js/bootstrap-datatable.min.js') }}"></script>
 
 
 
@@ -145,10 +140,8 @@
 		@endif
 
 
-        <script lang="text/javascript">
-			@section('inline-javascript')
-			@show
-		</script>
+		@section('inline-javascript')
+		@show
 
 	</body>
 </html>
