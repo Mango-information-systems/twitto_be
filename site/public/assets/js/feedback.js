@@ -6,23 +6,6 @@
  *
  * By http://www.paulund.co.uk
  */
-(function ($j) {
-
-  feedback_button = {
-
-    onReady: function () {
-      this.feedback_button_click();
-    },
-
-    feedback_button_click: function(){
-    	$("#feedback_button").click(function(){
-    		$('.form').slideToggle();
-    	});
-    }
-  };
-
-  $j().ready(function () {
-	  feedback_button.onReady();
-  });
-
-})(jQuery);
+$("#feedback_button").click(function(){
+	$('#feedback-form').slideToggle();
+});

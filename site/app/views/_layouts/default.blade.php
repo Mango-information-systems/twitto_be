@@ -13,8 +13,6 @@
 	<link href="{{ URL::asset('assets/css/amelia-bootstrap.min.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/custom.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/feedback.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/slick.grid.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/smoothness/jquery-ui-1.8.16.custom.css') }}" rel="stylesheet">
 
 	<style type="text/css">
 		body {
@@ -100,10 +98,10 @@
 <div class="feedback">
 	<a id="feedback_button">Feedback</a>
 
-	<div class="well form" style="margin-bottom: 0 !important;">
+	<div class="well form" id="feedback-form" style="margin-bottom: 0 !important;">
 		<h4>Please Send Us Your Feedback</h4>
 		<?php
-		echo Form::open(array('url' => 'feedback', 'method' => 'post', 'class' => 'ajax', 'data-replace' => '.feedback-status', 'data-spinner' => '.feedback-status'));
+		echo Form::open(array('url' => 'feedback', 'method' => 'post', 'class' => 'ajax', 'data-replace' => '.feedback-status', 'data-spinner' => '.feedback-status' ));
 		echo Form::email('email', null, array('placeholder' => 'Email (optional)', 'id' => 'email'));
 		echo Form::textarea('feedback_text', null, array('placeholder' => 'Message (mandatory)', 'id' => 'feedback_text'));
 		echo Form::text('welcome_check', null, array('id' => 'welcome_check'));
@@ -119,11 +117,12 @@
 <!-- Le javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="{{ URL::asset('assets/js/jquery-2.0.2.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery.isotope.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
 <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/bootstrap-datatable.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
 
 
 
