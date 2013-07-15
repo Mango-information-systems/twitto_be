@@ -34,10 +34,10 @@ class HomeController extends BaseController {
 		$validation = Validator::make($input, $rules);
 
 		$response = [
-			"error_validation" => ['html' => '<div class="feedback-status">Please fill in the required fields</div>'],
-			"error_server" => ['html' => '<div class="feedback-status">Server error. Please try again later.</div>'],
-			"error_too_soon" => ['html' => '<div class="feedback-status">You have already sent your feedback.<br/> Please try again in 20 seconds.</div>'],
-			"success" => ['html' => '<div class="feedback-status">Thank you for your message</div>'],
+			"error_validation" => ['html' => '<div class="feedback-status" id="feedback-status">Please fill in the required fields</div>'],
+			"error_server" => ['html' => '<div class="feedback-status" id="feedback-status">Server error. Please try again later.</div>'],
+			"error_too_soon" => ['html' => '<div class="feedback-status" id="feedback-status">You have already sent your feedback.<br/> Please try again in 20 seconds.</div>'],
+			"success" => ['html' => '<div class="feedback-status" id="feedback-status">Thank you for your message</div>'],
 		];
 
 		if ($validation->fails()) {

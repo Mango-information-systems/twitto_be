@@ -108,7 +108,7 @@
 		echo Form::button('Send', array('name' => 'submit_form', 'id' => 'submit_form', 'class' => 'btn pull-right', 'type' => 'submit'));
 		?>
 		<?php echo Form::close();?>
-		<div class="feedback-status"></div>
+		<div class="feedback-status" id="feedback-status"></div>
 
 	</div>
 </div>
@@ -123,6 +123,7 @@
 <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/bootstrap-datatable.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
 
 
 
