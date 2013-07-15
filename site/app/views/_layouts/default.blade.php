@@ -152,9 +152,6 @@
 		dt.render();
 	}
 
-	$('#search_username').blur( function() {
-		search_username();
-	});
 	$('#search_username_button').click( function() {
 		search_username();
 	});
