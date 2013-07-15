@@ -128,7 +128,7 @@
 
 
 @if(!Config::get('app.debug'))
-<script>
+<script lang="text/javascript">
 	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -142,6 +142,32 @@
 
 @section('inline-javascript')
 @show
+
+<script lang="text/javascript">
+	function search_username(){
+		var dt = $("#twitter-datatable").data("datatable");
+		var postdata = dt.options.post;
+
+		postdata.search_username = $('#search_username').val();
+		dt.render();
+	}
+
+	$('#search_username').blur( function() {
+		search_username();
+	});
+	$('#search_username_button').click( function() {
+		search_username();
+	});
+
+	$('#search_username').keypress(function(event) {
+		if (event.which == 13) {
+			event.preventDefault();
+			search_username();
+		}
+	});
+
+
+</script>
 
 </body>
 </html>

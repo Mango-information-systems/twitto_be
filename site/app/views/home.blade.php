@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 @section('main')
-<div id="table-container_1"></div>
+<div id="twitter-datatable"></div>
 @stop
 
 {{-- Web site Title --}}
@@ -21,11 +21,14 @@
 
 @section('inline-javascript')
 <script lang="text/javascript">
-	$("#table-container_1").datatable({
+	//https://github.com/jeffdupont/bootstrap-data-table
+	$("#twitter-datatable").datatable({
 		perPage: 10
 		, url: '/json/users/category'
 		, showPagination: true
-		//, showFilter: true
+		, showTopPagination: true
+		, showFilterRow: false
+		, showFilter: false
 		//, filterModal: $("#table-container_1-filter")
 		, post: {_token: "<?php echo csrf_token();?>" }
 		, title: ''
@@ -35,28 +38,19 @@
 				, sortable: false
 				, field: "column_rank"
 				, callback: function ( data, cell ) {
-				return data[cell.field];
-			}
+					return data[cell.field];
+				}
 				, filter: false
 				, css: {
 				width: '10%'
 			}
 			}
 			, {
-				title: "Profile Picture"
+				title: "Profile"
 				, sortable: false
 				, field: "column_profile_picture"
 				, css: {
-					width: '10%'
-				}
-			}
-			, {
-				title: "Name - @username"
-				, sortable: false
-				, field: "column_name_username"
-				, filter: false
-				, css: {
-					width: '10%'
+					width: '20%'
 				}
 			}
 			, {

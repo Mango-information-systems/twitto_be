@@ -10,7 +10,7 @@ class Twuser extends Eloquent {
 		return $this->belongsToMany('Category', 'fact_influence', 'tw_id', 'main_category_id')->withPivot('kred_score')->orderBy('kred_score');
 	}
 
-	public function getUsersCategory($howmany, $skip = 0, $category_id = 0){
+	public function getUsersCategory($howmany, $skip = 0, $category_id = 0, $search_username = ''){
 
 		$return_array = [];
 
@@ -35,9 +35,14 @@ class Twuser extends Eloquent {
 			$query_all = $query_all->where('category_id', '=', $category_id);
 			$query = $query->where('category_id', '=', $category_id);
 		}
+		if($search_username != ''){
+			$query_all = $query_all->where('screen_name', 'LIKE', '%'. $search_username. '%');
+			$query = $query->where('screen_name', 'LIKE', '%'. $search_username. '%');
+		}
 
 		$return_array['row_num'] = $query_all->count();
 		$return_array['data'] = $query->get();
+
 		return $return_array;
 	}
 }

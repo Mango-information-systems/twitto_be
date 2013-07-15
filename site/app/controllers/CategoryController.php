@@ -27,11 +27,12 @@ class CategoryController extends BaseController {
 		$records_number = (isset($input["perPage"]) ? $input["perPage"] : 10);
 		$page_number = (isset($input["currentPage"]) ? $input["currentPage"] : 1);
 		$category_id = (isset($input["category_id"]) ? $input["category_id"] : 0);
+		$search_username = (isset($input["search_username"]) ? $input["search_username"] : 0);
 
 		$offset = $records_number * ($page_number-1);
 
 		$_user = new Twuser();
-		$users = $_user->getUsersCategory($records_number, $offset, $category_id);
+		$users = $_user->getUsersCategory($records_number, $offset, $category_id, $search_username);
 
 		$return_array = array(
 
@@ -52,7 +53,11 @@ class CategoryController extends BaseController {
 				$return_array["data"],
 				array(
 					"column_rank"  => $user->id,
-					"column_profile_picture"  => '<img src="'.$user->profile_image_url.'" width="48" height="48" class="img-rounded" alt="'.$user->screen_name.'" title="'.$user->screen_name.'" /><br/>',
+					"column_profile_picture"  => '<div class="media"><a class="pull-left" href="https://www.twitter.com/'.$user->screen_name.'" target="_blank"><img src="'.$user->profile_image_url.'" width="48" height="48" class="img-rounded media-object" alt="'.$user->screen_name.'" title="'.$user->screen_name.'" /></a>
+<div class="media-body">
+<h4 class="media-heading">'.$user->name.'</h4>
+<a href="https://www.twitter.com/'.$user->screen_name.'" target="_blank">@'.$user->screen_name.'</a>
+</div>',
 					"column_name_username"  => '<span class="lead">'.$user->name.'</span><br/><a href="https://www.twitter.com/'.$user->screen_name.'" target="_blank">@'.$user->screen_name.'</a>',
 					"column_description"  => $user->description,
 					"column_category"  => '<a href="'.URL::to('category/' . $user->main_category_id ).'">'.$user->category_name.'</a>',
