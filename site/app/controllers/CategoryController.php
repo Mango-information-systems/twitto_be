@@ -52,7 +52,7 @@ class CategoryController extends BaseController {
 			array_push(
 				$return_array["data"],
 				array(
-					"column_rank"  => $user->id,
+					"column_rank"  => '<span class="lead">'.rand(1, $users['row_num']).'</span>',
 					"column_profile_picture"  => '<div class="media"><a class="pull-left" href="https://www.twitter.com/'.$user->screen_name.'" target="_blank"><img src="'.$user->profile_image_url.'" width="48" height="48" class="img-rounded media-object" alt="'.$user->screen_name.'" title="'.$user->screen_name.'" /></a>
 <div class="media-body">
 <h4 class="media-heading">'.$user->name.'</h4>
@@ -61,7 +61,7 @@ class CategoryController extends BaseController {
 					"column_name_username"  => '<span class="lead">'.$user->name.'</span><br/><a href="https://www.twitter.com/'.$user->screen_name.'" target="_blank">@'.$user->screen_name.'</a>',
 					"column_description"  => twitter_txt_parse($user->description),
 					"column_category"  => '<a href="'.URL::to('category/' . $user->main_category_id ).'/'. Str::slug($user->category_name) .'">'.$user->category_name.'</a>',
-					"column_score"  => $user->kred_score
+					"column_score"  => '<span class="lead">'.$user->kred_score.'</span>'
 				)
 			);
 		}

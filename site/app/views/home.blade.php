@@ -42,7 +42,7 @@
 				}
 				, filter: false
 				, css: {
-				width: '10%'
+				width: '5%'
 			}
 			}
 			, {
@@ -58,7 +58,7 @@
 				, sortable: false
 				, field: "column_description"
 				, css: {
-					width: '50%'
+					width: '60%'
 				}
 			}
 			, {
@@ -70,12 +70,12 @@
 				}
 			}
 			, {
-				title: "Score"
+				title: "Kred Score"
 				, sortable: false
 				, field: "column_score"
 				, css: {
 					textAlign: 'right'
-					, width: '10%'
+					, width: '5%'
 
 				}
 			}
