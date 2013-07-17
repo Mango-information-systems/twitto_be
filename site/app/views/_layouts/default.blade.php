@@ -149,6 +149,9 @@
 		var dt = $("#twitter-datatable").data("datatable");
 		var postdata = dt.options.post;
 
+		//Set page to 1 when searching
+		dt.options.currentPage = 1;
+
 		postdata.search_username = $('#search_username').val();
 		dt.render();
 	}
