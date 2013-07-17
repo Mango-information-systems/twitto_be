@@ -5,7 +5,7 @@
 	@endforeach
 
 	<div class="form-search pull-right">
-		<input type="search" class="input-medium search-query" id="search_username" placeholder="search">
+		<input type="search" class="input-medium search-query" id="search_username" placeholder="keyword or username">
 		<button class="btn" id="search_username_button">Search</button>
 	</div>
 

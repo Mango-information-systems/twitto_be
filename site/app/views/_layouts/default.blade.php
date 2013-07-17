@@ -124,6 +124,7 @@
 <script src="{{ URL::asset('assets/js/bootstrap-datatable.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/jquery.placeholder.min.js') }}"></script>
 
 
 
@@ -161,6 +162,10 @@
 			event.preventDefault();
 			search_username();
 		}
+	});
+
+	$(function() {
+		$('input, textarea').placeholder();
 	});
 
 
