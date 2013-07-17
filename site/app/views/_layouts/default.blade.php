@@ -141,10 +141,26 @@
 @endif
 
 
+<script lang="text/javascript">
+
+	var page = 1;
+	var lochash    = window.location.hash.substr(1),
+		page = lochash.substr(lochash.indexOf('page='))
+			.split('&')[0]
+			.split('=')[1];
+
+	if(!page){
+		page=1;
+	}
+	</script>
+
 @section('inline-javascript')
 @show
 
 <script lang="text/javascript">
+
+	var page = 1;
+
 	function search_username(){
 		var dt = $("#twitter-datatable").data("datatable");
 		var postdata = dt.options.post;

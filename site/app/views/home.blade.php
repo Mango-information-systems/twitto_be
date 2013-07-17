@@ -29,6 +29,7 @@
 		, showTopPagination: true
 		, showFilterRow: false
 		, showFilter: false
+		, currentPage: page
 		//, filterModal: $("#table-container_1-filter")
 		, post: {_token: "<?php echo csrf_token();?>" }
 		, title: ''
