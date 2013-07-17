@@ -39,6 +39,9 @@ class Twuser extends Eloquent {
 			$query_all = $query_all->where('screen_name', 'LIKE', '%'. $search_username. '%');
 			$query = $query->where('screen_name', 'LIKE', '%'. $search_username. '%');
 
+			$query_all = $query_all->orWhere('screen_name', '=', '@'. $search_username);
+			$query = $query->orWhere('screen_name', '=', '@'. $search_username);
+
 			$query_all = $query_all->orWhere('description', 'LIKE', '%'. $search_username. '%');
 			$query = $query->orWhere('description', 'LIKE', '%'. $search_username. '%');
 		}
