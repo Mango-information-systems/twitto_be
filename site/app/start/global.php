@@ -97,3 +97,14 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+/*
+|--------------------------------------------------------------------------
+| Require The Functions File
+|--------------------------------------------------------------------------
+|
+| Next we will load the functions file for the application. This gives us
+| a nice separate location to store our application functions.
+|
+*/
+require app_path().'/functions.php';

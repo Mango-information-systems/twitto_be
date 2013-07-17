@@ -59,7 +59,7 @@ class CategoryController extends BaseController {
 <a href="https://www.twitter.com/'.$user->screen_name.'" target="_blank">@'.$user->screen_name.'</a>
 </div>',
 					"column_name_username"  => '<span class="lead">'.$user->name.'</span><br/><a href="https://www.twitter.com/'.$user->screen_name.'" target="_blank">@'.$user->screen_name.'</a>',
-					"column_description"  => $user->description,
+					"column_description"  => twitter_txt_parse($user->description),
 					"column_category"  => '<a href="'.URL::to('category/' . $user->main_category_id ).'/'. Str::slug($user->category_name) .'">'.$user->category_name.'</a>',
 					"column_score"  => $user->kred_score
 				)
