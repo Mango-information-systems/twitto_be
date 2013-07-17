@@ -14,6 +14,10 @@ class Twuser extends Eloquent {
 
 		$return_array = [];
 
+		if($howmany > 100){
+			$howmany = 100;
+		}
+
 		$query_all = DB::table('tw_user')
 			->join('fact_influence', 'tw_id', '=', 'id')
 			->join('category', 'main_category_id', '=', 'category_id')

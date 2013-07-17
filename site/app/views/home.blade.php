@@ -23,7 +23,7 @@
 <script lang="text/javascript">
 	//https://github.com/jeffdupont/bootstrap-data-table
 	$("#twitter-datatable").datatable({
-		perPage: 10
+		perPage: perpagejs
 		, url: '/json/users/category'
 		, showPagination: true
 		, showTopPagination: true
