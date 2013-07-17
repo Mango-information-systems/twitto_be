@@ -169,6 +169,8 @@
 
 	$(function() {
 		$('input, textarea').placeholder();
+		$('.dt-toolbar-container').removeClass('clearfix');
+		$('.dt-toolbar-container').style('padding: 10px;');
 	});
 
 
