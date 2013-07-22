@@ -161,6 +161,8 @@
 	if(!perpagejs	){
 		perpagejs=10;
 	}
+
+	$("img").lazyload();
 	</script>
 
 @section('inline-javascript')
@@ -193,6 +195,7 @@
 	$(function() {
 		$('input, textarea').placeholder();
 		$('.dt-toolbar-container').removeClass('clearfix');
+		$('#dt-top-details').addClass('clearfix');
 	});
 
 
