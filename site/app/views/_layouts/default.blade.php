@@ -161,8 +161,6 @@
 	if(!perpagejs	){
 		perpagejs=10;
 	}
-
-	$("img").lazyload();
 	</script>
 
 @section('inline-javascript')
