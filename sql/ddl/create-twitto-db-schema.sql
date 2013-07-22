@@ -96,7 +96,9 @@ CREATE TABLE IF NOT EXISTS `fact_influence` (
   `kred_score` int(20) NOT NULL COMMENT 'Kred influence score',
   `kred_outreach` int(20) NOT NULL COMMENT 'Kred outreach score',
   `last_update` datetime NULL COMMENT 'timestamp of last update of the kred score',
-  PRIMARY KEY (`tw_id`)
+  PRIMARY KEY (`tw_id`),
+  UNIQUE KEY `tw_id_categ` (`tw_id`,`main_category_id`),
+  KEY `kred_score` (`kred_score`)
 )
 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci 
 COMMENT='rankings fact table, measuring influence of twitter users from Kred and from twitto''s users rating, also storing main category and location. To be used in main page';

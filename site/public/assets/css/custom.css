@@ -71,3 +71,15 @@
 	display: none;
 	visibility: hidden;
 }
+
+#scrolltop{
+	height: 1px;
+}
+
+.topcategories{
+	margin-bottom: 0px !important;
+}
+
+.size48{
+	height: 48px;
+}

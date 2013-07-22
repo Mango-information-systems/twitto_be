@@ -4,7 +4,8 @@
     "keywords": ["framework", "laravel"],
 	"require": {
 		"laravel/framework": "4.0.*",
-        "way/generators": "dev-master"
+        "way/generators": "dev-master",
+		"juy/profiler" : "dev-master"
 	},
 	"autoload": {
 		"classmap": [
