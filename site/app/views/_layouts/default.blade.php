@@ -194,8 +194,6 @@
 
 	$(function() {
 		$('input, textarea').placeholder();
-		$('.dt-toolbar-container').removeClass('clearfix');
-		$('#dt-top-details').addClass('clearfix');
 	});
 
 
