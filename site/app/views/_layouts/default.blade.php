@@ -71,7 +71,7 @@
 				@section('h1-title')
 				@show
 			</h1>
-			@include('topcategories')
+			@section('topcategories')
 			@show
 			@yield('main')
 		</div><!--/span-->

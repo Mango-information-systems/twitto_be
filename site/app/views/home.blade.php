@@ -1,5 +1,6 @@
 @extends('_layouts.default')
 @section('main')
+<div id="scrolltop">&nbsp;</div>
 <div id="twitter-datatable"></div>
 @stop
 
@@ -16,6 +17,12 @@
 {{-- h1 --}}
 @section('h1-title')
 {{ $h1_title }}
+@stop
+
+{{-- topcategories --}}
+@section('topcategories')
+@include('topcategories')
+@show
 @stop
 
 
@@ -35,23 +42,11 @@
 		, title: ''
 		, columns: [
 			{
-				title: "Rank"
-				, sortable: false
-				, field: "column_rank"
-				, callback: function ( data, cell ) {
-					return data[cell.field];
-				}
-				, filter: false
-				, css: {
-				width: '5%'
-			}
-			}
-			, {
 				title: "Profile"
 				, sortable: false
 				, field: "column_profile_picture"
 				, css: {
-					width: '20%'
+					width: '25%'
 				}
 			}
 			, {
