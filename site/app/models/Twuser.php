@@ -22,7 +22,7 @@ class Twuser extends Eloquent {
 			->join('fact_influence', 'tw_id', '=', 'id')
 			->join('category', 'main_category_id', '=', 'category_id')
 			->select('tw_id as id')
-			->remember(10);
+			->remember(1440);
 
 		$query = DB::table('fact_influence')
 			->leftJoin('tw_user', 'tw_id', '=', 'id')
@@ -33,7 +33,7 @@ class Twuser extends Eloquent {
 			->select('tw_id as id','screen_name', 'description',
 				'category_name','main_category_id', 'profile_image_url',
 				'kred_score', 'name')
-			->remember(10);
+			->remember(1440);
 
 		if($category_id != 0){
 			$query_all = $query_all->where('category_id', '=', $category_id);
