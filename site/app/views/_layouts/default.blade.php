@@ -87,6 +87,8 @@
 					&copy; <a href="http://mango-is.com/" target="_blank"><img src="{{ URL::asset('assets/img/mango-information-systems-square-logo-23x23.png') }}" /> Mango Information systems 2013</a>
 					|
 					<a href="https://github.com/Mango-information-systems/twitto_be" target="_blank">Fork me on Github</a>
+					|
+					<a href="https://twitter.com/twitto_be" target="_blank">Follow @twitto_be</a>
 				</div>
 			</div>
 		</div>
@@ -144,7 +146,7 @@
 <script lang="text/javascript">
 
 	var page = 1;
-	var perpagejs = 10;
+	var perpagejs = 100;
 	var lochash    = window.location.hash.substr(1),
 		page = lochash.substr(lochash.indexOf('page='))
 			.split('&')[0]
@@ -159,7 +161,7 @@
 	}
 
 	if(!perpagejs	){
-		perpagejs=10;
+		perpagejs = 100;
 	}
 	</script>
 

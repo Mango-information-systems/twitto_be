@@ -24,7 +24,7 @@ class CategoryController extends BaseController {
 
 		$input = Input::all();
 
-		$records_number = (isset($input["perPage"]) ? $input["perPage"] : 10);
+		$records_number = (isset($input["perPage"]) ? $input["perPage"] : 100);
 		$page_number = (isset($input["currentPage"]) ? $input["currentPage"] : 1);
 		$category_id = (isset($input["category_id"]) ? $input["category_id"] : 0);
 		$search_username = (isset($input["search_username"]) ? $input["search_username"] : 0);
