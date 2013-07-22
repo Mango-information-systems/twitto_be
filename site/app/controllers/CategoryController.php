@@ -53,7 +53,7 @@ class CategoryController extends BaseController {
 				$return_array["data"],
 				array(
 					"column_rank"  => '<span class="lead">'.rand(1, $users['row_num']).'</span>',
-					"column_profile_picture"  => '<div class="media"><a class="pull-left" href="https://www.twitter.com/'.$user->screen_name.'" target="_blank"><img src="'.$user->profile_image_url.'" width="48" height="48" class="img-rounded media-object" alt="'.$user->screen_name.'" title="'.$user->screen_name.'" /></a>
+					"column_profile_picture"  => '<div class="media"><a class="pull-left" href="https://www.twitter.com/'.$user->screen_name.'" target="_blank"><img src="'.$user->profile_image_url.'" width="48" height="48" class="img-rounded media-object size48" alt="'.$user->screen_name.'" title="'.$user->screen_name.'" /></a>
 <div class="media-body">
 <h4 class="media-heading">'.$user->name.'</h4>
 <a href="https://www.twitter.com/'.$user->screen_name.'" target="_blank">@'.$user->screen_name.'</a>
