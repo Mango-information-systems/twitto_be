@@ -22,6 +22,9 @@ Route::post('feedback', 'HomeController@feedback');
 Route::get('privacy', 'StaticController@privacy');
 Route::get('about', 'StaticController@about');
 
+#Test D3
+Route::get('testd3', 'TestController@testd3');
+
 # Json Get users of category / pagination
 Route::post('json/users/category', 'CategoryController@jsonUsersCategory');
 

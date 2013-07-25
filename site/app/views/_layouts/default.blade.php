@@ -13,6 +13,7 @@
 	<link href="{{ URL::asset('assets/css/amelia-bootstrap.min.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/custom.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/feedback.css') }}" rel="stylesheet">
+	<link href="{{ URL::asset('assets/css/dc.css') }}" rel="stylesheet">
 
 	<style type="text/css">
 		body {
@@ -127,6 +128,9 @@
 <script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery.placeholder.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/d3.js') }}"></script>
+<script src="{{ URL::asset('assets/js/crossfilter.v1.js') }}"></script>
+<script src="{{ URL::asset('assets/js/dc.js') }}"></script>
 
 
 
