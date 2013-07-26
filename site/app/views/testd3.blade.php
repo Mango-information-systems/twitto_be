@@ -92,16 +92,15 @@ About
 			var categoriesGroup = categories.group();
 
 
-
-
-
 			var languages = ndx.dimension(function (d) {
 				return d.lang;
 			});
-
 			var languagesGroup = languages.group();
+			var languagesDomain = [""];
 
-			console.log(languagesGroup.all());
+			languagesGroup.all().forEach(function (e){
+				languagesDomain.push(e.key);
+			});
 
 			categoriesChart.width(400)
 				.height(400)
@@ -113,17 +112,16 @@ About
 				.elasticX(true)
 				.xAxis().ticks(4);
 
-			languagesChart.width(400)
+			languagesChart.width(800)
 				.height(400)
-				.margins({top: 10, right: 50, bottom: 30, left: 40})
 				.dimension(languages)
 				.group(languagesGroup)
 				.elasticY(true)
-				.gap(1)
-				.round(dc.round.floor)
-				.x(d3.scale.linear().domain([-25, 25]))
-				.renderHorizontalGridLines(true)
-				.xAxis();
+				.centerBar(true)
+				.x(d3.scale.ordinal().domain(languagesDomain))
+				.xUnits(dc.units.ordinal);
+
+
 
 		dc.renderAll();
 
