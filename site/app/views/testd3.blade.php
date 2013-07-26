@@ -17,7 +17,9 @@
 	</div>
 
 </div>
-
+<div class="row-fluid">
+<table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="twitter-datatable"></table>
+</div>
 
 
 
@@ -51,6 +53,40 @@ About
 <script type="text/javascript">
 	var categoriesChart = dc.rowChart("#categories-chart");
 	var languagesChart = dc.barChart("#languages-chart");
+
+	var dt;
+	var filteredData;
+
+
+	//The following takes ages to run, with many records
+	//This is because I have to loop over objects, get
+	//the values of each key, make them an array, and push it to another array
+	//If we could improve this then we would have solved our performance issue
+	//(given that datatable jquery can manage 90.000+ records (which I cannot test now)
+
+	function filterData(){
+		var newDataArray = new Array;
+		for(var o in filteredData.top(Infinity)) {
+			var dataArray = $.map(filteredData.top(Infinity)[o],function(v){
+				return v;
+			});
+
+			newDataArray.push(dataArray);
+		}
+
+		$('#twitter-datatable').dataTable().fnClearTable();
+		$('#twitter-datatable').dataTable().fnAddData(newDataArray);
+		$('#twitter-datatable').dataTable().fnDraw();
+	}
+
+
+	categoriesChart.on("postRedraw", function(chart, filter){
+		filterData();
+	});
+
+	languagesChart.on("postRedraw", function(chart, filter){
+		filterData();
+	});
 
 	d3.csv("tw_user.csv", function (data) {
 			var new_data = []
@@ -121,14 +157,26 @@ About
 				.x(d3.scale.ordinal().domain(languagesDomain))
 				.xUnits(dc.units.ordinal);
 
+			dc.renderAll();
+
+			filteredData = languages;
 
 
-		dc.renderAll();
-
-	}
+			$('#twitter-datatable').dataTable( {
+				"sAjaxDataProp": "",
+				"aaData": [	],
+				"aoColumns": [
+					{ "sTitle": "Screen Name" },
+					{ "sTitle": "Lang" },
+					{ "sTitle": "Category" }
+				]
+			} );
+		}
 );
 
 </script>
+
+
 
 
 @stop
