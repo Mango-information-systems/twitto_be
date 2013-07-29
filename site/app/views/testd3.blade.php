@@ -149,6 +149,7 @@ About
 
 			$('#twitter-datatable').dataTable( {
 				"sAjaxDataProp": "",
+				"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
 				"aaData": [	],
 				"aoColumns": [
 					{ "sTitle": "Screen Name" },
@@ -160,7 +161,7 @@ About
 			// Keep the following disabled so that we actually see the difference between
 			// just rendering the charts and how much time the datatable takes to load
 
-			//filterData();
+			filterData();
 		}
 );
 
