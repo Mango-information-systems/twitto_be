@@ -66,13 +66,9 @@ About
 
 	function filterData(){
 		var newDataArray = new Array;
-		for(var o in filteredData.top(Infinity)) {
-			var dataArray = $.map(filteredData.top(Infinity)[o],function(v){
-				return v;
-			});
-
-			newDataArray.push(dataArray);
-		}
+		filteredData.top(Infinity).forEach(function(item) {
+			newDataArray.push(_.values(item))
+		})
 
 		$('#twitter-datatable').dataTable().fnClearTable();
 		$('#twitter-datatable').dataTable().fnAddData(newDataArray);
@@ -84,12 +80,10 @@ About
 		filterData();
 	});
 
-	languagesChart.on("postRedraw", function(chart, filter){
-		filterData();
-	});
+
 
 	d3.csv("tw_user.csv", function (data) {
-			var new_data = []
+			var new_data = [];
 			data.forEach(function (e){
 				if (e.main_category_id != "-1") {
 					new_data.push(e);

@@ -134,6 +134,7 @@
 <script src="{{ URL::asset('assets/js/d3.js') }}"></script>
 <script src="{{ URL::asset('assets/js/crossfilter.v1.js') }}"></script>
 <script src="{{ URL::asset('assets/js/dc.js') }}"></script>
+<script src="{{ URL::asset('assets/js/underscore-min.js') }}"></script>
 
 
 
