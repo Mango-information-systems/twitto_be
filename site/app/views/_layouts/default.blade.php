@@ -14,6 +14,9 @@
 	<link href="{{ URL::asset('assets/css/custom.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/feedback.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/dc.css') }}" rel="stylesheet">
+	<!-- DataTables CSS -->
+	<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+
 
 	<style type="text/css">
 		body {
@@ -131,6 +134,12 @@
 <script src="{{ URL::asset('assets/js/d3.js') }}"></script>
 <script src="{{ URL::asset('assets/js/crossfilter.v1.js') }}"></script>
 <script src="{{ URL::asset('assets/js/dc.js') }}"></script>
+<script src="{{ URL::asset('assets/js/underscore-min.js') }}"></script>
+
+
+
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 
 
 

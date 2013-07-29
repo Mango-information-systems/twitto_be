@@ -17,7 +17,9 @@
 	</div>
 
 </div>
-
+<div class="row-fluid">
+<table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="twitter-datatable"></table>
+</div>
 
 
 
@@ -52,22 +54,41 @@ About
 	var categoriesChart = dc.rowChart("#categories-chart");
 	var languagesChart = dc.barChart("#languages-chart");
 
-	d3.csv("tw_user.csv", function (data) {
-			var new_data = []
+	var dt;
+	var filteredData;
+
+	function filterData(){
+		var newDataArray = new Array;
+
+		$('#twitter-datatable').dataTable().fnClearTable();
+		$('#twitter-datatable').dataTable().fnAddData(filteredData.top(Infinity));
+		$('#twitter-datatable').dataTable().fnDraw();
+	}
+
+
+	categoriesChart.on("postRedraw", function(chart, filter){
+		filterData();
+	});
+
+
+
+	d3.json("tw_user.json", function (data) {
+			var new_data = [];
+			/*
 			data.forEach(function (e){
 				if (e.main_category_id != "-1") {
 					new_data.push(e);
 				}
 			});
-
-			data = new_data;
+*/
+			data = data.tw_user;
 
 			// feed it through crossfilter
 			var ndx = crossfilter(data);
 			var all = ndx.groupAll();
 
 			var categories = ndx.dimension(function (d) {
-				var category = d.main_category_id;
+				var category = d[2];
 				switch(category){
 					case "1":
 						return "Bloggers"
@@ -92,16 +113,15 @@ About
 			var categoriesGroup = categories.group();
 
 
-
-
-
 			var languages = ndx.dimension(function (d) {
-				return d.lang;
+				return d[1];
 			});
-
 			var languagesGroup = languages.group();
+			var languagesDomain = [""];
 
-			console.log(languagesGroup.all());
+			languagesGroup.all().forEach(function (e){
+				languagesDomain.push(e.key);
+			});
 
 			categoriesChart.width(400)
 				.height(400)
@@ -113,24 +133,41 @@ About
 				.elasticX(true)
 				.xAxis().ticks(4);
 
-			languagesChart.width(400)
+			languagesChart.width(800)
 				.height(400)
-				.margins({top: 10, right: 50, bottom: 30, left: 40})
 				.dimension(languages)
 				.group(languagesGroup)
 				.elasticY(true)
-				.gap(1)
-				.round(dc.round.floor)
-				.x(d3.scale.linear().domain([-25, 25]))
-				.renderHorizontalGridLines(true)
-				.xAxis();
+				.centerBar(true)
+				.x(d3.scale.ordinal().domain(languagesDomain))
+				.xUnits(dc.units.ordinal);
 
-		dc.renderAll();
+			dc.renderAll();
 
-	}
+			filteredData = languages;
+
+
+			$('#twitter-datatable').dataTable( {
+				"sAjaxDataProp": "",
+				"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
+				"aaData": [	],
+				"aoColumns": [
+					{ "sTitle": "Screen Name" },
+					{ "sTitle": "Lang" },
+					{ "sTitle": "Category" }
+				]
+			} );
+
+			// Keep the following disabled so that we actually see the difference between
+			// just rendering the charts and how much time the datatable takes to load
+
+			filterData();
+		}
 );
 
 </script>
+
+
 
 
 @stop
