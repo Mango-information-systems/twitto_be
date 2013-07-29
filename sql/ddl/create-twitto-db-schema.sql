@@ -2,16 +2,60 @@
 
 /*
 drop table tw_user;
-drop table lkp_location;
-drop table category;
-drop table location;
-drop table fact_influence;
-drop table fact_category;
+drop table dim_topic;
+drop table dim_province;
+drop table fact_topic;
+drop table stg_tw_user;
+drop table audit_etl;
 */
 
 USE `twitto`;
 
+-- production tables
+
 CREATE TABLE IF NOT EXISTS `tw_user` (
+  `tw_id` int(20) NOT NULL,
+  `screen_name` varchar(255),
+  `name` varchar(255),
+  `description` varchar(255),
+  `profile_background_image_url` varchar(255),
+  `lang` varchar(255),
+  `province_id` varchar(255) COMMENT 'Id of the province parsed from user location',
+  `klout_id` varchar(255) COMMENT 'Klout user Id, is NULL when the user is missing from Klout',
+  `klout_score` int(20) unsigned COMMENT 'Klout influence score',
+  `last_update_klout` datetime COMMENT 'Timestamp of last update of user Klout score',
+  PRIMARY KEY (`tw_id`),
+  UNIQUE (`klout_id`)
+)
+DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'twittos table used by front-end';
+
+CREATE TABLE IF NOT EXISTS `dim_topic` (
+  `topic_id` int(20) NOT NULL COMMENT 'Id of the category',
+  `slug` varchar(255) COMMENT 'topic slug to be used in the url',
+  `display_name` varchar(255) COMMENT 'display name of the category',
+  `image_url` varchar(255) COMMENT 'topic thumbnail image url',
+  PRIMARY KEY (`topic_id`)
+)
+DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'categories dimension table, populated using geonames responses usint Open MapQuest API';
+
+CREATE TABLE IF NOT EXISTS `dim_province` (
+  `province_id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'Id of the province',
+  `province_name` varchar(255) COMMENT 'name of the province',
+  PRIMARY KEY (`province_id`)
+)
+DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'Belgian provinces';
+
+CREATE TABLE IF NOT EXISTS `fact_topic` (
+  `tw_id` int(20) NOT NULL COMMENT 'Twitter user Id (numeric)',
+  `topic_id` int(20) NOT NULL COMMENT 'category id for the user''s main category',
+  `last_update` datetime NULL COMMENT 'timestamp of last update of the kred score',
+  PRIMARY KEY (`tw_id`, `topic_id`)
+)
+DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='fact table linking users to associated topics';
+
+-- technical tables
+
+CREATE TABLE IF NOT EXISTS `stg_tw_user` (
   `id` int(20) NOT NULL,
   `screen_name` varchar(255),
   `name` varchar(255),
@@ -48,66 +92,14 @@ CREATE TABLE IF NOT EXISTS `tw_user` (
   `profile_background_tile` tinyint(1),
   `profile_sidebar_border_color` varchar(255),
   `profile_sidebar_fill_color` varchar(255),
-  `last_update` datetime,
+  `last_update` datetime COMMENT 'Timestamp of last update of user info',
+  `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'flag telling whether the user is deleted from twitter',
   PRIMARY KEY (`id`)
 )
-DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'staging table storing all tw_user info';
 
-CREATE TABLE IF NOT EXISTS `lkp_location` (
-  `location_id` int(20) NOT NULL COMMENT 'Id of the location',
-  `dirty_name` varchar(255) COMMENT 'name of the cleansed location not cleansed',
-  PRIMARY KEY (`location_id`, `dirty_name`)
+CREATE TABLE IF NOT EXISTS `audit_etl` (
+  `process_name` varchar(255),
+  `last_run` datetime COMMENT 'Records the timestamp of last successful run of a process'
 )
-DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'bridge table between twitter''s uncleansed locations and cleansed locations';
-
-
-CREATE TABLE IF NOT EXISTS `category` (
-  `category_id` int(20) NOT NULL AUTO_INCREMENT COMMENT 'Id of the category',
-  `category_name` varchar(255) COMMENT 'name of the category',
-  `category_description` varchar(1020) COMMENT 'description of the category',
-  `sorting_order` int(20) COMMENT 'sort order for display of categories',
-  PRIMARY KEY (`category_id`)
-)
-DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'categories dimension table, populated using geonames responses usint Open MapQuest API';
-
-CREATE TABLE IF NOT EXISTS `location` (
-  `location_id` int(20) NOT NULL AUTO_INCREMENT COMMENT 'Id of the location',
-  `location_name` varchar(255) COMMENT 'label at leaf level',
-  `location_type` varchar(255) COMMENT 'type of location',
-  `admin_area_1` varchar(255) COMMENT 'name of admin area 1',
-  `admin_area_1_type` varchar(255) COMMENT 'type of admin area 1 (most likely country)',
-  `admin_area_3` varchar(255) COMMENT 'name of admin area 3',
-  `admin_area_3_type` varchar(255) COMMENT 'type of admin area 1 (most likely state)',
-  `admin_area_4` varchar(255) COMMENT 'name of admin area 4',
-  `admin_area_4_type` varchar(255) COMMENT 'type of admin area 1 (most likely county)',
-  `admin_area_5` varchar(255) COMMENT 'name of admin area 5',
-  `admin_area_5_type` varchar(255) COMMENT 'type of admin area 1 (most likely city)',
-  `postal_code` varchar(255) COMMENT 'postal code',
-  PRIMARY KEY (`location_id`),
-  UNIQUE KEY `location_name` (`location_name`,`location_type`,`admin_area_1`)
-)
-DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'locations hierarchy dimension table, populated using geonames responses using Open MapQuest API';
-
-CREATE TABLE IF NOT EXISTS `fact_influence` (
-  `tw_id` int(20) NOT NULL COMMENT 'Twitter user Id (numeric)',
-  `main_category_id` int(20) NOT NULL COMMENT 'category id for the user''s main category',
-  `location_id` int(20) NOT NULL COMMENT 'id of the user''s location',
-  `b_score` int(20) NOT NULL COMMENT 'twitto influence score',
-  `kred_score` int(20) NOT NULL COMMENT 'Kred influence score',
-  `kred_outreach` int(20) NOT NULL COMMENT 'Kred outreach score',
-  `last_update` datetime NULL COMMENT 'timestamp of last update of the kred score',
-  PRIMARY KEY (`tw_id`),
-  UNIQUE KEY `tw_id_categ` (`tw_id`,`main_category_id`),
-  KEY `kred_score` (`kred_score`)
-)
-DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci 
-COMMENT='rankings fact table, measuring influence of twitter users from Kred and from twitto''s users rating, also storing main category and location. To be used in main page';
-
-CREATE TABLE IF NOT EXISTS `fact_category` (
-  `tw_id` int(20) NOT NULL COMMENT 'Twitter user Id (numeric)',
-  `category_id` int(20) NOT NULL COMMENT 'category id',
-  `is_main` tinyint(1) COMMENT 'flag indicated whether this is to be considered as the main category of the person',
-  PRIMARY KEY (`tw_id`, `category_id`)
-)
-DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci 
-COMMENT='categories fact table, storing relationship between twitter users and categories';
+DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'audit table tracking status of data integration processes';
