@@ -57,21 +57,11 @@ About
 	var dt;
 	var filteredData;
 
-
-	//The following takes ages to run, with many records
-	//This is because I have to loop over objects, get
-	//the values of each key, make them an array, and push it to another array
-	//If we could improve this then we would have solved our performance issue
-	//(given that datatable jquery can manage 90.000+ records (which I cannot test now)
-
 	function filterData(){
 		var newDataArray = new Array;
-		filteredData.top(Infinity).forEach(function(item) {
-			newDataArray.push(_.values(item))
-		})
 
 		$('#twitter-datatable').dataTable().fnClearTable();
-		$('#twitter-datatable').dataTable().fnAddData(newDataArray);
+		$('#twitter-datatable').dataTable().fnAddData(filteredData.top(Infinity));
 		$('#twitter-datatable').dataTable().fnDraw();
 	}
 
@@ -82,22 +72,23 @@ About
 
 
 
-	d3.csv("tw_user.csv", function (data) {
+	d3.json("tw_user.json", function (data) {
 			var new_data = [];
+			/*
 			data.forEach(function (e){
 				if (e.main_category_id != "-1") {
 					new_data.push(e);
 				}
 			});
-
-			data = new_data;
+*/
+			data = data.tw_user;
 
 			// feed it through crossfilter
 			var ndx = crossfilter(data);
 			var all = ndx.groupAll();
 
 			var categories = ndx.dimension(function (d) {
-				var category = d.main_category_id;
+				var category = d[2];
 				switch(category){
 					case "1":
 						return "Bloggers"
@@ -123,7 +114,7 @@ About
 
 
 			var languages = ndx.dimension(function (d) {
-				return d.lang;
+				return d[1];
 			});
 			var languagesGroup = languages.group();
 			var languagesDomain = [""];
@@ -165,6 +156,11 @@ About
 					{ "sTitle": "Category" }
 				]
 			} );
+
+			// Keep the following disabled so that we actually see the difference between
+			// just rendering the charts and how much time the datatable takes to load
+
+			//filterData();
 		}
 );
 
