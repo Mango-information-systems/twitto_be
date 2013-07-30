@@ -159,8 +159,10 @@ function getKloutTopics(currentIndex, errCount, ids) {
 				if (err == 'Error: Klout is unavailable.')	{
 				// Klout not reachable, retry after a short delay
 					console.log('Klout is unavailable, reattempting...')
-					if (errCount < 3)
-						_.delay(getKloutTopics, 15000 * (1 + errCount), currentIndex, errCount+1, ids)
+					if (errCount < 3) {
+						// retry with linear backoff
+						_.delay(getKloutTopics, 15000 * (1 + 2 * errCount), currentIndex, errCount+1, ids)
+					}
 					else {
 						console.log('failed too many times, exiting.')
 						shutdownProcess()

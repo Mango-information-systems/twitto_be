@@ -30,9 +30,10 @@ CREATE TABLE IF NOT EXISTS `tw_user` (
 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'twittos table used by front-end';
 
 CREATE TABLE IF NOT EXISTS `dim_topic` (
-  `topic_id` int(20) NOT NULL COMMENT 'Id of the category',
+  `topic_id` varchar(255) NOT NULL COMMENT 'Id of the topic',
+  `topic_type` varchar(255) COMMENT 'type of topic: "sub" for subject, or "entity"',
   `slug` varchar(255) COMMENT 'topic slug to be used in the url',
-  `display_name` varchar(255) COMMENT 'display name of the category',
+  `display_name` varchar(255) COMMENT 'display name of the topic',
   `image_url` varchar(255) COMMENT 'topic thumbnail image url',
   PRIMARY KEY (`topic_id`)
 )
