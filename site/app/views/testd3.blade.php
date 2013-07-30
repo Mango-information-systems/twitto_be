@@ -147,10 +147,6 @@ About
 				"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
 				"aaData": [	],
 				"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-					var imgLink = aData[3]; // where 4 is the zero-origin column for 2D
-					var imgTag = '<img src="' + imgLink + '"/>';
-					$('td:eq(3)', nRow).html(imgTag); // where 4 is the zero-origin visible column in the HTML
-
 					var jqxhr = $.ajax({
 						url: "/json/userDetails/" + aData[0],
 						async: false
