@@ -55,4 +55,39 @@ class Twuser extends Eloquent {
 
 		return $return_array;
 	}
+
+	public function getUsers(){
+
+		$return_array = [];
+
+		// Change the fetch mode to "FETCH_NUM"
+		// So that an indexed array is returned
+		// Converting it to JSON results in a smaller file
+		DB::setFetchMode(PDO::FETCH_NUM);
+
+		$query = DB::table('fact_influence')
+			->leftJoin('tw_user', 'tw_id', '=', 'id')
+			->leftJoin('category', 'main_category_id', '=', 'category_id')
+			->orderBy('kred_score', 'desc')
+			->select('screen_name', 'lang', 'main_category_id', 'main_category_id', 'main_category_id', 'main_category_id')
+			->remember(1440);
+
+		$return_array['tw_user'] = $query->get();
+
+		DB::setFetchMode(PDO::FETCH_CLASS);
+
+		return $return_array;
+	}
+
+
+	public function getUserDetails($username){
+
+		$query = DB::table('tw_user')
+			->select('description', 'profile_image_url', 'name')
+			->where('screen_name', '=', $username)
+			->remember(1440);
+
+		return $query->get();
+	}
+
 }
