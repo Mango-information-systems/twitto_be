@@ -1,6 +1,8 @@
 archive
 site/__MACOSX/
-site/app/config/database.php 
+site/app/config/*
+*.log
+*.dump
 sql/ddl/create-twitto-db.sql
 twitto_private
 *params.json*
