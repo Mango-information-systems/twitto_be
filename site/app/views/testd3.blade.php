@@ -58,21 +58,16 @@ About
 	var filteredData;
 
 	function filterData(){
-		var newDataArray = new Array;
-
 		$('#twitter-datatable').dataTable().fnClearTable();
 		$('#twitter-datatable').dataTable().fnAddData(filteredData.top(Infinity));
-		$('#twitter-datatable').dataTable().fnDraw();
+		//$('#twitter-datatable').dataTable().fnDraw();
 	}
-
 
 	categoriesChart.on("postRedraw", function(chart, filter){
 		filterData();
 	});
 
-
-
-	d3.json("tw_user.json", function (data) {
+	d3.json("json/users.json", function (data) {
 			var new_data = [];
 			/*
 			data.forEach(function (e){
@@ -151,10 +146,32 @@ About
 				"sAjaxDataProp": "",
 				"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
 				"aaData": [	],
+				"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+					var jqxhr = $.ajax({
+						url: "/json/userDetails/" + aData[0],
+						async: false
+
+					});
+
+					var json = JSON.parse(jqxhr.responseText);
+					var imgTag = '<img src="' + json.profile_image_url + '"/>';
+					$('td:eq(3)', nRow).html(imgTag); // where 4 is the zero-origin visible column in the HTML
+					$('td:eq(4)', nRow).html(json.description); // where 4 is the zero-origin visible column in the HTML
+					$('td:eq(5)', nRow).html(json.name); // where 4 is the zero-origin visible column in the HTML
+
+
+
+					return nRow;
+				},
+
+
 				"aoColumns": [
 					{ "sTitle": "Screen Name" },
 					{ "sTitle": "Lang" },
-					{ "sTitle": "Category" }
+					{ "sTitle": "Category" },
+					{ "sTitle": "Image" },
+					{ "sTitle": "Description" },
+					{ "sTitle": "Name" }
 				]
 			} );
 

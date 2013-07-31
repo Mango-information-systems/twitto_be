@@ -25,6 +25,12 @@ Route::get('about', 'StaticController@about');
 #Test D3
 Route::get('testd3', 'TestController@testd3');
 
+# Json Get all users
+Route::get('json/users.json', 'CategoryController@jsonUsers');
+
+# Json Get all users
+Route::get('json/userDetails/{username}', 'CategoryController@jsonUserDetails');
+
 # Json Get users of category / pagination
 Route::post('json/users/category', 'CategoryController@jsonUsersCategory');
 
