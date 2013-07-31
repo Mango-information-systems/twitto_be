@@ -70,6 +70,7 @@ class Twuser extends Eloquent {
 			->leftJoin('category', 'main_category_id', '=', 'category_id')
 			->orderBy('kred_score', 'desc')
 			->select('screen_name', 'lang', 'main_category_id', 'main_category_id', 'main_category_id', 'main_category_id')
+			->take(5000)
 			->remember(1440);
 
 		$return_array['tw_user'] = $query->get();
