@@ -71,8 +71,26 @@ function timeStampToMysqlFormat(date1) {
 }
 
 /* -----------------------------------------------------------------------------------
- * statistics calculation functions
+ * module functions
 ----------------------------------------------------------------------------------- */
+
+function deleteKloutId (tw_id) {
+// remove obsolete klout_id	
+// console.log('deleting obsolere Klout info for user', tw_id)
+	var qry = mysql.query('update tw_user set klout_id = null, klout_score = null where tw_id = ' + tw_id, function(err, data) {
+		if (err) {
+			console.log('error removing obsolete tw_id from tw_user', data)
+			throw err
+		}
+	})
+	
+	var qry2 = mysql.query('delete from fact_topic where tw_id = ' + tw_id, function(err, data) {
+		if (err) {
+			console.log('error deleting facts to obsolete tw_id', data)
+			throw err
+		}
+	})
+}
 
 function storeResult(score) {
 // store result in database
@@ -116,7 +134,15 @@ function getKloutScores(currentIndex, errCount, ids) {
 				}
 				else if (klout_response && klout_response.validationErrors) {
 					console.log('Id validation error, skipping...')
+					deleteKloutId(ids[currentIndex].tw_id)
 					getKloutScores (currentIndex+1, 0, ids)
+				}
+				else if (klout_response && klout_response.headers && klout_response.headers['x-mashery-error-code'] == 'ERR_403_DEVELOPER_OVER_QPS') {
+					console.log('----------------------------')
+					console.log('Klout complains about too many requests per second, consider increasing delay')
+					// we do not relaunch in order to avoid being banned/blacklisted
+					// process should rather be debugged when this happens
+					shutdownProcess()
 				}
 				else if (klout_response && klout_response.headers && klout_response.headers['x-mashery-error-code'] == 'ERR_403_DEVELOPER_OVER_RATE') {
 				// rate-limited, retry after delay expiration

@@ -71,27 +71,40 @@ function timeStampToMysqlFormat(date1) {
 }
 
 /* -----------------------------------------------------------------------------------
- * statistics calculation functions
+ * module functions
 ----------------------------------------------------------------------------------- */
 
 function storeResult(identity) {
 // store result in database
 //	console.log(result)
 
-	var qry = mysql.query('INSERT INTO tw_user (tw_id, klout_id) VALUES ' + mysql.escape(identity) + ' ON DUPLICATE KEY UPDATE klout_id = VALUES(klout_id)', function(err, data) {
+	var qry = mysql.query('INSERT INTO tw_user (tw_id, klout_id, last_update_klout) VALUES ' + mysql.escape(identity) + ' ON DUPLICATE KEY UPDATE klout_id = VALUES(klout_id), last_update_klout = VALUES(last_update_klout)', function(err, data) {
 		if (err) {
-			console.log('error storing results for ', data)
+			console.log('error storing klout identity', data)
 			throw err
 		}
 		else {
-			console.log('results saved , affected rows:', data.affectedRows)
+			console.log('klout identity saved , affected rows:', data.affectedRows)
 		}
 	})
-	
-/*	console.log('-------------------------------------------------------------------')
+	if (identity[0][1]) {
+	// insert user to topics fact table, assigning to the dummy topic. This record will trigger topics load at next topics ETL execution
+		var topicRow = [[identity[0][0], -1, '1900-1-1 00:00:00']]
+		var qry2 = mysql.query('INSERT ignore INTO fact_topic (tw_id, topic_id, last_update) VALUES ' + mysql.escape(topicRow), function(err, data) {
+			if (err) {
+				console.log('error storing topics dummy record', data)
+				throw err
+			}
+			else {
+				console.log('dummy topics record saved , affected rows:', data.affectedRows)
+			}
+		})
+	}
+	/*
+	console.log('-------------------------------------------------------------------')
  	console.log('rendered query', qry.sql)
 	console.log('-------------------------------------------------------------------')
-*/
+	*/
 }
 
 function getKloutIds(currentIndex, errCount, ids) {
@@ -105,7 +118,7 @@ function getKloutIds(currentIndex, errCount, ids) {
 				if (err == 'Error: Resource or user not found.') {
 				// user not found, skip
 					console.log('skipping user not found')
-					storeResult([[ids[currentIndex], null]])
+					storeResult([[ids[currentIndex], null, processTimestamp]])
 					if (currentIndex >= ids.length-1) {
 						getUserIds()
 					}
@@ -123,6 +136,13 @@ function getKloutIds(currentIndex, errCount, ids) {
 						console.log('failed too many times, exiting.')
 						shutdownProcess()
 					}
+				}
+				else if (klout_response && klout_response.headers && klout_response.headers['x-mashery-error-code'] == 'ERR_403_DEVELOPER_OVER_QPS') {
+					console.log('----------------------------')
+					console.log('Klout complains about too many requests per second, consider increasing delay')
+					// we do not relaunch in order to avoid being banned/blacklisted
+					// process should rather be debugged when this happens
+					shutdownProcess()
 				}
 				else if (klout_response && klout_response.headers['x-mashery-error-code'] == 'ERR_403_DEVELOPER_OVER_RATE') {
 				// rate-limited, retry after delay expiration
@@ -164,8 +184,8 @@ function getKloutIds(currentIndex, errCount, ids) {
 			}
 			else {
 				console.log('... klout response received')
-	//			console.log(klout_response)
-				storeResult([[ids[currentIndex], klout_response.id]])
+				// console.log(klout_response)
+				storeResult([[ids[currentIndex], klout_response.id, processTimestamp]])
 				if (currentIndex >= ids.length-1) {
 					 getUserIds()
 				 }

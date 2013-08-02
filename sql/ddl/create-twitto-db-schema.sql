@@ -50,7 +50,7 @@ DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'Belgian provinces';
 
 CREATE TABLE IF NOT EXISTS `fact_topic` (
   `tw_id` int(20) NOT NULL COMMENT 'Twitter user Id (numeric)',
-  `topic_id` int(20) NOT NULL COMMENT 'category id for the user''s main category',
+  `topic_id` int(20) NOT NULL COMMENT 'topic id',
   `last_update` datetime NULL COMMENT 'timestamp of last update of the kred score',
   PRIMARY KEY (`tw_id`, `topic_id`)
 )
