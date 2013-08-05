@@ -9,7 +9,7 @@ drop table stg_tw_user;
 drop table audit_etl;
 */
 
-USE `twitto`;
+-- USE `twitto`;
 
 -- production tables
 
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `tw_user` (
   `screen_name` varchar(255),
   `name` varchar(255),
   `description` varchar(255),
-  `profile_background_image_url` varchar(255),
+  `profile_image_url` varchar(255),
   `lang` varchar(255),
   `province_id` varchar(255) COMMENT 'Id of the province parsed from user location',
   `klout_id` varchar(255) COMMENT 'Klout user Id, is NULL when the user is missing from Klout',
