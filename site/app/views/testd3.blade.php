@@ -2,9 +2,9 @@
 @section('main')
 
 <div class="row-fluid">
-	<div id="categories-chart">
-		<strong>Categories Chart</strong>
-		<a class="reset" href="javascript:categoriesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+	<div id="topics-chart">
+		<strong>Topics Chart</strong>
+		<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
 		<div class="clearfix"></div>
 	</div>
@@ -18,7 +18,7 @@
 
 </div>
 <div class="row-fluid">
-<table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="twitter-datatable"></table>
+	<table class="table table-striped table-bordered" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 </div>
 
 
@@ -51,11 +51,13 @@ About
 @section('inline-javascript')
 
 <script type="text/javascript">
-	var categoriesChart = dc.rowChart("#categories-chart");
+	var topicsChart = dc.rowChart("#topics-chart");
 	var languagesChart = dc.barChart("#languages-chart");
 
 	var dt;
 	var filteredData;
+
+	var topics;
 
 	function filterData(){
 		$('#twitter-datatable').dataTable().fnClearTable();
@@ -63,66 +65,118 @@ About
 		//$('#twitter-datatable').dataTable().fnDraw();
 	}
 
-	categoriesChart.on("postRedraw", function(chart, filter){
+	topicsChart.on("postRedraw", function(chart, filter){
 		filterData();
+	})
+
+	/*
+	d3.json("json/topics.json", function (data) {
+		topics = data;
 	});
+	*/
+
 
 	d3.json("json/users.json", function (data) {
 			var new_data = [];
+/*
+		data.tw_user.forEach(function (e){
+			if(e[4] != '-1'){
+				new_data.push(e);
+			}
+		});
+*/
 			/*
-			data.forEach(function (e){
-				if (e.main_category_id != "-1") {
+			data.tw_user.forEach(function (e){
+				if (
+					e[4] == "745" ||
+					e[4] == "1654" ||
+					e[4] == "1362" ||
+					e[4] == "1387" ||
+					e[4] == "2499" ||
+					e[4] == "2527" ||
+					e[4] == "240" ||
+					e[4] == "2668" ||
+					e[4] == "2095" ||
+					e[4] == "895" ) {
 					new_data.push(e);
 				}
-			});
-*/
-			data = data.tw_user;
+			});*/
+
+			//data = new_data;
 
 			// feed it through crossfilter
-			var ndx = crossfilter(data);
+			var ndx = crossfilter(data.tw_user);
 			var all = ndx.groupAll();
 
-			var categories = ndx.dimension(function (d) {
-				var category = d[2];
-				switch(category){
-					case "1":
-						return "Bloggers"
+			var topicsDimension = ndx.dimension(function (d) {
+				var topic = d[4].split(',');
+
+				if(_.findWhere(topic, '745') ){
+					return "Computers";
+
+				}else if(_.findWhere(topic, '1654') ){
+					return "Business"
+
+				}else if(_.findWhere(topic, '1362') ){
+					return "Software"
+
+				}else if(_.findWhere(topic, '1387') ){
+					return "Music"
+
+				}else if(_.findWhere(topic, '2499') ){
+					return "Belgium"
+
+				}else if(_.findWhere(topic, '2527') ){
+					return "Movies"
+
+				}else if(_.findWhere(topic, '240') ){
+					return "Studio Brussels"
+
+				}else if(_.findWhere(topic, '2668') ){
+					return "Social Media"
+
+				}else if(_.findWhere(topic, '2095') ){
+					return "Journalism"
+
+				}else if(_.findWhere(topic, '895') ){
+					return "Design"
+				}else{
+					return "Other";
+				};
+
+			});
+			var topicsGroup = topicsDimension.group();
+
+
+			var languagesDimension = ndx.dimension(function (d) {
+				var lang = d[1];
+				switch(lang){
+					case "en":
+						return "en"
 						break;
-					case "2":
-						return "Communication"
+					case "nl":
+						return "nl"
 						break;
-					case "3":
-						return "Politics"
+					case "fr":
+						return "fr"
 						break;
-					case "4":
-						return "Media"
-						break;
-					case "7":
-						return "Startup"
-						break;
-					case "-1":
-						return "Uncategorized"
+					default :
+						return "ot"
 						break;
 				}
 			});
-			var categoriesGroup = categories.group();
-
-
-			var languages = ndx.dimension(function (d) {
-				return d[1];
-			});
-			var languagesGroup = languages.group();
+			var languagesGroup = languagesDimension.group();
 			var languagesDomain = [""];
 
 			languagesGroup.all().forEach(function (e){
 				languagesDomain.push(e.key);
 			});
 
-			categoriesChart.width(400)
+			topicsChart.width(400)
 				.height(400)
 				.margins({top: 20, left: 10, right: 10, bottom: 20})
-				.group(categoriesGroup)
-				.dimension(categories)
+				.group(topicsGroup)
+				.dimension(topicsDimension)
 				.colors(['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb'])
 				.title(function(d){return d.value;})
 				.elasticX(true)
@@ -130,7 +184,7 @@ About
 
 			languagesChart.width(800)
 				.height(400)
-				.dimension(languages)
+				.dimension(languagesDimension)
 				.group(languagesGroup)
 				.elasticY(true)
 				.centerBar(true)
@@ -139,13 +193,13 @@ About
 
 			dc.renderAll();
 
-			filteredData = languages;
-
-
 			$('#twitter-datatable').dataTable( {
+				"sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
 				"sAjaxDataProp": "",
 				"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
 				"aaData": [	],
+				"sPaginationType": "bootstrap",
+				"aaSorting": [[ 3, "desc" ]],
 				"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 					var jqxhr = $.ajax({
 						url: "/json/userDetails/" + aData[0],
@@ -155,35 +209,51 @@ About
 
 					var json = JSON.parse(jqxhr.responseText);
 					var imgTag = '<img src="' + json.profile_image_url + '"/>';
-					$('td:eq(3)', nRow).html(imgTag); // where 4 is the zero-origin visible column in the HTML
-					$('td:eq(4)', nRow).html(json.description); // where 4 is the zero-origin visible column in the HTML
-					$('td:eq(5)', nRow).html(json.name); // where 4 is the zero-origin visible column in the HTML
+
+					var profileHTML = '' +
+						'<div class="media">' +
+						'<a target="_blank" href="https://www.twitter.com/'+json.screen_name+'" class="pull-left">' +
+						'<img width="48" height="48" title="'+json.name+'" alt="'+json.name+'" class="img-rounded media-object size48" src="'+json.profile_image_url+'">' +
+						'</a>' +
+						'<div class="media-body">' +
+						'<h4 class="media-heading">'+json.name+'</h4>' +
+						'<a target="_blank" href="https://www.twitter.com/'+json.screen_name+'">@'+json.screen_name+'</a>' +
+						'</div>' +
+						'</div>';
+
+
+					$('td:eq(1)', nRow).html(profileHTML); // where 4 is the zero-origin visible column in the HTML
+					$('td:eq(2)', nRow).html(json.description); // where 4 is the zero-origin visible column in the HTML
+					$('td:eq(3)', nRow).html(json.name); // where 4 is the zero-origin visible column in the HTML
 
 
 
 					return nRow;
 				},
-
-
-				"aoColumns": [
-					{ "sTitle": "Screen Name" },
-					{ "sTitle": "Lang" },
-					{ "sTitle": "Category" },
-					{ "sTitle": "Image" },
-					{ "sTitle": "Description" },
-					{ "sTitle": "Name" }
+				"aoColumnDefs": [
+					{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false },
+					{ "sTitle": "Lang", "aTargets": [ 1 ], "bVisible": false, "bSearchable": false },
+					{ "sTitle": "Province ID", "aTargets": [ 2 ], "bVisible": false, "bSearchable": false },
+					{ "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false },
+					{ "sTitle": "Topic ID", "aTargets": [ 4 ], "bVisible": false, "bSearchable": false },
+					{ "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": true },
+					{ "sTitle": "Rank", "aTargets": [ 6 ], "bSearchable": false },
+					{ "sTitle": "Profile", "aTargets": [ 7 ], "bSearchable": false },
+					{ "sTitle": "Description", "aTargets": [ 8 ], "bSearchable": false  }
 				]
 			} );
+
+			filteredData = languagesDimension;
 
 			// Keep the following disabled so that we actually see the difference between
 			// just rendering the charts and how much time the datatable takes to load
 
 			filterData();
+
 		}
 );
 
 </script>
-
 
 
 

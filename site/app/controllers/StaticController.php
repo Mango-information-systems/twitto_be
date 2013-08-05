@@ -7,9 +7,9 @@ class StaticController extends BaseController {
         $page_desc = 'twitto.be privacy policy';
 		$category_id = 0;
 
-		$categories = Category::orderBy('sorting_order', 'asc')->get();
+		//$categories = Category::orderBy('sorting_order', 'asc')->get();
 
-		return View::make('privacy', compact('page_title', 'page_desc', 'categories', 'category_id'));
+		return View::make('privacy', compact('page_title', 'page_desc', 'category_id'));
 	}
 
 	public function about(){
@@ -17,10 +17,10 @@ class StaticController extends BaseController {
         $page_desc = 'what is twitto.be all about';
 		$category_id = 0;
 
-        $categories = Category::orderBy('sorting_order', 'asc')->get();
+        //$categories = Category::orderBy('sorting_order', 'asc')->get();
 
 		
-		return View::make('about', compact('page_title', 'page_desc', 'categories', 'category_id'));
+		return View::make('about', compact('page_title', 'page_desc', 'category_id'));
 	}
 
 

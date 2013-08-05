@@ -19,11 +19,7 @@
 {{ $h1_title }}
 @stop
 
-{{-- topcategories --}}
-@section('topcategories')
-@include('topcategories')
-@show
-@stop
+
 
 
 @section('inline-javascript')

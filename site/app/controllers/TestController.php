@@ -7,10 +7,10 @@ class TestController extends BaseController {
         $page_desc = 'what is twitto.be all about';
 		$category_id = 0;
 
-        $categories = Category::orderBy('sorting_order', 'asc')->get();
+        //$categories = Category::orderBy('sorting_order', 'asc')->get();
 
 		
-		return View::make('testd3', compact('page_title', 'page_desc', 'categories', 'category_id'));
+		return View::make('testd3', compact('page_title', 'page_desc', 'category_id'));
 	}
 
 

@@ -75,8 +75,7 @@
 				@section('h1-title')
 				@show
 			</h1>
-			@section('topcategories')
-			@show
+
 			@yield('main')
 		</div><!--/span-->
 	</div><!--/row-->
@@ -140,7 +139,8 @@
 
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
-
+<script src="http://datatables.github.io/Plugins/integration/bootstrap/dataTables.bootstrap.js"></script>
+<script src="http://datatables.net/media/blog/bootstrap/paging.js"></script>
 
 
 @if(!Config::get('app.debug'))
