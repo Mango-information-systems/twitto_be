@@ -60,8 +60,23 @@ About
 	var topics;
 
 	function filterData(){
+
+		var fdata = filteredData.top(Infinity);
+		var scores = [];
+
+		$.each(filteredData.top(Infinity), function(index, value) {
+			scores.push(fdata[index][3]);
+		});
+
+		var sorted = scores.slice().sort(function(a,b){return b-a});
+		var ranks = scores.slice().map(function(v){ return sorted.indexOf(v)+1 });
+
+		$.each(filteredData.top(Infinity), function(index, value) {
+			fdata[index][6] = ranks[index];
+		});
+
 		$('#twitter-datatable').dataTable().fnClearTable();
-		$('#twitter-datatable').dataTable().fnAddData(filteredData.top(Infinity));
+		$('#twitter-datatable').dataTable().fnAddData(fdata);
 		//$('#twitter-datatable').dataTable().fnDraw();
 	}
 
@@ -78,13 +93,13 @@ About
 
 	d3.json("json/users.json", function (data) {
 			var new_data = [];
-/*
+
 		data.tw_user.forEach(function (e){
 			if(e[4] != '-1'){
 				new_data.push(e);
 			}
 		});
-*/
+
 			/*
 			data.tw_user.forEach(function (e){
 				if (
@@ -102,10 +117,10 @@ About
 				}
 			});*/
 
-			//data = new_data;
+			data = new_data;
 
 			// feed it through crossfilter
-			var ndx = crossfilter(data.tw_user);
+			var ndx = crossfilter(data);
 			var all = ndx.groupAll();
 
 			var topicsDimension = ndx.dimension(function (d) {
@@ -231,15 +246,15 @@ About
 					return nRow;
 				},
 				"aoColumnDefs": [
-					{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false },
-					{ "sTitle": "Lang", "aTargets": [ 1 ], "bVisible": false, "bSearchable": false },
-					{ "sTitle": "Province ID", "aTargets": [ 2 ], "bVisible": false, "bSearchable": false },
+					{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false },
+					{ "sTitle": "Lang", "aTargets": [ 1 ], "bVisible": false, "bSearchable": false, "bSortable": false },
+					{ "sTitle": "Province ID", "aTargets": [ 2 ], "bVisible": false, "bSearchable": false, "bSortable": false },
 					{ "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false },
-					{ "sTitle": "Topic ID", "aTargets": [ 4 ], "bVisible": false, "bSearchable": false },
-					{ "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": true },
-					{ "sTitle": "Rank", "aTargets": [ 6 ], "bSearchable": false },
-					{ "sTitle": "Profile", "aTargets": [ 7 ], "bSearchable": false },
-					{ "sTitle": "Description", "aTargets": [ 8 ], "bSearchable": false  }
+					{ "sTitle": "Topic ID", "aTargets": [ 4 ], "bVisible": false, "bSearchable": false, "bSortable": false },
+					{ "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": true, "bSortable": false },
+					{ "sTitle": "Rank", "aTargets": [ 6 ], "bSearchable": false, "bSortable": false },
+					{ "sTitle": "Profile", "aTargets": [ 7 ], "bSearchable": false, "bSortable": false },
+					{ "sTitle": "Description", "aTargets": [ 8 ], "bSearchable": false, "bSortable": false  }
 				]
 			} );
 
