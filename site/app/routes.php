@@ -27,6 +27,7 @@ Route::get('testd3', 'TestController@testd3');
 
 # Json Get all users
 Route::get('json/users.json', 'CategoryController@jsonUsers');
+Route::get('json/topics.json', 'CategoryController@jsonTopics');
 
 # Json Get all users
 Route::get('json/userDetails/{username}', 'CategoryController@jsonUserDetails');

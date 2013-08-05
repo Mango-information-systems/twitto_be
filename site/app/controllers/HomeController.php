@@ -14,9 +14,9 @@ class HomeController extends BaseController {
 
 		$category_id = 0;
 
-		$categories = Category::orderBy('sorting_order', 'asc')->get();
+		//$categories = Category::orderBy('sorting_order', 'asc')->get();
 
-		return View::make('home', compact('page_title', 'page_desc','h1_title', 'categories', 'category_id'));
+		return View::make('home', compact('page_title', 'page_desc','h1_title', 'category_id'));
 	}
 
 	public function feedback() {
