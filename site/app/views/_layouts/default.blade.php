@@ -126,7 +126,6 @@
 <script src="{{ URL::asset('assets/js/jquery.isotope.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
 <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/bootstrap-datatable.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery.placeholder.min.js') }}"></script>
