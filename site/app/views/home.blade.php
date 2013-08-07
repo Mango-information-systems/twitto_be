@@ -57,17 +57,26 @@ function filterData(urlFilter){
 	var scores = [];
 
 	if(urlFilter != null){
-		urlFilter['topics'].forEach(function(d){
-			topicsChart.filter(d);
-			topicsChart.redraw();
-		});
-		urlFilter['area'].forEach(function(d){
-			//areaChart.filter(d);
-		});
-		urlFilter['languages'].forEach(function(d){
-			languagesChart.filter(d);
-			languagesChart.redraw();
-		});
+		if(urlFilter['topics'][0] != ''){
+			urlFilter['topics'].forEach(function(d){
+				topicsChart.filter(d);
+			});
+		}
+
+		if(urlFilter['area'][0] != ''){
+			urlFilter['area'].forEach(function(d){
+				//areaChart.filter(d);
+			});
+		}
+
+		if(urlFilter['languages'][0] != ''){
+			urlFilter['languages'].forEach(function(d){
+				languagesChart.filter(d);
+			});
+		}
+
+		topicsChart.redraw();
+		languagesChart.redraw();
 
 		return;
 	}
