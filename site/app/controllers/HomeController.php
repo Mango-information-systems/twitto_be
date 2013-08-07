@@ -14,9 +14,13 @@ class HomeController extends BaseController {
 
 		$category_id = 0;
 
+		$input = Input::all();
+		$filters['topics'] = (isset($input['topics']) ? trim($input['topics']) : '');
+		$filters['area'] = (isset($input['area']) ? trim($input['area']) : '');
+		$filters['languages'] = (isset($input['languages']) ? trim($input['languages']) : '');
 		//$categories = Category::orderBy('sorting_order', 'asc')->get();
 
-		return View::make('home', compact('page_title', 'page_desc','h1_title', 'category_id'));
+		return View::make('home', compact('page_title', 'page_desc','h1_title', 'category_id', 'filters'));
 	}
 
 	public function feedback() {

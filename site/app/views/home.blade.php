@@ -51,10 +51,26 @@ var filteredData;
 
 var topics;
 
-function filterData(){
+function filterData(urlFilter){
 
 	var fdata = filteredData.top(Infinity);
 	var scores = [];
+
+	if(urlFilter != null){
+		urlFilter['topics'].forEach(function(d){
+			topicsChart.filter(d);
+			topicsChart.redraw();
+		});
+		urlFilter['area'].forEach(function(d){
+			//areaChart.filter(d);
+		});
+		urlFilter['languages'].forEach(function(d){
+			languagesChart.filter(d);
+			languagesChart.redraw();
+		});
+
+		return;
+	}
 
 	$.each(filteredData.top(Infinity), function(index, value) {
 		scores.push(fdata[index][3]);
@@ -72,22 +88,21 @@ function filterData(){
 	//$('#twitter-datatable').dataTable().fnDraw();
 }
 
-topicsChart.on("postRedraw", function(chart, filter){
-	filterData();
-})
-
-/*
- d3.json("json/topics.json", function (data) {
- topics = data;
- });
- */
-
+topicsChart.on("preRedraw", function(chart){
+	var topicsFilter = topicsChart.filters().join(",");
+	var languagesFilter = languagesChart.filters().join(",");
+	History.pushState(null, null, "?topics="+topicsFilter+"&languages="+languagesFilter); // logs {state:1}, "State 1", "?state=1"
+});
+topicsChart.on("postRedraw", function(chart){
+	filterData(null);
+});
 
 d3.json("json/users.json", function (data) {
 		var new_data = [];
 
 		data.tw_user.forEach(function (e){
-			if(e[4] != '-1'){
+			var topic = e[4].split(',')
+			if(_.findWhere(topic, '745')  || _.findWhere(topic, '1654')){
 				new_data.push(e);
 			}
 		});
@@ -200,6 +215,7 @@ d3.json("json/users.json", function (data) {
 
 		dc.renderAll();
 
+		//https://datatables.net/
 		$('#twitter-datatable').dataTable( {
 			"sDom": "<'row-fluid'<'span6'T><'span6'fp>r>t<'row-fluid'<'span6'i><'span6'p>",
 			"sAjaxDataProp": "",
@@ -257,13 +273,17 @@ d3.json("json/users.json", function (data) {
 		// Keep the following disabled so that we actually see the difference between
 		// just rendering the charts and how much time the datatable takes to load
 
-		filterData();
+		var urlFilters = [];
+		urlFilters['topics'] = "<?php echo $filters['topics']; ?>";
+		urlFilters['topics'] = urlFilters['topics'].split(",");
+		urlFilters['area'] = "<?php echo $filters['area']; ?>";
+		urlFilters['area'] = urlFilters['area'].split(",");
+		urlFilters['languages'] = "<?php echo $filters['languages']; ?>";
+		urlFilters['languages'] = urlFilters['languages'].split(",");
+		filterData(urlFilters);
 
 	}
 );
 
 </script>
-
-
-
 @stop
