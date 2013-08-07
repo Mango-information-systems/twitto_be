@@ -224,8 +224,10 @@ d3.json("json/users.json", function (data) {
 
 		dc.renderAll();
 
+		var twids = [];
+
 		//https://datatables.net/
-		$('#twitter-datatable').dataTable( {
+			$('#twitter-datatable').dataTable( {
 			"sDom": "<'row-fluid'<'span6'T><'span6'fp>r>t<'row-fluid'<'span6'i><'span6'p>",
 			"sAjaxDataProp": "",
 			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
@@ -235,34 +237,49 @@ d3.json("json/users.json", function (data) {
 			"oLanguage": {
 				"sInfo": "Showing _TOTAL_ twittos (_START_ to _END_)"
 			},
+			"fnDrawCallback": function( oSettings ) {
+				if(twids.length!=0){;
+
+					var jqxhr = $.ajax({
+						url: "/json/userDetails/" + twids.join(","),
+						async: false
+					}).responseText;
+					var json = JSON.parse(jqxhr);
+					var rows = $("#twitter-datatable tbody tr");
+
+					$.each(rows, function(index, value) {
+
+						var oTable = $("#twitter-datatable").dataTable();
+						var rowValues = oTable.fnGetData(value);
+
+						var tw_id = rowValues[0];
+						var rank = $("#twitter-datatable tbody tr:eq("+index+") td:eq(1)").html();
+
+						var rankTag = '<p class="lead">' + rank + '</p>';
+						var profileHTML = '' +
+							'<div class="media">' +
+							'<a target="_blank" href="https://www.twitter.com/'+json[tw_id].screen_name+'" class="pull-left">' +
+							'<img width="48" height="48" title="'+json.name+'" alt="'+json[tw_id].name+'" class="img-rounded media-object size48" src="'+json[tw_id].profile_image_url+'">' +
+							'</a>' +
+							'<div class="media-body">' +
+							'<h4 class="media-heading">'+json[tw_id].name+'</h4>' +
+							'<a target="_blank" href="https://www.twitter.com/'+json[tw_id].screen_name+'">@'+json[tw_id].screen_name+'</a>' +
+							'</div>' +
+							'</div>';
+
+						$("#twitter-datatable tbody tr:eq("+index+") td:eq(1)").html(profileHTML);
+						$("#twitter-datatable tbody tr:eq("+index+") td:eq(2)").html(json[tw_id].description);
+					});
+
+				}
+
+				//$("#twitter-datatable tbody tr:eq(1) td:eq(0)");
+
+				twids = []
+			},
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				var jqxhr = $.ajax({
-					url: "/json/userDetails/" + aData[0],
-					async: false
-
-				});
-
-				var json = JSON.parse(jqxhr.responseText);
-				var rankTag = '<p class="lead">' + aData[6] + '</p>';
-
-				var profileHTML = '' +
-					'<div class="media">' +
-					'<a target="_blank" href="https://www.twitter.com/'+json.screen_name+'" class="pull-left">' +
-					'<img width="48" height="48" title="'+json.name+'" alt="'+json.name+'" class="img-rounded media-object size48" src="'+json.profile_image_url+'">' +
-					'</a>' +
-					'<div class="media-body">' +
-					'<h4 class="media-heading">'+json.name+'</h4>' +
-					'<a target="_blank" href="https://www.twitter.com/'+json.screen_name+'">@'+json.screen_name+'</a>' +
-					'</div>' +
-					'</div>';
-
-
-				$('td:eq(0)', nRow).html(rankTag);
-				$('td:eq(1)', nRow).html(profileHTML);
-				$('td:eq(2)', nRow).html(json.description);
-				$('td:eq(3)', nRow).html(json.name);
-
-				return nRow;
+				twids.push(aData[0]);
+				console.log(nRow)
 			},
 			"aoColumnDefs": [
 				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false },

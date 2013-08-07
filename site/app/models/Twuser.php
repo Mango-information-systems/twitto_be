@@ -49,8 +49,8 @@ ORDER BY klout_score DESC
 	public function getUserDetails($tw_id){
 
 		$query = DB::table('tw_user')
-			->select('description', 'profile_image_url', 'name', 'screen_name')
-			->where('tw_id', '=', $tw_id)
+			->select('description', 'profile_image_url', 'name', 'screen_name', 'tw_id')
+			->whereIn('tw_id', explode(",", $tw_id))
 			->remember(1440);
 
 		return $query->get();
