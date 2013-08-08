@@ -5,7 +5,6 @@ var Mysql = require('mysql')
 	, params = require('./params.json')
     , klout = new Klout(params.klout.key, "json", "v2")
     , processTimestamp = timeStampToMysqlFormat(new Date())
-	, blacklist = [0] // temp workaround for not found users. soft delete to be implemented instead
 
 console.log('-- Using environment settings: ' + params.profile_name)
 
@@ -169,11 +168,6 @@ function getKloutScores(currentIndex, errCount, ids) {
 						shutdownProcess()
 					}
 				}
-	 /*
-	// blacklist unmatched ids, so that we don't re-process them at next iteration
-	// problematic because sometimes Kred returns the record, but filling id inside 'name' property
-	blacklist = blacklist.concat(_.difference(ids, _.pluck(body.data, 'numeric_id')))
-	*/
 			}
 			else {
 				console.log('... klout response received')
@@ -193,7 +187,6 @@ function getUserIds() {
 // get user ids withklout scores not updated recently
 	console.log('------------------- looking up users in tw_user')
 	mysql.query('select tw_id, klout_id from tw_user where klout_id is not null and last_update_klout < CURDATE() - INTERVAL 1 DAY order by last_update_klout limit 5000', function(err, res) {
-		/* and klout_id not in (' + mysql.escape(blacklist) + ')  */
 		if (err) throw err
 		else {
 			if (res.length == 0) {

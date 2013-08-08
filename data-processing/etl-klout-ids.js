@@ -88,6 +88,7 @@ function storeResult(identity) {
 		}
 	})
 	if (identity[0][1]) {
+
 	// insert user to topics fact table, assigning to the dummy topic. This record will trigger topics load at next topics ETL execution
 		var topicRow = [[identity[0][0], -1, '1900-1-1 00:00:00']]
 		var qry2 = mysql.query('INSERT ignore INTO fact_topic (tw_id, topic_id, last_update) VALUES ' + mysql.escape(topicRow), function(err, data) {
@@ -99,6 +100,11 @@ function storeResult(identity) {
 				console.log('dummy topics record saved , affected rows:', data.affectedRows)
 			}
 		})
+		/*
+		console.log('-------------------------------------------------------------------')
+		console.log('rendered query', qry2.sql)
+		console.log('-------------------------------------------------------------------')
+		*/
 	}
 	/*
 	console.log('-------------------------------------------------------------------')
@@ -200,7 +206,7 @@ function getKloutIds(currentIndex, errCount, ids) {
 function getUserIds() {
 // get user ids missing klout information
 	console.log('------------------- looking up users in tw_user')
-	mysql.query('select tw_id from tw_user where klout_id is null limit 5000', function(err, res) {
+	mysql.query('select tw_id from tw_user where klout_id is null order by last_update_klout limit 5000', function(err, res) {
 		if (err) throw err
 		else {
 			if (res.length == 0) {
