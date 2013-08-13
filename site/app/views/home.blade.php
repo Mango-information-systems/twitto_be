@@ -116,12 +116,13 @@ topicsChart.on("postRedraw", function(chart){
 });
 
 d3.json("json/users.json", function (data) {
-		var new_data = [];
+		var newData = [];
 
 		data.tw_user.forEach(function (e){
 			var topic = e[4].split(',')
+// TODO: remove the step below, such filtering should be done at server side rather than client side
 			if(topic.indexOf('745') != -1 || topic.indexOf('1654') != -1 ){
-				new_data.push(e);
+				newData.push(e.concat(['1', '1', '1']));
 			}
 		});
 
@@ -138,47 +139,48 @@ d3.json("json/users.json", function (data) {
 		 e[4] == "2668" ||
 		 e[4] == "2095" ||
 		 e[4] == "895" ) {
-		 new_data.push(e);
+		 newData.push(e);
 		 }
 		 });*/
 
-		data = new_data;
+		data = newData;
 
 		// feed it through crossfilter
 		var ndx = crossfilter(data);
+
 		var all = ndx.groupAll();
 
 		var topicsDimension = ndx.dimension(function (d) {
 			var topic = d[4].split(',');
 
-			if(_.findWhere(topic, '745') ){
+			if(topic.indexOf('745') != -1 ){
 				return "Computers";
 
-			}else if(_.findWhere(topic, '1654') ){
+			}else if(topic.indexOf('1654') != -1 ){
 				return "Business"
 
-			}else if(_.findWhere(topic, '1362') ){
+			}else if(topic.indexOf('1362') != -1 ){
 				return "Software"
 
-			}else if(_.findWhere(topic, '1387') ){
+			}else if(topic.indexOf('1387') != -1 ){
 				return "Music"
 
-			}else if(_.findWhere(topic, '2499') ){
+			}else if(topic.indexOf('2499') != -1 ){
 				return "Belgium"
 
-			}else if(_.findWhere(topic, '2527') ){
+			}else if(topic.indexOf('2527') != -1 ){
 				return "Movies"
 
-			}else if(_.findWhere(topic, '240') ){
+			}else if(topic.indexOf('240') != -1 ){
 				return "Studio Brussels"
 
-			}else if(_.findWhere(topic, '2668') ){
+			}else if(topic.indexOf('2668') != -1 ){
 				return "Social Media"
 
-			}else if(_.findWhere(topic, '2095') ){
+			}else if(topic.indexOf('2095') != -1 ){
 				return "Journalism"
 
-			}else if(_.findWhere(topic, '895') ){
+			}else if(topic.indexOf('895') != -1 ){
 				return "Design"
 			}else{
 				return "Other";
@@ -186,7 +188,6 @@ d3.json("json/users.json", function (data) {
 
 		});
 		var topicsGroup = topicsDimension.group();
-
 
 		var languagesDimension = ndx.dimension(function (d) {
 			var lang = d[1];
@@ -206,6 +207,7 @@ d3.json("json/users.json", function (data) {
 			}
 		});
 		var languagesGroup = languagesDimension.group();
+		
 		var languagesDomain = [""];
 
 		languagesGroup.all().forEach(function (e){
@@ -232,7 +234,6 @@ d3.json("json/users.json", function (data) {
 			.xUnits(dc.units.ordinal);
 
 		dc.renderAll();
-
 		var twids = [];
 
 		//https://datatables.net/
@@ -256,9 +257,9 @@ d3.json("json/users.json", function (data) {
 					var json = JSON.parse(jqxhr);
 					var rows = $("#twitter-datatable tbody tr");
 
+					var oTable = $("#twitter-datatable").dataTable();
 					$.each(rows, function(index, value) {
 
-						var oTable = $("#twitter-datatable").dataTable();
 						var rowValues = oTable.fnGetData(value);
 
 						var tw_id = rowValues[0];
@@ -279,7 +280,6 @@ d3.json("json/users.json", function (data) {
 						$("#twitter-datatable tbody tr:eq("+index+") td:eq(1)").html(profileHTML);
 						$("#twitter-datatable tbody tr:eq("+index+") td:eq(2)").html(json[tw_id].description);
 					});
-
 				}
 
 				//$("#twitter-datatable tbody tr:eq(1) td:eq(0)");

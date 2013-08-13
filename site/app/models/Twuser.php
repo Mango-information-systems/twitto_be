@@ -25,7 +25,7 @@ ORDER BY klout_score DESC
 			->orderBy('klout_score', 'desc')
 			->select('tw_user.tw_id as tw_id', 'lang', 'province_id',
 				'klout_score', DB::raw('GROUP_CONCAT( fact_topic.topic_id ) AS topic_id'),
-				'screen_name', DB::raw('1'), DB::raw('1'), DB::raw('1')
+				'screen_name'
 			)
 			->remember(1440)
 			->groupBy('tw_user.tw_id');
