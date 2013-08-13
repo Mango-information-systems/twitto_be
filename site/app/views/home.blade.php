@@ -81,15 +81,24 @@ function filterData(urlFilter){
 		return;
 	}
 
-	$.each(filteredData.top(Infinity), function(index, value) {
-		scores.push(fdata[index][3]);
-	});
+// TODO: make server return numeric data type instead of string
+	var scores = _.pluck(fdata, 3)
 
-	var sorted = scores.slice().sort(function(a,b){return b-a});
-	var ranks = scores.slice().map(function(v){ return sorted.indexOf(v)+1 });
+	// below: ranking based on solution http://stackoverflow.com/a/14835680
+	function cmp_rnum(a,b) {
+		// comparison function: reverse numeric order
+		return b-a;
+	}
+	function index_map(acc, item, index) {
+		// reduction function to produce a map of array items to their index
+		acc[item] = index;
+		return acc;
+	}
 
-	$.each(filteredData.top(Infinity), function(index, value) {
-		fdata[index][6] = ranks[index];
+	var rankindex = _.reduceRight(scores.slice().sort(cmp_rnum), index_map, {})
+
+	$.each(fdata, function(index, value) {
+		fdata[index][6] = rankindex[fdata[index][3]] + 1;
 	});
 
 	$('#twitter-datatable').dataTable().fnClearTable();
@@ -111,7 +120,7 @@ d3.json("json/users.json", function (data) {
 
 		data.tw_user.forEach(function (e){
 			var topic = e[4].split(',')
-			if(_.findWhere(topic, '745')  || _.findWhere(topic, '1654')){
+			if(topic.indexOf('745') != -1 || topic.indexOf('1654') != -1 ){
 				new_data.push(e);
 			}
 		});
@@ -279,7 +288,7 @@ d3.json("json/users.json", function (data) {
 			},
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				twids.push(aData[0]);
-				console.log(nRow)
+				// console.log(nRow)
 			},
 			"aoColumnDefs": [
 				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false },
