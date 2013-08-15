@@ -234,10 +234,47 @@ d3.json("json/users.json", function (data) {
 			.xUnits(dc.units.ordinal);
 
 		dc.renderAll();
-		var twids = [];
+		var xHR
+			, twids = []
+			, ajaxErrCount = 0
+			, xHRRunning = false
 
 		//https://datatables.net/
-			$('#twitter-datatable').dataTable( {
+		function updateDataTable() {
+			if(twids.length!=0){
+				if (xHRRunning) {
+				// abort previous xHR in case is still running
+					xHR.abort()
+				}
+				xHRRunning = true
+				// get user details
+				xHR = $.ajax({
+// TODO: keep a cache of all user details in a global variable, and only retrieve the ones missing
+					url : "/json/userDetails/" + twids.join(",")
+					, dataType : 'json'
+					, success : function(data, status, jqXHR) {
+						$.each(data, function(index, item) {
+							$('#pic-' + index).attr('src', item.profile_image_url)
+							$('#name-' + index).html(item.name)
+							$('#desc-' + index).html(item.description)						
+						})
+						ajaxErrCount = 0
+					}
+					, error : function(jqXHR, err) {
+						console.log('dataTables update error', err)
+						ajaxErrCount++
+						if (ajaxErrCount < 2)
+							updateDataTable()
+					}
+					, complete : function(data, status, jqXHR) {
+						twids = []
+						xHRRunning = false
+					}
+				})
+			}
+		}
+		
+		$('#twitter-datatable').dataTable( {
 			"sDom": "<'row-fluid'<'span6'T><'span6'fp>r>t<'row-fluid'<'span6'i><'span6'p>",
 			"sAjaxDataProp": "",
 			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
@@ -248,58 +285,61 @@ d3.json("json/users.json", function (data) {
 				"sInfo": "Showing _TOTAL_ twittos (_START_ to _END_)"
 			},
 			"fnDrawCallback": function( oSettings ) {
-				if(twids.length!=0){;
-//TODO: make this work async
-					var jqxhr = $.ajax({
-						url: "/json/userDetails/" + twids.join(","),
-						async: false
-					}).responseText;
-					var json = JSON.parse(jqxhr);
-					var rows = $("#twitter-datatable tbody tr");
-
-					var oTable = $("#twitter-datatable").dataTable();
-					$.each(rows, function(index, value) {
-
-						var rowValues = oTable.fnGetData(value);
-
-						var tw_id = rowValues[0];
-						var rank = $(value).find('td:eq(0)').text();
-
-						var rankTag = '<p class="lead">' + rank + '</p>';
-						var profileHTML = '' +
-							'<div class="media">' +
-							'<a target="_blank" href="https://www.twitter.com/'+json[tw_id].screen_name+'" class="pull-left">' +
-							'<img width="48" height="48" title="'+json.name+'" alt="'+json[tw_id].name+'" class="img-rounded media-object size48" src="'+json[tw_id].profile_image_url+'">' +
-							'</a>' +
-							'<div class="media-body">' +
-							'<h4 class="media-heading">'+json[tw_id].name+'</h4>' +
-							'<a target="_blank" href="https://www.twitter.com/'+json[tw_id].screen_name+'">@'+json[tw_id].screen_name+'</a>' +
-							'</div>' +
-							'</div>';
-
-						$("#twitter-datatable tbody tr:eq("+index+") td:eq(1)").html(profileHTML);
-						$("#twitter-datatable tbody tr:eq("+index+") td:eq(2)").html(json[tw_id].description);
-					});
-				}
-
-				//$("#twitter-datatable tbody tr:eq(1) td:eq(0)");
-
-				twids = []
+				updateDataTable()
 			},
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				twids.push(aData[0]);
 				// console.log(nRow)
 			},
+// TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
+// will require reformating of fData and aData variables
 			"aoColumnDefs": [
-				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false },
-				{ "sTitle": "Lang", "aTargets": [ 1 ], "bVisible": false, "bSearchable": false, "bSortable": false },
-				{ "sTitle": "Province ID", "aTargets": [ 2 ], "bVisible": false, "bSearchable": false, "bSortable": false },
-				{ "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false },
-				{ "sTitle": "Topic ID", "aTargets": [ 4 ], "bVisible": false, "bSearchable": false, "bSortable": false },
-				{ "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": true, "bSortable": false },
-				{ "sTitle": "Rank", "aTargets": [ 6 ], "bSearchable": false, "bSortable": false, "sWidth": "5%" },
-				{ "sTitle": "Profile", "aTargets": [ 7 ], "bSearchable": false, "bSortable": false, "sWidth": "20%" },
-				{ "sTitle": "Description", "aTargets": [ 8 ], "bSearchable": false, "bSortable": false, "sWidth": "75%"  }
+				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+				, { "sTitle": "Lang", "aTargets": [ 1 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+				, { "sTitle": "Province ID", "aTargets": [ 2 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
+				, { "sTitle": "Topic ID", "aTargets": [ 4 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": true, "bSortable": false }
+				, {
+					"sTitle": "Rank"
+					, "fnRender": function ( oObj ) {
+						return '<p class="lead">' + oObj.aData[6] + '</p>'
+					}
+					, "aTargets": [ 6 ]
+					, "bSearchable": false
+					, "bSortable": false
+					, "sWidth": "5%"
+				}
+				, {
+					"sTitle": "Profile"
+					, "fnRender": function ( oObj ) {
+						var profileHTML = '' +
+							'<div class="media">' +
+							'<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '" class="pull-left">' +
+							'<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded media-object size48" src="http://placehold.it/48&text=loading...">' +
+							'</a>' +
+							'<div class="media-body">' +
+							'<h4 class="media-heading" id="name-' + oObj.aData[0] + '"></h4>' +
+							'<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>' +
+							'</div>' +
+							'</div>'
+						return profileHTML
+					}
+					, "aTargets": [ 7 ]
+					, "bSearchable": false
+					, "bSortable": false
+					, "sWidth": "20%"
+				}
+				, {
+					"sTitle": "Description"
+					, "fnRender": function ( oObj ) {
+						return '<p id="desc-' + oObj.aData[0] + '"></p>'
+					}
+					, "aTargets": [ 8 ]
+					, "bSearchable": false
+					, "bSortable": false
+					, "sWidth": "75%" 
+				}
 			]
 		} );
 
