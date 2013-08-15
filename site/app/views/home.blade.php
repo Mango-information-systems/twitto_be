@@ -122,7 +122,7 @@ d3.json("json/users.json", function (data) {
 			var topic = e[4].split(',')
 // TODO: remove the step below, such filtering should be done at server side rather than client side
 			if(topic.indexOf('745') != -1 || topic.indexOf('1654') != -1 ){
-				newData.push(e.concat(['1', '1', '1']));
+				newData.push(e.concat(['', '', '']));
 			}
 		});
 
@@ -249,7 +249,7 @@ d3.json("json/users.json", function (data) {
 			},
 			"fnDrawCallback": function( oSettings ) {
 				if(twids.length!=0){;
-
+//TODO: make this work async
 					var jqxhr = $.ajax({
 						url: "/json/userDetails/" + twids.join(","),
 						async: false
@@ -263,7 +263,7 @@ d3.json("json/users.json", function (data) {
 						var rowValues = oTable.fnGetData(value);
 
 						var tw_id = rowValues[0];
-						var rank = $("#twitter-datatable tbody tr:eq("+index+") td:eq(1)").html();
+						var rank = $(value).find('td:eq(0)').text();
 
 						var rankTag = '<p class="lead">' + rank + '</p>';
 						var profileHTML = '' +
