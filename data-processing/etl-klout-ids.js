@@ -132,7 +132,7 @@ function getKloutIds(currentIndex, errCount, ids) {
 						_.delay(getKloutIds, 50, currentIndex+1, 0, ids)
 					}
 				}
-				else if (err == 'Error: Klout is unavailable.')	{
+				else if (err == 'Error: Klout is unavailable.' || err == 'SyntaxError: Unexpected end of input')	{
 				// Klout not reachable, retry after a short delay
 					console.log('Klout is unavailable, reattempting...')
 					if (errCount < 3)

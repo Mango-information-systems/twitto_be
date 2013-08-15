@@ -212,7 +212,7 @@ function getKloutTopics(currentIndex, errCount, ids) {
 		klout.getUserTopics(ids[currentIndex].klout_id, function(err, klout_response) {
 // console.log(ids[currentIndex].tw_id, err, klout_response)
 			if (err || klout_response.validationErrors) {
-				if (err == 'Error: Klout is unavailable.')	{
+				if (err == 'Error: Klout is unavailable.' || err == 'SyntaxError: Unexpected end of input')	{
 				// Klout not reachable, retry after a short delay
 					console.log('Klout is unavailable, reattempting...')
 					if (errCount < 3) {
