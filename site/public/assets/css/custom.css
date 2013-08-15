@@ -83,3 +83,23 @@
 .size48{
 	height: 48px;
 }
+
+.klout {
+    display: inline-block;
+    *display: inline;/* for IE7*/
+    *zoom:1;/* for IE7*/
+    min-width: 48px;
+    min-height: 48px;
+    padding-left: 24px;
+    padding-top: 12px;
+    font-size: 23px;
+    font-weight: bold;
+    font-family: "DIN", Helvetica, Arial;
+    color: white;
+    background-image: url(/assets/img/klout-score-flag.png);
+    background-repeat: no-repeat;
+    background-size: 48px Auto;
+    background-position: top;
+}
+
+}

@@ -313,22 +313,27 @@ d3.json("json/users.json", function (data) {
 				, {
 					"sTitle": "Profile"
 					, "fnRender": function ( oObj ) {
-						var profileHTML = '' +
-							'<div class="media">' +
-							'<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '" class="pull-left">' +
-							'<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded media-object size48" src="http://placehold.it/48&text=loading...">' +
-							'</a>' +
-							'<div class="media-body">' +
-							'<h4 class="media-heading" id="name-' + oObj.aData[0] + '"></h4>' +
-							'<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>' +
-							'</div>' +
-							'</div>'
+						var profileHTML = ''
+							+ '<div class="media">'
+							+ '<div class="pull-left media-object">'
+							+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/' + oObj.aData[5] + '">'
+							+ oObj.aData[3]
+							+ '</a>'
+							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
+							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="http://placehold.it/48&text=loading...">'
+							+ '</a>'
+							+ '</div>'
+							+ '<div class="media-body">'
+							+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '"></h4>'
+							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>'
+							+ '</div>'
+							+ '</div>'
 						return profileHTML
 					}
 					, "aTargets": [ 7 ]
 					, "bSearchable": false
 					, "bSortable": false
-					, "sWidth": "20%"
+					, "sWidth": "25%"
 				}
 				, {
 					"sTitle": "Description"
@@ -338,7 +343,7 @@ d3.json("json/users.json", function (data) {
 					, "aTargets": [ 8 ]
 					, "bSearchable": false
 					, "bSortable": false
-					, "sWidth": "75%" 
+					, "sWidth": "70%" 
 				}
 			]
 		} );
