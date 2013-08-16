@@ -123,7 +123,6 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.isotope.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
 <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
@@ -138,6 +137,7 @@
 <script src="{{ URL::asset('assets/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/dataTables.bootstrap.js') }}"></script>
 <script src="{{ URL::asset('assets/js/dataTables.paging.js') }}"></script>
+<script src="{{ URL::asset('assets/js/dataTables.fnStandingRedraw.js') }}"></script>
 
 
 @if(!Config::get('app.debug'))

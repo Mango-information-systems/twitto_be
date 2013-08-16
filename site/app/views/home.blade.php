@@ -37,25 +37,26 @@
 {{ $h1_title }}
 @stop
 
-
-
-
 @section('inline-javascript')
 
 <script type="text/javascript">
 var topicsChart = dc.rowChart("#topics-chart")
-var languagesChart = dc.barChart("#languages-chart")
-
-var filteredData
+	, languagesChart = dc.barChart("#languages-chart")
+	, dataTable // cached selector of datatable
+	, pageSliceIndex // index to add next page to the data table
+	, filteredData // full dataset (crossfilter dimension)
+	, fdata // top infinity of filteredData
 	, twittosDetails = {} // all twittos for which details have already been extracted
 	, topics
 
 function filterData(urlFilter){
+// crossfilter data
 
-	var fdata = filteredData.top(Infinity);
+	fdata = filteredData.top(Infinity);
 	var scores = [];
 
 	if(urlFilter != null){
+	// filter based on url params
 		if(urlFilter['topics'][0] != ''){
 			urlFilter['topics'].forEach(function(d){
 				topicsChart.filter(d);
@@ -80,29 +81,36 @@ function filterData(urlFilter){
 		return;
 	}
 
-// TODO: make server return numeric data type instead of string
+	// compute ranks for current filters set
 	var scores = _.pluck(fdata, 3)
 
 	// below: ranking based on solution http://stackoverflow.com/a/14835680
 	function cmp_rnum(a,b) {
 		// comparison function: reverse numeric order
-		return b-a;
+		return b-a
 	}
 	function index_map(acc, item, index) {
 		// reduction function to produce a map of array items to their index
-		acc[item] = index;
-		return acc;
+		acc[item] = index
+		return acc
 	}
 
 	var rankindex = _.reduceRight(scores.slice().sort(cmp_rnum), index_map, {})
 
 	$.each(fdata, function(index, value) {
-		fdata[index][6] = rankindex[fdata[index][3]] + 1;
-	});
+		// assign ranks to data rows
+		fdata[index][6] = rankindex[fdata[index][3]] + 1
+	})
 
-	$('#twitter-datatable').dataTable().fnClearTable();
-	$('#twitter-datatable').dataTable().fnAddData(fdata);
-	//$('#twitter-datatable').dataTable().fnDraw();
+	// sort data by descending rank, in order to provide relevant subset to datatables
+	fdata.sort(function(a, b) {
+		return a[6] - b[6]
+	})
+
+	dataTable.fnClearTable()
+	pageSliceIndex = Math.min(50, fdata.length)
+	dataTable.fnAddData(fdata.slice(0, pageSliceIndex))
+	
 }
 
 topicsChart.on("preRedraw", function(chart){
@@ -115,18 +123,15 @@ topicsChart.on("postRedraw", function(chart){
 });
 
 d3.json("json/users.json", function (data) {
-		var newData = [];
+// TODO: make server return numeric data type instead of string
+		var newData = []
 
 		data.tw_user.forEach(function (e){
-			var topic = e[4].split(',')
-// TODO: remove the step below, such filtering should be done at server side rather than client side
-			if(topic.indexOf('745') != -1 || topic.indexOf('1654') != -1 ){
-				// add dummy columns for datatable rendering
-				newData.push(e.concat(['', '', '']))
-				// initialize cache object
-				twittosDetails[e[0]] = {}
-			}
-		});
+			// add dummy columns for datatable rendering
+			newData.push(e.concat(['', '', '']))
+			// initialize cache object
+			twittosDetails[e[0]] = {}
+		})
 
 		/*
 		 data.tw_user.forEach(function (e){
@@ -143,20 +148,20 @@ d3.json("json/users.json", function (data) {
 		 e[4] == "895" ) {
 		 newData.push(e);
 		 }
-		 });*/
+		 })*/
 
-		data = newData;
+		data = newData
 
 		// feed it through crossfilter
-		var ndx = crossfilter(data);
+		var ndx = crossfilter(data)
 
-		var all = ndx.groupAll();
+		var all = ndx.groupAll()
 
 		var topicsDimension = ndx.dimension(function (d) {
-			var topic = d[4].split(',');
+			var topic = d[4].split(',')
 
 			if(topic.indexOf('745') != -1 ){
-				return "Computers";
+				return "Computers"
 
 			}else if(topic.indexOf('1654') != -1 ){
 				return "Business"
@@ -184,28 +189,29 @@ d3.json("json/users.json", function (data) {
 
 			}else if(topic.indexOf('895') != -1 ){
 				return "Design"
+				
 			}else{
-				return "Other";
-			};
+				return "Other"
+			}
 
-		});
+		})
 		var topicsGroup = topicsDimension.group();
 
 		var languagesDimension = ndx.dimension(function (d) {
-			var lang = d[1];
+			var lang = d[1]
 			switch(lang){
 				case "en":
 					return "en"
-					break;
+				break
 				case "nl":
 					return "nl"
-					break;
+				break
 				case "fr":
 					return "fr"
-					break;
+				break
 				default :
 					return "ot"
-					break;
+				break
 			}
 		});
 		var languagesGroup = languagesDimension.group();
@@ -243,6 +249,7 @@ d3.json("json/users.json", function (data) {
 
 		//https://datatables.net/
 		function updateDataTable() {
+			
 			if (xHRRunning) {
 			// abort previous xHR in case is still running
 				xHR.abort()
@@ -267,22 +274,31 @@ d3.json("json/users.json", function (data) {
 							, cached: true
 						}
 					})
+					twids = []
 					ajaxErrCount = 0
 				}
 				, error : function(jqXHR, err) {
+					xHRRunning = false
 					console.log('dataTables update error', err)
 					ajaxErrCount++
-					if (ajaxErrCount < 2)
+					if (ajaxErrCount < 2 && err != 'abort') {
+						console.log('reattempting...')
 						updateDataTable()
-				}
-				, complete : function(data, status, jqXHR) {
-					twids = []
-					xHRRunning = false
+					}
 				}
 			})
 		}
 		
-		$('#twitter-datatable').dataTable( {
+		function addNextPageData(twids) {
+			if (pageSliceIndex < fdata.length) {
+				dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+11, fdata.length)), false)
+				pageSliceIndex = Math.min(pageSliceIndex+11, fdata.length)
+				// launch a redraw keeping current pagination info (plugin)
+				dataTable.fnStandingRedraw()
+			}
+		}
+		
+		dataTable = $('#twitter-datatable').dataTable( {
 			"sDom": "<'row-fluid'<'span6'T><'span6'fp>r>t<'row-fluid'<'span6'i><'span6'p>",
 			"sAjaxDataProp": "",
 			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
@@ -293,9 +309,16 @@ d3.json("json/users.json", function (data) {
 				"sInfo": "Showing _TOTAL_ twittos (_START_ to _END_)"
 			},
 			"fnDrawCallback": function( oSettings ) {
-				if(twids.length != 0){
+				var pagination = this.fnPagingInfo()
+				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2) {
+					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
+					addNextPageData(twids)
+				}
+				else if(twids.length != 0){
+					// update row
 					updateDataTable()
 				}
+
 			},
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				// identify users not yet cached, for which we should retrieve details via ajax call.
