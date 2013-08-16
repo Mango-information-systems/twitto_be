@@ -43,13 +43,12 @@
 @section('inline-javascript')
 
 <script type="text/javascript">
-var topicsChart = dc.rowChart("#topics-chart");
-var languagesChart = dc.barChart("#languages-chart");
+var topicsChart = dc.rowChart("#topics-chart")
+var languagesChart = dc.barChart("#languages-chart")
 
-var dt;
-var filteredData;
-
-var topics;
+var filteredData
+	, twittosDetails = {} // all twittos for which details have already been extracted
+	, topics
 
 function filterData(urlFilter){
 
@@ -122,7 +121,10 @@ d3.json("json/users.json", function (data) {
 			var topic = e[4].split(',')
 // TODO: remove the step below, such filtering should be done at server side rather than client side
 			if(topic.indexOf('745') != -1 || topic.indexOf('1654') != -1 ){
-				newData.push(e.concat(['', '', '']));
+				// add dummy columns for datatable rendering
+				newData.push(e.concat(['', '', '']))
+				// initialize cache object
+				twittosDetails[e[0]] = {}
 			}
 		});
 
@@ -241,37 +243,43 @@ d3.json("json/users.json", function (data) {
 
 		//https://datatables.net/
 		function updateDataTable() {
-			if(twids.length!=0){
-				if (xHRRunning) {
-				// abort previous xHR in case is still running
-					xHR.abort()
-				}
-				xHRRunning = true
-				// get user details
-				xHR = $.ajax({
-// TODO: keep a cache of all user details in a global variable, and only retrieve the ones missing
-					url : "/json/userDetails/" + twids.join(",")
-					, dataType : 'json'
-					, success : function(data, status, jqXHR) {
-						$.each(data, function(index, item) {
-							$('#pic-' + index).attr('src', item.profile_image_url)
-							$('#name-' + index).html(item.name)
-							$('#desc-' + index).html(item.description)						
-						})
-						ajaxErrCount = 0
-					}
-					, error : function(jqXHR, err) {
-						console.log('dataTables update error', err)
-						ajaxErrCount++
-						if (ajaxErrCount < 2)
-							updateDataTable()
-					}
-					, complete : function(data, status, jqXHR) {
-						twids = []
-						xHRRunning = false
-					}
-				})
+			if (xHRRunning) {
+			// abort previous xHR in case is still running
+				xHR.abort()
 			}
+			xHRRunning = true
+			// get user details
+			xHR = $.ajax({
+// TODO: keep a cache of all user details in a global variable, and only retrieve the ones missing
+				url : "/json/userDetails/" + twids.join(",")
+				, dataType : 'json'
+				, success : function(data, status, jqXHR) {
+					$.each(data, function(index, item) {
+						// update data table content
+						$('#pic-' + index).attr('src', item.profile_image_url)
+						$('#name-' + index).html(item.name)
+						$('#desc-' + index).html(item.description)
+						// add user details to cache
+						twittosDetails[index] = {
+							name : item.name
+							, description : item.description
+							, profile_image_url: item.profile_image_url
+							, cached: true
+						}
+					})
+					ajaxErrCount = 0
+				}
+				, error : function(jqXHR, err) {
+					console.log('dataTables update error', err)
+					ajaxErrCount++
+					if (ajaxErrCount < 2)
+						updateDataTable()
+				}
+				, complete : function(data, status, jqXHR) {
+					twids = []
+					xHRRunning = false
+				}
+			})
 		}
 		
 		$('#twitter-datatable').dataTable( {
@@ -285,11 +293,15 @@ d3.json("json/users.json", function (data) {
 				"sInfo": "Showing _TOTAL_ twittos (_START_ to _END_)"
 			},
 			"fnDrawCallback": function( oSettings ) {
-				updateDataTable()
+				if(twids.length != 0){
+					updateDataTable()
+				}
 			},
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				twids.push(aData[0]);
-				// console.log(nRow)
+				// identify users not yet cached, for which we should retrieve details via ajax call.
+				if (!twittosDetails[aData[0]].cached) {
+					twids.push(aData[0])
+				}
 			},
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
@@ -320,11 +332,11 @@ d3.json("json/users.json", function (data) {
 							+ oObj.aData[3]
 							+ '</a>'
 							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
-							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="http://placehold.it/48&text=loading...">'
+							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
 							+ '</a>'
 							+ '</div>'
 							+ '<div class="media-body">'
-							+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '"></h4>'
+							+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
 							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>'
 							+ '</div>'
 							+ '</div>'
@@ -338,7 +350,7 @@ d3.json("json/users.json", function (data) {
 				, {
 					"sTitle": "Description"
 					, "fnRender": function ( oObj ) {
-						return '<p id="desc-' + oObj.aData[0] + '"></p>'
+						return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
 					}
 					, "aTargets": [ 8 ]
 					, "bSearchable": false
