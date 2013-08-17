@@ -257,7 +257,6 @@ d3.json("json/users.json", function (data) {
 			xHRRunning = true
 			// get user details
 			xHR = $.ajax({
-// TODO: keep a cache of all user details in a global variable, and only retrieve the ones missing
 				url : "/json/userDetails/" + twids.join(",")
 				, dataType : 'json'
 				, success : function(data, status, jqXHR) {
@@ -279,11 +278,13 @@ d3.json("json/users.json", function (data) {
 				}
 				, error : function(jqXHR, err) {
 					xHRRunning = false
-					console.log('dataTables update error', err)
-					ajaxErrCount++
-					if (ajaxErrCount < 2 && err != 'abort') {
-						console.log('reattempting...')
-						updateDataTable()
+					if (err != 'abort') {
+						console.log('dataTables update error', err)
+						ajaxErrCount++
+						if (ajaxErrCount < 2) {
+							console.log('reattempting...')
+							updateDataTable()
+						}
 					}
 				}
 			})
@@ -299,15 +300,12 @@ d3.json("json/users.json", function (data) {
 		}
 		
 		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "<'row-fluid'<'span6'T><'span6'fp>r>t<'row-fluid'<'span6'i><'span6'p>",
+			"sDom": "<'row-fluid'<'span6'T><'span6'p>r>t<'row-fluid'<'span6'i><'span6'p>",
 			"sAjaxDataProp": "",
 			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
 			"aaData": [	],
 			"sPaginationType": "bootstrap",
 			"aaSorting": [[ 3, "desc" ]],
-			"oLanguage": {
-				"sInfo": "Showing _TOTAL_ twittos (_START_ to _END_)"
-			},
 			"fnDrawCallback": function( oSettings ) {
 				var pagination = this.fnPagingInfo()
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2) {
@@ -334,7 +332,7 @@ d3.json("json/users.json", function (data) {
 				, { "sTitle": "Province ID", "aTargets": [ 2 ], "bVisible": false, "bSearchable": false, "bSortable": false }
 				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
 				, { "sTitle": "Topic ID", "aTargets": [ 4 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": true, "bSortable": false }
+				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
 				, {
 					"sTitle": "Rank"
 					, "fnRender": function ( oObj ) {
