@@ -349,7 +349,7 @@ d3.json('json/users.json', function (data) {
 		}
 		
 		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "<'row-fluid'<'span6'T><'span6'p>r>t<'row-fluid'<'span6'i><'span6'p>",
+			"sDom": "<'row-fluid'<'span6'T>r>t<'row-fluid'<'span6 pull-right'p>",
 			"sAjaxDataProp": "",
 			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
 			"aaData": [	],
