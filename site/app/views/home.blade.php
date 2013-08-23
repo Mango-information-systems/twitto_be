@@ -87,7 +87,7 @@ var provincesMap = {
 	, pageSliceIndex // index to add next page to the data table
 	, filteredData // full dataset (crossfilter dimension)
 	, fdata // top infinity of filteredData
-	, twittosDetails = {} // all twittos for which details have already been extracted
+	, twittosDetails = {} // cache of all twittos for which details have already been extracted
 	, topics
 	, provincesGroup
 
@@ -169,36 +169,9 @@ topicsChart.on('postRedraw', function(chart){
 
 d3.json('json/users.json', function (data) {
 // TODO: make server return numeric data type instead of string
-		var newData = []
-
-		data.tw_user.forEach(function (e){
-			// add dummy columns for datatable rendering
-			newData.push(e.concat(['', '', '']))
-			// initialize cache object
-			twittosDetails[e[0]] = {}
-		})
-
-		/*
-		 data.tw_user.forEach(function (e){
-		 if (
-		 e[4] == "745" ||
-		 e[4] == "1654" ||
-		 e[4] == "1362" ||
-		 e[4] == "1387" ||
-		 e[4] == "2499" ||
-		 e[4] == "2527" ||
-		 e[4] == "240" ||
-		 e[4] == "2668" ||
-		 e[4] == "2095" ||
-		 e[4] == "895" ) {
-		 newData.push(e);
-		 }
-		 })*/
-
-		data = newData
 
 		// feed it through crossfilter
-		var ndx = crossfilter(data)
+		var ndx = crossfilter(data.tw_user)
 
 		var all = ndx.groupAll()
 
@@ -310,6 +283,7 @@ d3.json('json/users.json', function (data) {
 			}
 			xHRRunning = true
 			// get user details
+			
 			xHR = $.ajax({
 				url : "/json/userDetails/" + twids.join(",")
 				, dataType : 'json'
@@ -381,25 +355,25 @@ d3.json('json/users.json', function (data) {
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
 			"aoColumnDefs": [
-				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-				, { "sTitle": "Lang", "aTargets": [ 1 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-				, { "sTitle": "Province ID", "aTargets": [ 2 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
-				, { "sTitle": "Topic ID", "aTargets": [ 4 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
-				, {
+					{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+					, {
 					"sTitle": "Rank"
 					, "fnRender": function ( oObj ) {
 						return '<p class="lead">' + oObj.aData[6] + '</p>'
 					}
-					, "aTargets": [ 6 ]
+					, "aTargets": [ 1 ]
 					, "bSearchable": false
 					, "bSortable": false
 					, "sWidth": "5%"
 				}
+				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
 				, {
 					"sTitle": "Profile"
 					, "fnRender": function ( oObj ) {
+						if (! twittosDetails[oObj.aData[0]]) {
+							// create empty details object in case it does not exist yet.
+							twittosDetails[oObj.aData[0]] = {}
+						}
 						var profileHTML = ''
 							+ '<div class="media">'
 							+ '<div class="pull-left media-object">'
@@ -417,7 +391,7 @@ d3.json('json/users.json', function (data) {
 							+ '</div>'
 						return profileHTML
 					}
-					, "aTargets": [ 7 ]
+					, "aTargets": [ 2 ]
 					, "bSearchable": false
 					, "bSortable": false
 					, "sWidth": "25%"
@@ -427,13 +401,14 @@ d3.json('json/users.json', function (data) {
 					, "fnRender": function ( oObj ) {
 						return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
 					}
-					, "aTargets": [ 8 ]
+					, "aTargets": [ 4 ]
 					, "bSearchable": false
 					, "bSortable": false
 					, "sWidth": "70%" 
 				}
+				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
 			]
-		} );
+		} )
 
 		filteredData = languagesDimension;
 
