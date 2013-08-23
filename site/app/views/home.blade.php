@@ -377,7 +377,7 @@ d3.json('json/users.json', function (data) {
 						var profileHTML = ''
 							+ '<div class="media">'
 							+ '<div class="pull-left media-object">'
-							+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/' + oObj.aData[5] + '">'
+							+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/user/' + oObj.aData[5] + '">'
 							+ oObj.aData[3]
 							+ '</a>'
 							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
@@ -394,7 +394,7 @@ d3.json('json/users.json', function (data) {
 					, "aTargets": [ 2 ]
 					, "bSearchable": false
 					, "bSortable": false
-					, "sWidth": "25%"
+					, "sWidth": "30%"
 				}
 				, {
 					"sTitle": "Description"
@@ -404,7 +404,7 @@ d3.json('json/users.json', function (data) {
 					, "aTargets": [ 4 ]
 					, "bSearchable": false
 					, "bSortable": false
-					, "sWidth": "70%" 
+					, "sWidth": "65%" 
 				}
 				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
 			]
