@@ -2,31 +2,36 @@
 @section('main')
 <div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
-	<div id="topics-chart" class="span3">
-		<strong>Topics filters</strong>
-		<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+	<div class="span2">
+		<div id="topics-chart" class="span12">
+			<strong>Topics filters</strong>
+			<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
-		<div class="clearfix"></div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+	<div class="span8">
+		<div class="row-fluid">
+			<div id="be-chart" class="span4">
+				<p><strong>Provinces filters</strong></p>
+				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+
+				<div class="clearfix"></div>
+			</div>
+			
+			<div id="languages-chart" class="span4">
+				<strong>Languages filters</strong>
+				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+				<div class="clearfix"></div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<table class="table table-striped table-bordered" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+		</div>
 	</div>
 
-    <div id="be-chart" class="span3">
-        <p><strong>Provinces filters</strong></p>
-        <a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
-
-        <div class="clearfix"></div>
-    </div>
-    
-	<div id="languages-chart" class="span3">
-		<strong>Languages filters</strong>
-		<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
-		<div class="clearfix"></div>
-	</div>
-
-</div>
-<div class="row-fluid">
-	<table class="table table-striped table-bordered" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 </div>
 @stop
 
