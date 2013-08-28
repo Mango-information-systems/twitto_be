@@ -2,7 +2,7 @@
 @section('main')
 <div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
-	<div class="span2">
+	<div class="span3">
 		<div id="topics-chart" class="span12">
 			<strong>Topics filters</strong>
 			<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
@@ -10,9 +10,9 @@
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<div class="span8">
+	<div class="span9">
 		<div class="row-fluid">
-			<div id="be-chart" class="span4">
+			<div id="be-chart" class="span6">
 				<p><strong>Provinces filters</strong></p>
 				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
@@ -20,7 +20,7 @@
 				<div class="clearfix"></div>
 			</div>
 			
-			<div id="languages-chart" class="span4">
+			<div id="languages-chart" class="span6">
 				<strong>Languages filters</strong>
 				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
@@ -28,7 +28,7 @@
 			</div>
 		</div>
 		<div class="row-fluid">
-			<table class="table table-striped table-bordered" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+			<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 		</div>
 	</div>
 
@@ -120,6 +120,8 @@ function filterData(urlFilter){
 		topicsChart.redraw()
 		languagesChart.redraw()
 		beChart.redraw()
+
+		resizeContent()
 
 		return
 	}
@@ -236,11 +238,12 @@ d3.json('json/users.json', function (data) {
 		})
 
 		topicsChart.width(300)
-			.height(300)
+			.height(700)
 			.margins({top: 20, left: 10, right: 10, bottom: 20})
 			.group(topicsGroup)
 			.dimension(topicsDimension)
 			.title(function(d){return d.value + ' twittos'})
+			.colors(["#4682B4"])
 			.elasticX(true)
 			.xAxis().ticks(4)
 
@@ -336,6 +339,12 @@ d3.json('json/users.json', function (data) {
 			"aaSorting": [[ 3, "desc" ]],
 			"fnDrawCallback": function( oSettings ) {
 				var pagination = this.fnPagingInfo()
+
+				//Set min-width and max-width for columns
+				this.find('td:eq(0)').css('max-width', '30px')
+				this.find('td:eq(1)').css('min-width', '300px')
+				this.find('td:eq(1)').css('max-width', '380px')
+
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2) {
 					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
 					addNextPageData(twids)
@@ -404,7 +413,7 @@ d3.json('json/users.json', function (data) {
 					, "aTargets": [ 4 ]
 					, "bSearchable": false
 					, "bSortable": false
-					, "sWidth": "65%" 
+					, "sWidth": "65%"
 				}
 				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
 			]
@@ -426,6 +435,80 @@ d3.json('json/users.json', function (data) {
 
 	}
 );
+
+function resizeContent() {
+	var topicsOldWidth = topicsChart.width()
+		, topicsNewWidth = $('#topics-chart').width()
+		, topicsNewHeight = Math.round(topicsChart.height() * topicsNewWidth / topicsOldWidth)
+		, topicsSvg = $('#topics-chart svg')
+
+	if(topicsNewWidth != topicsOldWidth) {
+		topicsChart.width(topicsNewWidth)
+		topicsChart.height(topicsNewHeight)
+
+		topicsSvg.attr('width', topicsNewWidth)
+		topicsSvg.attr('height', topicsNewHeight)
+
+		topicsChart.render()
+	}
+
+	var beOldWidth = beChart.width()
+		, beNewWidth = $('#be-chart').width()
+		, beNewHeight = Math.round(beChart.height() * beNewWidth / beOldWidth)
+		, beSvg = $('#be-chart svg')
+
+	if(beNewWidth != beOldWidth) {
+		beChart.width(beNewWidth)
+		beChart.height(beNewHeight)
+
+		beSvg.attr('width', beNewWidth)
+		beSvg.attr('height', beNewHeight)
+
+		beChart.render()
+	}
+
+	var langOldWidth = languagesChart.width()
+		, langNewWidth = $('#languages-chart').width()
+		, langNewHeight = Math.round(languagesChart.height() * langNewWidth / langOldWidth)
+		, langSvg = $('#languages-chart svg')
+
+	if(langNewWidth != langOldWidth) {
+		languagesChart.width(langNewWidth)
+		languagesChart.height(langNewHeight)
+
+		langSvg.attr('width', langNewWidth)
+		langSvg.attr('height', langNewHeight)
+
+		//Strange that we need to do a redraw. The url filters are not shown if we do not render.redraw
+		languagesChart.render().redraw()
+	}
+
+}
+
+// debouncing resize event based on http://stackoverflow.com/questions/5489946/jquery-how-to-wait-for-the-end-or-resize-event-and-only-then-perform-an-ac
+var rtime = new Date(1, 1, 1970, 12,00,00)
+	, timeout = false
+	, delta = 200
+$(window).on("resize", function() {
+	rtime = new Date()
+	if (timeout === false) {
+		timeout = true
+		setTimeout(resizeend, delta)
+	}
+})
+function resizeend() {
+	if (new Date() - rtime < delta) {
+		setTimeout(resizeend, delta)
+	} else {
+		timeout = false
+		resizeContent()
+	}
+}
+
+$(function() {
+	resizeContent()
+})
+
 
 </script>
 @stop
