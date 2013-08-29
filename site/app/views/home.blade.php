@@ -282,7 +282,7 @@ d3.json('json/users.json', function (data) {
 		})
 
 		topicsChart.width(300)
-			.height(700)
+			.height(1000)
 			.margins({top: 20, left: 10, right: 10, bottom: 20})
 			.group(topicsGroup)
 			.dimension(topicsDimension)
@@ -323,8 +323,8 @@ d3.json('json/users.json', function (data) {
 				})
 
 		languagesChart.width(400)
-			.height(300)
-			.margins({top: 10, right: 50, bottom: 30, left: 45})
+			.height(400)
+			.margins({top: 10, right: 0, bottom: 35, left: 35})
 			.dimension(languagesDimension)
 			.group(languagesGroup)
 			.title(function(d){return d.value + ' twittos'})
@@ -498,8 +498,15 @@ d3.json('json/users.json', function (data) {
 function resizeContent() {
 	var topicsOldWidth = topicsChart.width()
 		, topicsNewWidth = $('#topics-chart').width()
-		, topicsNewHeight = Math.round(topicsChart.height() * topicsNewWidth / topicsOldWidth)
-		, topicsSvg = $('#topics-chart svg')
+		, topicsNewHeight = Math.round($('#topics-chart').height() * topicsNewWidth / topicsOldWidth)
+
+	//Min-Max Height
+	if(topicsNewHeight > 1000) {
+		topicsNewHeight = 1000
+	}
+	if(topicsNewHeight < 600) {
+		topicsNewHeight = 600
+	}
 
 	if(topicsNewWidth != topicsOldWidth) {
 		topicsChart.width(topicsNewWidth)
@@ -511,19 +518,32 @@ function resizeContent() {
 	var beOldWidth = beChart.width()
 		, beNewWidth = $('#be-chart').width()
 		, beNewHeight = Math.round(beChart.height() * beNewWidth / beOldWidth)
-		, beSvg = $('#be-chart svg')
 
 	if(beNewWidth != beOldWidth) {
 		beChart.width(beNewWidth)
 		beChart.height(beNewHeight)
+		beChart
+			.projection(d3.geo.mercator()
+				.center([5, 48.9])
+				.scale(beNewWidth * 13)
+				.translate([beNewHeight/2 + 50, beNewHeight])
+			)
 
 		beChart.render()
+
 	}
 
 	var langOldWidth = languagesChart.width()
 		, langNewWidth = $('#languages-chart').width()
-		, langNewHeight = Math.round(languagesChart.height() * langNewWidth / langOldWidth)
-		, langSvg = $('#languages-chart svg')
+		, langNewHeight = Math.round($('#languages-chart').height() * langNewWidth / langOldWidth)
+
+	//Min-Max Width
+	if(langNewWidth > 600) {
+		langNewWidth = 600
+	}
+	if(langNewWidth < 300) {
+		langNewWidth = 300
+	}
 
 	if(langNewWidth != langOldWidth) {
 		languagesChart.width(langNewWidth)
