@@ -335,15 +335,12 @@ d3.json('json/users.json', function (data) {
 			"sAjaxDataProp": "",
 			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
 			"aaData": [	],
+			"asStripeClasses": [ ],
+
 			"sPaginationType": "bootstrap",
 			"aaSorting": [[ 3, "desc" ]],
 			"fnDrawCallback": function( oSettings ) {
 				var pagination = this.fnPagingInfo()
-
-				//Set min-width and max-width for columns
-				this.find('td:eq(0)').css('max-width', '30px')
-				this.find('td:eq(1)').css('min-width', '300px')
-				this.find('td:eq(1)').css('max-width', '380px')
 
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2) {
 					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
@@ -446,8 +443,8 @@ function resizeContent() {
 		topicsChart.width(topicsNewWidth)
 		topicsChart.height(topicsNewHeight)
 
-		topicsSvg.attr('width', topicsNewWidth)
-		topicsSvg.attr('height', topicsNewHeight)
+		//topicsSvg.attr('width', topicsNewWidth)
+		//topicsSvg.attr('height', topicsNewHeight)
 
 		topicsChart.render()
 	}
@@ -461,8 +458,8 @@ function resizeContent() {
 		beChart.width(beNewWidth)
 		beChart.height(beNewHeight)
 
-		beSvg.attr('width', beNewWidth)
-		beSvg.attr('height', beNewHeight)
+		//beSvg.attr('width', beNewWidth)
+		//beSvg.attr('height', beNewHeight)
 
 		beChart.render()
 	}
@@ -476,8 +473,8 @@ function resizeContent() {
 		languagesChart.width(langNewWidth)
 		languagesChart.height(langNewHeight)
 
-		langSvg.attr('width', langNewWidth)
-		langSvg.attr('height', langNewHeight)
+		//langSvg.attr('width', langNewWidth)
+		//langSvg.attr('height', langNewHeight)
 
 		//Strange that we need to do a redraw. The url filters are not shown if we do not render.redraw
 		languagesChart.render().redraw()
@@ -504,11 +501,6 @@ function resizeend() {
 		resizeContent()
 	}
 }
-
-$(function() {
-	resizeContent()
-})
-
 
 </script>
 @stop

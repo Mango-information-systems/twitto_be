@@ -106,3 +106,13 @@
 #topics-chart g.row text {
 	fill: #333333 !important;
 }
+
+/* Datatable widths */
+#twitter-datatable td:nth-child(1){
+	max-width: 30px;
+}
+
+#twitter-datatable td:nth-child(2){
+	min-width: 300px;
+	max-width: 380px;
+}
