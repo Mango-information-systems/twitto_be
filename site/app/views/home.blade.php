@@ -74,7 +74,29 @@ var provincesMap = {
 		, 'nl' : 'Dutch'
 		, 'ot' : 'Other'
 	}
-	
+	, topicsMap = {
+		'2499' : 'Belgium'
+		,'1654' : 'Business'
+		,'1387' : 'Music'
+		,'-1' : 'Unassigned'
+		,'2527' : 'Movies'
+		,'745' : 'Computers'
+		,'240' : 'Studio Brussel'
+		,'1362' : 'Software'
+		,'2657' : 'Television'
+		,'2668' : 'Social Media'
+		,'1581' : 'Books'
+		,'1457' : 'Brussels'
+		,'2095' : 'Journalism'
+		,'19' : 'Twitter'
+		,'15' : 'News and Media'
+		,'3899' : 'Travel'
+		,'2021' : 'Celebrities'
+		,'2038' : 'Sports'
+		,'1490' : 'Fashion'
+		,'1790' : 'Video Games'
+		,'2403' : 'Politics'
+	}
 	, projection = d3.geo.mercator()
 		.center([5, 48.9])
 		.scale(700 * 6)
@@ -177,45 +199,67 @@ d3.json('json/users.json', function (data) {
 
 		var all = ndx.groupAll()
 
-		var topicsDimension = ndx.dimension(function (d) {
-			var topic = d[4].split(',')
+		// Solution based on
+		// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
+		// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
+		var topicsDimension = ndx.dimension(function(d){
+			var topics = d[4].split(',')
 
-			if(topic.indexOf('745') != -1 ){
-				return "Computers"
+			//Replace the topic ID with the equivalent text from the topicsMap
+			topics.forEach (function(val, idx) {
+				topics[idx] = topicsMap[val]
+			})
 
-			}else if(topic.indexOf('1654') != -1 ){
-				return "Business"
+			return topics
+		});
 
-			}else if(topic.indexOf('1362') != -1 ){
-				return "Software"
+		var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
-			}else if(topic.indexOf('1387') != -1 ){
-				return "Music"
-
-			}else if(topic.indexOf('2499') != -1 ){
-				return "Belgium"
-
-			}else if(topic.indexOf('2527') != -1 ){
-				return "Movies"
-
-			}else if(topic.indexOf('240') != -1 ){
-				return "Studio Brussels"
-
-			}else if(topic.indexOf('2668') != -1 ){
-				return "Social Media"
-
-			}else if(topic.indexOf('2095') != -1 ){
-				return "Journalism"
-
-			}else if(topic.indexOf('895') != -1 ){
-				return "Design"
-				
-			}else{
-				return "Other"
+		// hack to make dc.js charts work
+		topicsGroup.all = function() {
+			var newObject = [];
+			for (var key in this) {
+				if (this.hasOwnProperty(key) && key != "all") {
+					newObject.push({
+						key: key,
+						value: this[key]
+					});
+				}
 			}
+			return newObject;
+		}
 
-		})
-		var topicsGroup = topicsDimension.group()
+		// Reduce functions to be used by topicsGroup
+		function reduceAdd(p, v) {
+			var topics = v[4].split(',')
+			var topicName = ''
+
+			topics.forEach (function(val, idx) {
+				//Add new entries with the text from the topicsMap, keep the rest - should be removed
+				topicName = topicsMap[val]
+				if(topicName != undefined)
+					p[topicName] = (p[topicName] || 0) + 1 //increment counts
+			})
+			return p
+		}
+
+		function reduceRemove(p, v) {
+			var topics = v[4].split(',')
+			var topicName = ''
+
+			topics.forEach (function(val, idx) {
+				//Add new entries with the text from the topicsMap, keep the rest - should be removed
+				topicName = topicsMap[val]
+				if(topicName != undefined)
+					p[topicName] = (p[topicName] || 0) - 1 //decrement counts
+			})
+			return p
+		}
+
+		function reduceInitial() {
+			return {}
+		}
+
 
 		var provincesDimension = ndx.dimension(function (d) {
 			// lookup province name from province id
@@ -245,6 +289,24 @@ d3.json('json/users.json', function (data) {
 			.title(function(d){return d.value + ' twittos'})
 			.colors(["#4682B4"])
 			.elasticX(true)
+			.filterHandler(function(dimension, filter){
+				dimension.filter(function(d) {
+					var found = false
+
+					//if there are no filters, return true
+					if (topicsChart.filters().length == 0){
+						return true
+					} else {
+						_.each(topicsChart.filters(), function(curfilter) {
+							if (d.indexOf(curfilter) != -1){
+								found = true
+							}
+						})
+						return found
+					}
+				})
+				return filter
+			})
 			.xAxis().ticks(4)
 
 		beChart.width(300)
@@ -443,9 +505,6 @@ function resizeContent() {
 		topicsChart.width(topicsNewWidth)
 		topicsChart.height(topicsNewHeight)
 
-		//topicsSvg.attr('width', topicsNewWidth)
-		//topicsSvg.attr('height', topicsNewHeight)
-
 		topicsChart.render()
 	}
 
@@ -458,9 +517,6 @@ function resizeContent() {
 		beChart.width(beNewWidth)
 		beChart.height(beNewHeight)
 
-		//beSvg.attr('width', beNewWidth)
-		//beSvg.attr('height', beNewHeight)
-
 		beChart.render()
 	}
 
@@ -472,9 +528,6 @@ function resizeContent() {
 	if(langNewWidth != langOldWidth) {
 		languagesChart.width(langNewWidth)
 		languagesChart.height(langNewHeight)
-
-		//langSvg.attr('width', langNewWidth)
-		//langSvg.attr('height', langNewHeight)
 
 		//Strange that we need to do a redraw. The url filters are not shown if we do not render.redraw
 		languagesChart.render().redraw()
