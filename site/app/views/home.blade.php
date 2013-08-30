@@ -192,308 +192,339 @@ topicsChart.on('postRedraw', function(chart){
 })
 
 d3.json('json/users.json', function (data) {
+	data.tw_user.forEach(function(val, idx){
+		var topics = val[4].split(',')
+		var replacedTopics = []
+
+		topics.forEach (function(val, idx) {
+			topics[idx] = topicsMap[val]
+			if(topics[idx] != undefined){
+				replacedTopics.push(topicsMap[val])
+			}
+		})
+		data.tw_user[idx][4] = replacedTopics;
+	})
+
 // TODO: make server return numeric data type instead of string
 
-		// feed it through crossfilter
-		var ndx = crossfilter(data.tw_user)
+	// feed it through crossfilter
+	var ndx = crossfilter(data.tw_user)
 
-		var all = ndx.groupAll()
+	var all = ndx.groupAll()
 
-		// Solution based on
-		// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
-		// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
-		var topicsDimension = ndx.dimension(function(d){
-			var topics = d[4].split(',')
+	// Solution based on
+	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
+	// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
+	var topicsDimension = ndx.dimension(function(d){
+		var topics = d[4]
+		/*
+		var topics = d[4].split(',')
 
-			//Replace the topic ID with the equivalent text from the topicsMap
-			topics.forEach (function(val, idx) {
-				topics[idx] = topicsMap[val]
-			})
-
-			return topics
-		});
-
-		var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
-
-		// hack to make dc.js charts work
-		topicsGroup.all = function() {
-			var newObject = [];
-			for (var key in this) {
-				if (this.hasOwnProperty(key) && key != "all") {
-					newObject.push({
-						key: key,
-						value: this[key]
-					});
-				}
-			}
-			return newObject;
-		}
-
-		// Reduce functions to be used by topicsGroup
-		function reduceAdd(p, v) {
-			var topics = v[4].split(',')
-			var topicName = ''
-
-			topics.forEach (function(val, idx) {
-				//Add new entries with the text from the topicsMap, keep the rest - should be removed
-				topicName = topicsMap[val]
-				if(topicName != undefined)
-					p[topicName] = (p[topicName] || 0) + 1 //increment counts
-			})
-			return p
-		}
-
-		function reduceRemove(p, v) {
-			var topics = v[4].split(',')
-			var topicName = ''
-
-			topics.forEach (function(val, idx) {
-				//Add new entries with the text from the topicsMap, keep the rest - should be removed
-				topicName = topicsMap[val]
-				if(topicName != undefined)
-					p[topicName] = (p[topicName] || 0) - 1 //decrement counts
-			})
-			return p
-		}
-
-		function reduceInitial() {
-			return {}
-		}
-
-
-		var provincesDimension = ndx.dimension(function (d) {
-			// lookup province name from province id
-            return provincesMap[d[2]]
-        })
-        provincesGroup = provincesDimension.group()
-
-		var languagesDimension = ndx.dimension(function (d) {
-			if (['en', 'fr', 'nl'].indexOf(d[1]) == -1 ) {
-				d[1] = 'ot'
-			}
-			return languagesMap[d[1]]
+		//Replace the topic ID with the equivalent text from the topicsMap
+		topics.forEach (function(val, idx) {
+			topics[idx] = topicsMap[val]
 		})
-		var languagesGroup = languagesDimension.group()
-		
-		var languagesDomain = ['']
+*/
+		return topics
+	});
 
-		languagesGroup.all().forEach(function (e){
-			languagesDomain.push(e.key)
+	var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
+
+	// hack to make dc.js charts work
+	topicsGroup.all = function() {
+		var newObject = [];
+		for (var key in this) {
+			if (this.hasOwnProperty(key) && key != "all") {
+				newObject.push({
+					key: key,
+					value: this[key]
+				});
+			}
+		}
+		return newObject;
+	}
+
+	// Reduce functions to be used by topicsGroup
+	function reduceAdd(p, v) {
+		//var topics = v[4].split(',')
+		var topics = v[4]
+
+		var topicName = ''
+/*
+		topics.forEach (function(val, idx) {
+			//Add new entries with the text from the topicsMap, keep the rest - should be removed
+			topicName = topicsMap[val]
+			if(topicName != undefined)
+				p[topicName] = (p[topicName] || 0) + 1 //increment counts
+		})
+		*/
+
+		topics.forEach (function(val, idx) {
+			p[val] = (p[val] || 0) + 1; //increment counts
+		})
+		return p
+	}
+
+	function reduceRemove(p, v) {
+		//var topics = v[4].split(',')
+		var topics = v[4]
+		var topicName = ''
+
+		/*
+		topics.forEach (function(val, idx) {
+			//Add new entries with the text from the topicsMap, keep the rest - should be removed
+			topicName = topicsMap[val]
+			if(topicName != undefined)
+				p[topicName] = (p[topicName] || 0) - 1 //decrement counts
 		})
 
-		topicsChart.width(300)
-			.height(1000)
-			.margins({top: 20, left: 10, right: 10, bottom: 20})
-			.group(topicsGroup)
-			.dimension(topicsDimension)
-			.title(function(d){return d.value + ' twittos'})
-			.colors(["#4682B4"])
-			.elasticX(true)
-			.filterHandler(function(dimension, filter){
-				dimension.filter(function(d) {
-					var found = false
+		*/
 
-					//if there are no filters, return true
-					if (topicsChart.filters().length == 0){
-						return true
-					} else {
-						_.each(topicsChart.filters(), function(curfilter) {
-							if (d.indexOf(curfilter) != -1){
-								found = true
-							}
-						})
-						return found
-					}
-				})
-				return filter
-			})
-			.xAxis().ticks(4)
+		topics.forEach (function(val, idx) {
+			p[val] = (p[val] || 0) - 1; //increment counts
+		})
+		return p
+	}
 
-		beChart.width(300)
-				.height(300)
-				.dimension(provincesDimension)
-				.group(provincesGroup)
-				.colors(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
-				.projection(projection)
-				.overlayGeoJson(provinces.features, 'state', function (d) {
-					return d.properties.name
-				})
-				.title(function (d) {
-					return d.key + '\n' + (d.value ? d.value : 0) + ' twittos'
-				})
+	function reduceInitial() {
+		return {}
+	}
 
-		languagesChart.width(400)
-			.height(400)
-			.margins({top: 10, right: 0, bottom: 35, left: 35})
-			.dimension(languagesDimension)
-			.group(languagesGroup)
-			.title(function(d){return d.value + ' twittos'})
-			.elasticY(true)
-			.centerBar(true)
-			.x(d3.scale.ordinal().domain(languagesDomain))
-			.xUnits(dc.units.ordinal);
 
-		dc.renderAll();
-		var xHR
-			, twids = []
-			, ajaxErrCount = 0
-			, xHRRunning = false
+	var provincesDimension = ndx.dimension(function (d) {
+		// lookup province name from province id
+		return provincesMap[d[2]]
+	})
+	provincesGroup = provincesDimension.group()
 
-		//https://datatables.net/
-		function updateDataTable() {
-			
-			if (xHRRunning) {
-			// abort previous xHR in case is still running
-				xHR.abort()
-			}
-			xHRRunning = true
-			// get user details
-			
-			xHR = $.ajax({
-				url : "/json/userDetails/" + twids.join(",")
-				, dataType : 'json'
-				, success : function(data, status, jqXHR) {
-					$.each(data, function(index, item) {
-						// update data table content
-						$('#pic-' + index).attr('src', item.profile_image_url)
-						$('#name-' + index).html(item.name)
-						$('#desc-' + index).html(item.description)
-						// add user details to cache
-						twittosDetails[index] = {
-							name : item.name
-							, description : item.description
-							, profile_image_url: item.profile_image_url
-							, cached: true
+	var languagesDimension = ndx.dimension(function (d) {
+		if (['en', 'fr', 'nl'].indexOf(d[1]) == -1 ) {
+			d[1] = 'ot'
+		}
+		return languagesMap[d[1]]
+	})
+	var languagesGroup = languagesDimension.group()
+
+	var languagesDomain = ['']
+
+	languagesGroup.all().forEach(function (e){
+		languagesDomain.push(e.key)
+	})
+
+	topicsChart.width(300)
+		.height(1000)
+		.margins({top: 20, left: 10, right: 10, bottom: 20})
+		.group(topicsGroup)
+		.dimension(topicsDimension)
+		.title(function(d){return d.value + ' twittos'})
+		.colors(["#4682B4"])
+		.elasticX(true)
+		.filterHandler(function(dimension, filter){
+			dimension.filter(function(d) {
+				var found = false
+
+				//if there are no filters, return true
+				if (topicsChart.filters().length == 0){
+					return true
+				} else {
+					_.each(topicsChart.filters(), function(curfilter) {
+						if (d.indexOf(curfilter) != -1){
+							found = true
 						}
 					})
-					twids = []
-					ajaxErrCount = 0
-				}
-				, error : function(jqXHR, err) {
-					xHRRunning = false
-					if (err != 'abort') {
-						console.log('dataTables update error', err)
-						ajaxErrCount++
-						if (ajaxErrCount < 2) {
-							console.log('reattempting...')
-							updateDataTable()
-						}
-					}
+					return found
 				}
 			})
+			return filter
+		})
+		.xAxis().ticks(4)
+
+	beChart.width(300)
+		.height(300)
+		.dimension(provincesDimension)
+		.group(provincesGroup)
+		.colors(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
+		.projection(projection)
+		.overlayGeoJson(provinces.features, 'state', function (d) {
+			return d.properties.name
+		})
+		.title(function (d) {
+			return d.key + '\n' + (d.value ? d.value : 0) + ' twittos'
+		})
+
+	languagesChart.width(400)
+		.height(400)
+		.margins({top: 10, right: 0, bottom: 35, left: 35})
+		.dimension(languagesDimension)
+		.group(languagesGroup)
+		.title(function(d){return d.value + ' twittos'})
+		.elasticY(true)
+		.centerBar(true)
+		.x(d3.scale.ordinal().domain(languagesDomain))
+		.xUnits(dc.units.ordinal);
+
+	dc.renderAll();
+	var xHR
+		, twids = []
+		, ajaxErrCount = 0
+		, xHRRunning = false
+
+	//https://datatables.net/
+	function updateDataTable() {
+
+		if (xHRRunning) {
+			// abort previous xHR in case is still running
+			xHR.abort()
 		}
-		
-		function addNextPageData(twids) {
-			if (pageSliceIndex < fdata.length) {
-				dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+11, fdata.length)), false)
-				pageSliceIndex = Math.min(pageSliceIndex+11, fdata.length)
-				// launch a redraw keeping current pagination info (plugin)
-				dataTable.fnStandingRedraw()
+		xHRRunning = true
+		// get user details
+
+		xHR = $.ajax({
+			url : "/json/userDetails/" + twids.join(",")
+			, dataType : 'json'
+			, success : function(data, status, jqXHR) {
+				$.each(data, function(index, item) {
+					// update data table content
+					$('#pic-' + index).attr('src', item.profile_image_url)
+					$('#name-' + index).html(item.name)
+					$('#desc-' + index).html(item.description)
+					// add user details to cache
+					twittosDetails[index] = {
+						name : item.name
+						, description : item.description
+						, profile_image_url: item.profile_image_url
+						, cached: true
+					}
+				})
+				twids = []
+				ajaxErrCount = 0
 			}
+			, error : function(jqXHR, err) {
+				xHRRunning = false
+				if (err != 'abort') {
+					console.log('dataTables update error', err)
+					ajaxErrCount++
+					if (ajaxErrCount < 2) {
+						console.log('reattempting...')
+						updateDataTable()
+					}
+				}
+			}
+		})
+	}
+
+	function addNextPageData(twids) {
+		if (pageSliceIndex < fdata.length) {
+			dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+11, fdata.length)), false)
+			pageSliceIndex = Math.min(pageSliceIndex+11, fdata.length)
+			// launch a redraw keeping current pagination info (plugin)
+			dataTable.fnStandingRedraw()
 		}
-		
-		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "t<'row-fluid'<'span6 pull-right'p>",
-			"sAjaxDataProp": "",
-			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
-			"aaData": [	],
-			"asStripeClasses": [ ],
+	}
 
-			"sPaginationType": "bootstrap",
-			"aaSorting": [[ 3, "desc" ]],
-			"fnDrawCallback": function( oSettings ) {
-				var pagination = this.fnPagingInfo()
+	dataTable = $('#twitter-datatable').dataTable( {
+		"sDom": "t<'row-fluid'<'span6 pull-right'p>",
+		"sAjaxDataProp": "",
+		"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
+		"aaData": [	],
+		"asStripeClasses": [ ],
 
-				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2) {
-					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
-					addNextPageData(twids)
-				}
-				else if(twids.length != 0){
-					// update row
-					updateDataTable()
-				}
+		"sPaginationType": "bootstrap",
+		"aaSorting": [[ 3, "desc" ]],
+		"fnDrawCallback": function( oSettings ) {
+			var pagination = this.fnPagingInfo()
 
-			},
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				// identify users not yet cached, for which we should retrieve details via ajax call.
-				if (!twittosDetails[aData[0]].cached) {
-					twids.push(aData[0])
-				}
-			},
+			if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2) {
+				// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
+				addNextPageData(twids)
+			}
+			else if(twids.length != 0){
+				// update row
+				updateDataTable()
+			}
+
+		},
+		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			// identify users not yet cached, for which we should retrieve details via ajax call.
+			if (!twittosDetails[aData[0]].cached) {
+				twids.push(aData[0])
+			}
+		},
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
-			"aoColumnDefs": [
-					{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-					, {
-					"sTitle": "Rank"
-					, "fnRender": function ( oObj ) {
-						return '<p class="lead">' + oObj.aData[6] + '</p>'
-					}
-					, "aTargets": [ 1 ]
-					, "bSearchable": false
-					, "bSortable": false
-					, "sWidth": "5%"
+		"aoColumnDefs": [
+			{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+			, {
+				"sTitle": "Rank"
+				, "fnRender": function ( oObj ) {
+					return '<p class="lead">' + oObj.aData[6] + '</p>'
 				}
-				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
-				, {
-					"sTitle": "Profile"
-					, "fnRender": function ( oObj ) {
-						if (! twittosDetails[oObj.aData[0]]) {
-							// create empty details object in case it does not exist yet.
-							twittosDetails[oObj.aData[0]] = {}
-						}
-						var profileHTML = ''
-							+ '<div class="media">'
-							+ '<div class="pull-left media-object">'
-							+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/user/' + oObj.aData[5] + '">'
-							+ oObj.aData[3]
-							+ '</a>'
-							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
-							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
-							+ '</a>'
-							+ '</div>'
-							+ '<div class="media-body">'
-							+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
-							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>'
-							+ '</div>'
-							+ '</div>'
-						return profileHTML
+				, "aTargets": [ 1 ]
+				, "bSearchable": false
+				, "bSortable": false
+				, "sWidth": "5%"
+			}
+			, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
+			, {
+				"sTitle": "Profile"
+				, "fnRender": function ( oObj ) {
+					if (! twittosDetails[oObj.aData[0]]) {
+						// create empty details object in case it does not exist yet.
+						twittosDetails[oObj.aData[0]] = {}
 					}
-					, "aTargets": [ 2 ]
-					, "bSearchable": false
-					, "bSortable": false
-					, "sWidth": "30%"
+					var profileHTML = ''
+						+ '<div class="media">'
+						+ '<div class="pull-left media-object">'
+						+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/user/' + oObj.aData[5] + '">'
+						+ oObj.aData[3]
+						+ '</a>'
+						+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
+						+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
+						+ '</a>'
+						+ '</div>'
+						+ '<div class="media-body">'
+						+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
+						+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>'
+						+ '</div>'
+						+ '</div>'
+					return profileHTML
 				}
-				, {
-					"sTitle": "Description"
-					, "fnRender": function ( oObj ) {
-						return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
-					}
-					, "aTargets": [ 4 ]
-					, "bSearchable": false
-					, "bSortable": false
-					, "sWidth": "65%"
+				, "aTargets": [ 2 ]
+				, "bSearchable": false
+				, "bSortable": false
+				, "sWidth": "30%"
+			}
+			, {
+				"sTitle": "Description"
+				, "fnRender": function ( oObj ) {
+					return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
 				}
-				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
-			]
-		} )
+				, "aTargets": [ 4 ]
+				, "bSearchable": false
+				, "bSortable": false
+				, "sWidth": "65%"
+			}
+			, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
+		]
+	} )
 
-		filteredData = languagesDimension;
+	filteredData = languagesDimension;
 
-		// Keep the following disabled so that we actually see the difference between
-		// just rendering the charts and how much time the datatable takes to load
+	// Keep the following disabled so that we actually see the difference between
+	// just rendering the charts and how much time the datatable takes to load
 
-		var urlFilters = []
-		urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
-		urlFilters['topics'] = urlFilters['topics'].split(',')
-		urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
-		urlFilters['locations'] = urlFilters['locations'].split(',')
-		urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
-		urlFilters['languages'] = urlFilters['languages'].split(',')
-		filterData(urlFilters)
+	var urlFilters = []
+	urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
+	urlFilters['topics'] = urlFilters['topics'].split(',')
+	urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
+	urlFilters['locations'] = urlFilters['locations'].split(',')
+	urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
+	urlFilters['languages'] = urlFilters['languages'].split(',')
+	filterData(urlFilters)
 
-	}
-);
+
+
+})
 
 function resizeContent() {
 	var topicsOldWidth = topicsChart.width()
