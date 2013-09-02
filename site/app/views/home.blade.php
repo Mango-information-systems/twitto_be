@@ -112,6 +112,7 @@ var provincesMap = {
 	, twittosDetails = {} // cache of all twittos for which details have already been extracted
 	, topics
 	, provincesGroup
+	, topicsRows
 
 function filterData(urlFilter){
 // crossfilter data
@@ -192,7 +193,9 @@ topicsChart.on('postRedraw', function(chart){
 })
 
 d3.json('json/users.json', function (data) {
+	/*
 	data.tw_user.forEach(function(val, idx){
+
 		var topics = val[4].split(',')
 		var replacedTopics = []
 
@@ -204,6 +207,7 @@ d3.json('json/users.json', function (data) {
 		})
 		data.tw_user[idx][4] = replacedTopics;
 	})
+	*/
 
 // TODO: make server return numeric data type instead of string
 
@@ -216,10 +220,10 @@ d3.json('json/users.json', function (data) {
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
 	// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
 	var topicsDimension = ndx.dimension(function(d){
-		var topics = d[4]
-		/*
-		var topics = d[4].split(',')
+		//var topics = d[4]
 
+		var topics = d[4].split(',')
+		/*
 		//Replace the topic ID with the equivalent text from the topicsMap
 		topics.forEach (function(val, idx) {
 			topics[idx] = topicsMap[val]
@@ -246,8 +250,8 @@ d3.json('json/users.json', function (data) {
 
 	// Reduce functions to be used by topicsGroup
 	function reduceAdd(p, v) {
-		//var topics = v[4].split(',')
-		var topics = v[4]
+		var topics = v[4].split(',')
+		//var topics = v[4]
 
 		var topicName = ''
 /*
@@ -266,8 +270,8 @@ d3.json('json/users.json', function (data) {
 	}
 
 	function reduceRemove(p, v) {
-		//var topics = v[4].split(',')
-		var topics = v[4]
+		var topics = v[4].split(',')
+		//var topics = v[4]
 		var topicName = ''
 
 		/*
@@ -543,6 +547,7 @@ function resizeContent() {
 		topicsChart.width(topicsNewWidth)
 		topicsChart.height(topicsNewHeight)
 
+		topicsChart.redraw()
 		topicsChart.render()
 	}
 
@@ -605,6 +610,16 @@ function resizeend() {
 		resizeContent()
 	}
 }
+
+// renderlet function
+topicsChart.renderlet(function(chart){
+	// Select all rows of the topicsChart
+	// and loopover them to replace the IDs with Topic names
+	topicsRows = topicsChart.selectAll("text.row")
+	topicsRows[0].forEach (function(val) {
+		val.innerHTML = topicsMap[val.__data__.key]
+	})
+})
 
 </script>
 @stop
