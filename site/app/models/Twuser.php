@@ -54,7 +54,7 @@ ORDER BY klout_score DESC
 				'screen_name'
 			)
 			->remember(1440)
-			//->whereIn('fact_topic.topic_id', $topicIds)
+			->whereIn('fact_topic.topic_id', $topicIds)
 			->groupBy('tw_user.tw_id');
 
 
