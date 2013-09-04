@@ -18,6 +18,7 @@ class HomeController extends BaseController {
 		$filters['topics'] = (isset($input['topics']) ? trim($input['topics']) : '');
 		$filters['locations'] = (isset($input['locations']) ? trim($input['locations']) : '');
 		$filters['languages'] = (isset($input['languages']) ? trim($input['languages']) : '');
+		$filters['searchString'] = (isset($input['search']) ? trim($input['search']) : '');
 
 		return View::make('home', compact('page_title', 'page_desc','h1_title', 'category_id', 'filters'));
 	}

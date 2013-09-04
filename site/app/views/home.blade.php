@@ -28,6 +28,11 @@
 			</div>
 		</div>
 		<div class="row-fluid">
+			<form class="form-search pull-right">
+				<input type="text" class="input-medium search-query" id="searchfield" placeholder="Search">
+			</form>
+		</div>
+		<div class="row-fluid">
 			<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 		</div>
 	</div>
@@ -113,6 +118,16 @@ var provincesMap = {
 	, topics
 	, provincesGroup
 	, topicsRows
+	, $searchField
+
+var urlFilters = []
+urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
+urlFilters['topics'] = urlFilters['topics'].split(',')
+urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
+urlFilters['locations'] = urlFilters['locations'].split(',')
+urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
+urlFilters['languages'] = urlFilters['languages'].split(',')
+urlFilters['searchString'] = '<?php echo $filters['searchString']; ?>'
 
 function filterData(urlFilter){
 // crossfilter data
@@ -181,33 +196,51 @@ function filterData(urlFilter){
 	
 }
 
-topicsChart.on('preRedraw', function(chart){
+function historyPushState(){
 	var topicsFilter = topicsChart.filters().join(',')
-	, provincesFilter = beChart.filters().join(',')
-	, languagesFilter = languagesChart.filters().join(',')
-	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter)
+		, provincesFilter = beChart.filters().join(',')
+		, languagesFilter = languagesChart.filters().join(',')
+		, searchFilter = $searchField.val()
+	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter +
+		'&search=' + searchFilter)
+}
+
+topicsChart.on('preRedraw', function(chart){
+	historyPushState()
 	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
 })
 topicsChart.on('postRedraw', function(chart){
 	filterData(null)
 })
 
-d3.json('json/users.json', function (data) {
-	/*
-	data.tw_user.forEach(function(val, idx){
-
-		var topics = val[4].split(',')
-		var replacedTopics = []
-
-		topics.forEach (function(val, idx) {
-			topics[idx] = topicsMap[val]
-			if(topics[idx] != undefined){
-				replacedTopics.push(topicsMap[val])
-			}
-		})
-		data.tw_user[idx][4] = replacedTopics;
+//Split functions
+function getRemoteData(searchStr){
+	if(searchStr!=""){
+		searchStr = '/' + searchStr
+	}
+	d3.json('json/users.json/search'+searchStr, function (data) {
+		renderAll(data);
 	})
-	*/
+
+}
+
+function renderAll(data){
+
+	/*
+	 data.tw_user.forEach(function(val, idx){
+
+	 var topics = val[4].split(',')
+	 var replacedTopics = []
+
+	 topics.forEach (function(val, idx) {
+	 topics[idx] = topicsMap[val]
+	 if(topics[idx] != undefined){
+	 replacedTopics.push(topicsMap[val])
+	 }
+	 })
+	 data.tw_user[idx][4] = replacedTopics;
+	 })
+	 */
 
 // TODO: make server return numeric data type instead of string
 
@@ -224,11 +257,11 @@ d3.json('json/users.json', function (data) {
 
 		var topics = d[4].split(',')
 		/*
-		//Replace the topic ID with the equivalent text from the topicsMap
-		topics.forEach (function(val, idx) {
-			topics[idx] = topicsMap[val]
-		})
-*/
+		 //Replace the topic ID with the equivalent text from the topicsMap
+		 topics.forEach (function(val, idx) {
+		 topics[idx] = topicsMap[val]
+		 })
+		 */
 		return topics
 	});
 
@@ -254,14 +287,14 @@ d3.json('json/users.json', function (data) {
 		//var topics = v[4]
 
 		var topicName = ''
-/*
-		topics.forEach (function(val, idx) {
-			//Add new entries with the text from the topicsMap, keep the rest - should be removed
-			topicName = topicsMap[val]
-			if(topicName != undefined)
-				p[topicName] = (p[topicName] || 0) + 1 //increment counts
-		})
-		*/
+		/*
+		 topics.forEach (function(val, idx) {
+		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
+		 topicName = topicsMap[val]
+		 if(topicName != undefined)
+		 p[topicName] = (p[topicName] || 0) + 1 //increment counts
+		 })
+		 */
 
 		topics.forEach (function(val, idx) {
 			p[val] = (p[val] || 0) + 1; //increment counts
@@ -275,14 +308,14 @@ d3.json('json/users.json', function (data) {
 		var topicName = ''
 
 		/*
-		topics.forEach (function(val, idx) {
-			//Add new entries with the text from the topicsMap, keep the rest - should be removed
-			topicName = topicsMap[val]
-			if(topicName != undefined)
-				p[topicName] = (p[topicName] || 0) - 1 //decrement counts
-		})
+		 topics.forEach (function(val, idx) {
+		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
+		 topicName = topicsMap[val]
+		 if(topicName != undefined)
+		 p[topicName] = (p[topicName] || 0) - 1 //decrement counts
+		 })
 
-		*/
+		 */
 
 		topics.forEach (function(val, idx) {
 			p[val] = (p[val] || 0) - 1; //increment counts
@@ -365,9 +398,9 @@ d3.json('json/users.json', function (data) {
 		.elasticY(true)
 		.centerBar(true)
 		.x(d3.scale.ordinal().domain(languagesDomain))
-		.xUnits(dc.units.ordinal);
+		.xUnits(dc.units.ordinal)
 
-	dc.renderAll();
+	dc.renderAll()
 	var xHR
 		, twids = []
 		, ajaxErrCount = 0
@@ -375,7 +408,6 @@ d3.json('json/users.json', function (data) {
 
 	//https://datatables.net/
 	function updateDataTable() {
-
 		if (xHRRunning) {
 			// abort previous xHR in case is still running
 			xHR.abort()
@@ -426,109 +458,109 @@ d3.json('json/users.json', function (data) {
 		}
 	}
 
-	dataTable = $('#twitter-datatable').dataTable( {
-		"sDom": "t<'row-fluid'<'span6 pull-right'p>",
-		"sAjaxDataProp": "",
-		"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
-		"aaData": [	],
-		"asStripeClasses": [ ],
+	// Check if datatable is initialized
+	// Followed the documentation http://datatables.net/api
+	var ex = document.getElementById('twitter-datatable')
+	if ( ! $.fn.DataTable.fnIsDataTable( ex ) ) {
+		dataTable = $('#twitter-datatable').dataTable( {
+			"sDom": "t<'row-fluid'<'span6 pull-right'p>",
+			"sAjaxDataProp": "",
+			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
+			"aaData": [	],
+			"asStripeClasses": [ ],
 
-		"sPaginationType": "bootstrap",
-		"aaSorting": [[ 3, "desc" ]],
-		"fnDrawCallback": function( oSettings ) {
-			var pagination = this.fnPagingInfo()
+			"sPaginationType": "bootstrap",
+			"aaSorting": [[ 3, "desc" ]],
+			"fnDrawCallback": function( oSettings ) {
+				var pagination = this.fnPagingInfo()
 
-			if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2) {
-				// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
-				addNextPageData(twids)
-			}
-			else if(twids.length != 0){
-				// update row
-				updateDataTable()
-			}
+				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
+					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
+					addNextPageData(twids)
+					updateDataTable()
+				}
+				else if(twids.length != 0){
+					// update row
+					updateDataTable()
+				}
 
-		},
-		"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			// identify users not yet cached, for which we should retrieve details via ajax call.
-			if (!twittosDetails[aData[0]].cached) {
-				twids.push(aData[0])
-			}
-		},
+			},
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				// identify users not yet cached, for which we should retrieve details via ajax call.
+				if (!twittosDetails[aData[0]].cached) {
+					twids.push(aData[0])
+				}
+			},
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
-		"aoColumnDefs": [
-			{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-			, {
-				"sTitle": "Rank"
-				, "fnRender": function ( oObj ) {
-					return '<p class="lead">' + oObj.aData[6] + '</p>'
-				}
-				, "aTargets": [ 1 ]
-				, "bSearchable": false
-				, "bSortable": false
-				, "sWidth": "5%"
-			}
-			, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
-			, {
-				"sTitle": "Profile"
-				, "fnRender": function ( oObj ) {
-					if (! twittosDetails[oObj.aData[0]]) {
-						// create empty details object in case it does not exist yet.
-						twittosDetails[oObj.aData[0]] = {}
+			"aoColumnDefs": [
+				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+				, {
+					"sTitle": "Rank"
+					, "fnRender": function ( oObj ) {
+						return '<p class="lead">' + oObj.aData[6] + '</p>'
 					}
-					var profileHTML = ''
-						+ '<div class="media">'
-						+ '<div class="pull-left media-object">'
-						+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/user/' + oObj.aData[5] + '">'
-						+ oObj.aData[3]
-						+ '</a>'
-						+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
-						+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
-						+ '</a>'
-						+ '</div>'
-						+ '<div class="media-body">'
-						+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
-						+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>'
-						+ '</div>'
-						+ '</div>'
-					return profileHTML
+					, "aTargets": [ 1 ]
+					, "bSearchable": false
+					, "bSortable": false
+					, "sWidth": "5%"
 				}
-				, "aTargets": [ 2 ]
-				, "bSearchable": false
-				, "bSortable": false
-				, "sWidth": "30%"
-			}
-			, {
-				"sTitle": "Description"
-				, "fnRender": function ( oObj ) {
-					return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
+				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
+				, {
+					"sTitle": "Profile"
+					, "fnRender": function ( oObj ) {
+						if (! twittosDetails[oObj.aData[0]]) {
+							// create empty details object in case it does not exist yet.
+							twittosDetails[oObj.aData[0]] = {}
+						}
+						var profileHTML = ''
+							+ '<div class="media">'
+							+ '<div class="pull-left media-object">'
+							+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/user/' + oObj.aData[5] + '">'
+							+ oObj.aData[3]
+							+ '</a>'
+							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
+							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
+							+ '</a>'
+							+ '</div>'
+							+ '<div class="media-body">'
+							+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
+							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>'
+							+ '</div>'
+							+ '</div>'
+						return profileHTML
+					}
+					, "aTargets": [ 2 ]
+					, "bSearchable": false
+					, "bSortable": false
+					, "sWidth": "30%"
 				}
-				, "aTargets": [ 4 ]
-				, "bSearchable": false
-				, "bSortable": false
-				, "sWidth": "65%"
-			}
-			, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
-		]
-	} )
+				, {
+					"sTitle": "Description"
+					, "fnRender": function ( oObj ) {
+						return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
+					}
+					, "aTargets": [ 4 ]
+					, "bSearchable": false
+					, "bSortable": false
+					, "sWidth": "65%"
+				}
+				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
+			]
+		} )
+	}// End check if datatable is initialized
 
 	filteredData = languagesDimension;
 
 	// Keep the following disabled so that we actually see the difference between
 	// just rendering the charts and how much time the datatable takes to load
 
-	var urlFilters = []
-	urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
-	urlFilters['topics'] = urlFilters['topics'].split(',')
-	urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
-	urlFilters['locations'] = urlFilters['locations'].split(',')
-	urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
-	urlFilters['languages'] = urlFilters['languages'].split(',')
 	filterData(urlFilters)
 
+} //renderAll END
 
 
-})
+
 
 function resizeContent() {
 	var topicsOldWidth = topicsChart.width()
@@ -617,8 +649,25 @@ topicsChart.renderlet(function(chart){
 	// and loopover them to replace the IDs with Topic names
 	topicsRows = topicsChart.selectAll("text.row")
 	topicsRows[0].forEach (function(val) {
-		val.innerHTML = topicsMap[val.__data__.key]
+		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
+		val.textContent = topicsMap[val.__data__.key]
 	})
+})
+
+// On enter call the function which retrieves new data
+$searchField = $('#searchfield')
+$searchField.val(urlFilters['searchString'])
+$searchField.on('keypress',function(e){
+	var keyPressed = e.which
+	if(keyPressed == 13){
+		getRemoteData($searchField.val())
+		historyPushState()
+		e.preventDefault()
+	}
+});
+
+$(function() {
+	getRemoteData($searchField.val())
 })
 
 </script>
