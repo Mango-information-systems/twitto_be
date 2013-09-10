@@ -33,7 +33,7 @@ ORDER BY klout_score DESC
 			->groupBy('tw_user.tw_id');
 
 		if($searchString != ""){
-			$query->whereRaw("MATCH(screen_name, name, description) AGAINST ('?')", [$searchString]);
+			$query->whereRaw("MATCH(screen_name, name, description) AGAINST (?)", [$searchString]);
 		}
 
 		$return_array['tw_user'] = $query->get();
@@ -43,6 +43,7 @@ ORDER BY klout_score DESC
 		$last_query = end($queries);
 
 		var_dump($last_query);
+		var_dump($return_array);
 		die;
 		*/
 		DB::setFetchMode(PDO::FETCH_CLASS);
