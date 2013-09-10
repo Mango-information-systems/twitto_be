@@ -32,14 +32,8 @@ ORDER BY klout_score DESC
 			->remember(1440)
 			->groupBy('tw_user.tw_id');
 
-
-		// Advanced query grouping
-		// More on closures and anonymous functions http://php.net/manual/en/functions.anonymous.php
 		if($searchString != ""){
-			$query->where( function ( $query) use ($searchString){
-				$query = $query->orWhereRaw("MATCH(screen_name, name, description) AGAINST ('$searchString')");
-
-			});
+			$query->whereRaw("MATCH(screen_name, name, description) AGAINST ('?')", [$searchString]);
 		}
 
 		$return_array['tw_user'] = $query->get();
