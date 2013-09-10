@@ -7,30 +7,6 @@ class Twuser extends Eloquent {
 
 	public function getUsers(){
 
-		$topicIds = [
-			'2499'		// : 'Belgium'
-			,'1654'		// : 'Business'
-			,'1387'		// : 'Music'
-			,'-1'		// : 'Unassigned'
-			,'2527'		// : 'Movies'
-			,'745'		// : 'Computers'
-			,'240'		// : 'Studio Brussel'
-			,'1362'		// : 'Software'
-			,'2657'		// : 'Television'
-			,'2668'		// : 'Social Media'
-			,'1581'		// : 'Books'
-			,'1457'		// : 'Brussels'
-			,'2095'		// : 'Journalism'
-			,'19'		// : 'Twitter'
-			,'15'		// : 'News and Media'
-			,'3899'		// : 'Travel'
-			,'2021'		// : 'Celebrities'
-			,'2038'		// : 'Sports'
-			,'1490'		// : 'Fashion'
-			,'1790'		// : 'Video Games'
-			,'2403'		// : 'Politics'
-		];
-
 		$return_array = [];
 
 
@@ -54,7 +30,6 @@ ORDER BY klout_score DESC
 				'screen_name'
 			)
 			->remember(1440)
-			->whereIn('fact_topic.topic_id', $topicIds)
 			->groupBy('tw_user.tw_id');
 
 

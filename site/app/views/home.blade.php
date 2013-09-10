@@ -75,27 +75,15 @@ var provincesMap = {
 		, 'ot' : 'Other'
 	}
 	, topicsMap = {
-		'2499' : 'Belgium'
-		,'1654' : 'Business'
-		,'1387' : 'Music'
-		,'-1' : 'Unassigned'
-		,'2527' : 'Movies'
-		,'745' : 'Computers'
-		,'240' : 'Studio Brussel'
-		,'1362' : 'Software'
-		,'2657' : 'Television'
-		,'2668' : 'Social Media'
-		,'1581' : 'Books'
-		,'1457' : 'Brussels'
-		,'2095' : 'Journalism'
-		,'19' : 'Twitter'
-		,'15' : 'News and Media'
-		,'3899' : 'Travel'
-		,'2021' : 'Celebrities'
-		,'2038' : 'Sports'
-		,'1490' : 'Fashion'
-		,'1790' : 'Video Games'
-		,'2403' : 'Politics'
+		'-1' : 'Unassigned'
+		, 1 : 'Belgium'
+		, 2 : 'Business'
+		, 3 : 'Design'
+		, 4 : 'Entertainment'
+		, 5 : 'Health'
+		, 6 : 'Politics'
+		, 7 : 'Sport'
+		, 8 : 'Technology'
 	}
 	, projection = d3.geo.mercator()
 		.center([5, 48.9])
@@ -316,7 +304,7 @@ d3.json('json/users.json', function (data) {
 	})
 
 	topicsChart.width(300)
-		.height(1000)
+		.height(300)
 		.margins({top: 20, left: 10, right: 10, bottom: 20})
 		.group(topicsGroup)
 		.dimension(topicsDimension)
@@ -357,7 +345,7 @@ d3.json('json/users.json', function (data) {
 		})
 
 	languagesChart.width(400)
-		.height(400)
+		.height(300)
 		.margins({top: 10, right: 0, bottom: 35, left: 35})
 		.dimension(languagesDimension)
 		.group(languagesGroup)
@@ -539,8 +527,8 @@ function resizeContent() {
 	if(topicsNewHeight > 1000) {
 		topicsNewHeight = 1000
 	}
-	if(topicsNewHeight < 600) {
-		topicsNewHeight = 600
+	if(topicsNewHeight < 300) {
+		topicsNewHeight = 300
 	}
 
 	if(topicsNewWidth != topicsOldWidth) {
@@ -554,14 +542,18 @@ function resizeContent() {
 	var beOldWidth = beChart.width()
 		, beNewWidth = $('#be-chart').width()
 		, beNewHeight = Math.round(beChart.height() * beNewWidth / beOldWidth)
+console.log(beNewWidth, beNewHeight)
 
+	if(beNewWidth > 300) {
+		beNewWidth = 300
+	}
 	if(beNewWidth != beOldWidth) {
 		beChart.width(beNewWidth)
 		beChart.height(beNewHeight)
 		beChart
 			.projection(d3.geo.mercator()
 				.center([5, 48.9])
-				.scale(beNewWidth * 13)
+				.scale(beNewWidth * 7)
 				.translate([beNewHeight/2 + 50, beNewHeight])
 			)
 
@@ -574,11 +566,11 @@ function resizeContent() {
 		, langNewHeight = Math.round($('#languages-chart').height() * langNewWidth / langOldWidth)
 
 	//Min-Max Width
-	if(langNewWidth > 600) {
-		langNewWidth = 600
+	if(langNewWidth > 400) {
+		langNewWidth = 400
 	}
-	if(langNewWidth < 300) {
-		langNewWidth = 300
+	if(langNewWidth < 200) {
+		langNewWidth = 200
 	}
 
 	if(langNewWidth != langOldWidth) {
