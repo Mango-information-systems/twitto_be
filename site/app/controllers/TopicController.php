@@ -1,9 +1,11 @@
 <?php
 
 class TopicController extends BaseController {
-	public function jsonUsers() {
+	public function jsonUsers($searchStr = "") {
 		$_user = new Twuser();
-		$users = $_user->getUsers();
+		$searchStr = trim($searchStr);;
+
+		$users = $_user->getUsers($searchStr);
 
 		return Response::json($users, 200);
 	}

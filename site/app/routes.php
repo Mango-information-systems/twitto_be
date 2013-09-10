@@ -24,6 +24,7 @@ Route::get('about', 'StaticController@about');
 
 # Json Get all users
 Route::get('json/users.json', 'TopicController@jsonUsers');
+Route::get('json/users.json/search/{searchStr?}', 'TopicController@jsonUsers');
 #Route::get('json/topics.json', 'TopicController@jsonTopics');
 
 # Json Get all users

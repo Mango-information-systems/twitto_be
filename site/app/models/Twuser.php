@@ -5,7 +5,7 @@ class Twuser extends Eloquent {
 	protected $primaryKey = 'id';
 	public $timestamps = false;
 
-	public function getUsers(){
+	public function getUsers($searchString = ""){
 
 		$return_array = [];
 
@@ -32,6 +32,17 @@ ORDER BY klout_score DESC
 			->remember(1440)
 			->groupBy('tw_user.tw_id');
 
+
+		// Advanced query grouping
+		// More on closures and anonymous functions http://php.net/manual/en/functions.anonymous.php
+		if($searchString != ""){
+			$query->where( function ( $query) use ($searchString){
+
+				$query = $query->orWhereRaw("MATCH(screen_name) AGAINST ('$searchString' IN BOOLEAN MODE)");
+				$query = $query->orWhereRaw("MATCH(name) AGAINST ('$searchString' IN BOOLEAN MODE)");
+				$query = $query->orWhereRaw("MATCH(description) AGAINST ('$searchString' IN BOOLEAN MODE)");
+			});
+		}
 
 		$return_array['tw_user'] = $query->get();
 
