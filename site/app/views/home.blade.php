@@ -2,17 +2,15 @@
 @section('main')
 <div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
-	<div class="span3">
-		<div id="topics-chart" class="span12">
-			<strong>Topics filters</strong>
-			<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
-			<div class="clearfix"></div>
-		</div>
-	</div>
-	<div class="span9">
+	<div class="span12">
 		<div class="row-fluid">
-			<div id="be-chart" class="span6">
+			<div class="span3" id="topics-chart">
+				<strong>Topics filters</strong>
+				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+				<div class="clearfix"></div>
+			</div>
+			<div class="span3" id="be-chart">
 				<p><strong>Provinces filters</strong></p>
 				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
@@ -20,20 +18,24 @@
 				<div class="clearfix"></div>
 			</div>
 			
-			<div id="languages-chart" class="span6">
+			<div class="span3" id="languages-chart">
 				<strong>Languages filters</strong>
 				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
 				<div class="clearfix"></div>
 			</div>
-		</div>
-		<div class="row-fluid">
-			<form class="form-search pull-right">
-				<input type="text" class="input-medium search-query" id="searchfield" placeholder="Search">
+			
+			<div class="span3">
+				<p><strong>Search</strong></p>
+				<form class="form-search">
+				<input type="text" class="input-alrge search-query" id="searchfield" placeholder="keyword(s) or @username(s)">
 			</form>
+			</div>
 		</div>
 		<div class="row-fluid">
-			<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+			<div class="span10 offset1">
+				<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+			</div>
 		</div>
 	</div>
 
@@ -337,12 +339,12 @@ function renderAll(data){
 	})
 
 	topicsChart.width(300)
-		.height(300)
+		.height(200)
 		.margins({top: 20, left: 10, right: 10, bottom: 20})
 		.group(topicsGroup)
 		.dimension(topicsDimension)
 		.title(function(d){return d.value + ' twittos'})
-		.colors(["#4682B4"])
+		.colors(["#ffb380"])
 		.elasticX(true)
 		.filterHandler(function(dimension, filter){
 			dimension.filter(function(d) {
@@ -368,7 +370,7 @@ function renderAll(data){
 		.height(300)
 		.dimension(provincesDimension)
 		.group(provincesGroup)
-		.colors(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
+		.colors(["#ffe6d5", "#ffccaa", "#ffb380", "#ff9955", "#ff7f2a", "#ff6600", "#d45500", "#aa4400", "#803300", "#803300"])
 		.projection(projection)
 		.overlayGeoJson(provinces.features, 'state', function (d) {
 			return d.properties.name
@@ -547,20 +549,17 @@ function renderAll(data){
 
 } //renderAll END
 
-
-
-
 function resizeContent() {
 	var topicsOldWidth = topicsChart.width()
 		, topicsNewWidth = $('#topics-chart').width()
 		, topicsNewHeight = Math.round($('#topics-chart').height() * topicsNewWidth / topicsOldWidth)
 
 	//Min-Max Height
-	if(topicsNewHeight > 1000) {
-		topicsNewHeight = 1000
-	}
-	if(topicsNewHeight < 300) {
+	if(topicsNewHeight > 300) {
 		topicsNewHeight = 300
+	}
+	if(topicsNewHeight < 200) {
+		topicsNewHeight = 200
 	}
 
 	if(topicsNewWidth != topicsOldWidth) {
@@ -574,7 +573,7 @@ function resizeContent() {
 	var beOldWidth = beChart.width()
 		, beNewWidth = $('#be-chart').width()
 		, beNewHeight = Math.round(beChart.height() * beNewWidth / beOldWidth)
-console.log(beNewWidth, beNewHeight)
+// console.log(beNewWidth, beNewHeight)
 
 	if(beNewWidth > 300) {
 		beNewWidth = 300

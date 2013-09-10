@@ -4,7 +4,7 @@
 
 .dc-chart rect.bar {
 	stroke: none;
-	fill: steelblue;
+	fill: #d45500;
 	cursor: pointer;
 }
 
@@ -229,9 +229,12 @@
 }
 
 .dc-chart g.row text {
-	fill: white;
-	font-size: 12px;
+	fill: black;
+	font-size: 14px;
 	cursor: pointer;
+	stroke: white;
+	stroke-width: .4;
+	stroke-opacity: .5;
 }
 
 .dc-chart g text {

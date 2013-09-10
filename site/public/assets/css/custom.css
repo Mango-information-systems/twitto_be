@@ -102,11 +102,6 @@
     background-position: top;
 }
 
-/* dc.js rowChart text color */
-#topics-chart g.row text {
-	fill: #333333 !important;
-}
-
 /* Datatable widths */
 #twitter-datatable td:nth-child(1){
 	max-width: 30px;

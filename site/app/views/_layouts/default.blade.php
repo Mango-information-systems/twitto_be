@@ -10,7 +10,7 @@
 	<meta name="revised" content="{{ Config::get('app.reviseddate') }}" scheme="YYYY-MM-DD">
 
 	<!-- Le styles -->
-	<link href="{{ URL::asset('assets/css/amelia-bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ URL::asset('assets/css/twitto-bootstrap.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/custom.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/feedback.css') }}" rel="stylesheet">
 	<link href="{{ URL::asset('assets/css/dc.css') }}" rel="stylesheet">
@@ -20,7 +20,7 @@
 
 	<style type="text/css">
 		body {
-			padding-top: 60px;
+			padding-top: 40px;
 			padding-bottom: 40px;
 		}
 		.sidebar-nav {
@@ -53,7 +53,7 @@
 
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
 		<div class="container">
 			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -61,7 +61,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="brand" href="{{{ URL::to('/') }}}">Twitto.be</a>
+			<a class="brand" href="{{{ URL::to('/') }}}"><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" width="40px" height="40px"/> Twitto.be</a>
 			@section('topmenu')
 			@include('topmenu')
 		</div>
