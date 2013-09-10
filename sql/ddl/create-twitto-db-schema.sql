@@ -27,7 +27,9 @@ CREATE TABLE IF NOT EXISTS `tw_user` (
   PRIMARY KEY (`tw_id`),
   UNIQUE (`klout_id`)
 )
-DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'twittos table used by front-end';
+ENGINE=MYISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'twittos table used by front-end';
+
+ALTER TABLE `tw_user` ADD FULLTEXT (`screen_name`, `name`, `description`);
 
 CREATE TABLE IF NOT EXISTS `dim_topic` (
   `topic_id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'Id of the topic',

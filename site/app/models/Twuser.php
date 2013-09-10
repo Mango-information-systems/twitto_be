@@ -37,10 +37,8 @@ ORDER BY klout_score DESC
 		// More on closures and anonymous functions http://php.net/manual/en/functions.anonymous.php
 		if($searchString != ""){
 			$query->where( function ( $query) use ($searchString){
+				$query = $query->orWhereRaw("MATCH(screen_name, name, description) AGAINST ('$searchString')");
 
-				$query = $query->orWhereRaw("MATCH(screen_name) AGAINST ('$searchString' IN BOOLEAN MODE)");
-				$query = $query->orWhereRaw("MATCH(name) AGAINST ('$searchString' IN BOOLEAN MODE)");
-				$query = $query->orWhereRaw("MATCH(description) AGAINST ('$searchString' IN BOOLEAN MODE)");
 			});
 		}
 
