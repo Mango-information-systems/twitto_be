@@ -138,6 +138,7 @@
 <script src="{{ URL::asset('assets/js/dataTables.bootstrap.js') }}"></script>
 <script src="{{ URL::asset('assets/js/dataTables.paging.js') }}"></script>
 <script src="{{ URL::asset('assets/js/dataTables.fnStandingRedraw.js') }}"></script>
+<script src="{{ URL::asset('assets/js/jquery.blockUI.js') }}"></script>
 
 
 @if(!Config::get('app.debug'))

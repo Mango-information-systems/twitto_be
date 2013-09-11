@@ -27,9 +27,10 @@
 			
 			<div class="span3">
 				<p><strong>Search</strong></p>
-				<form class="form-search">
-				<input type="text" class="input-alrge search-query" id="searchfield" placeholder="keyword(s) or @username(s)">
-			</form>
+				<div class="input-append">
+					<input type="text" class="input-medium" id="searchfield" placeholder="keyword(s) or @username(s)">
+					<button class="btn" type="button" id="searchbutton">Search</button>
+				</div>
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -99,7 +100,7 @@ var provincesMap = {
 		.translate([370 / 2, 300])
     , topicsChart = dc.rowChart("#topics-chart")
 	, beChart = dc.geoChoroplethChart("#be-chart")
-	, languagesChart = dc.barChart("#languages-chart")
+	, languagesChart = dc.rowChart("#languages-chart")
 	, dataTable // cached selector of datatable
 	, pageSliceIndex // index to add next page to the data table
 	, filteredData // full dataset (crossfilter dimension)
@@ -109,6 +110,9 @@ var provincesMap = {
 	, provincesGroup
 	, topicsRows
 	, $searchField
+	, $searchButton
+	, enterPressed = false
+	, cachedAllData = null //cached all initial data
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -148,8 +152,6 @@ function filterData(urlFilter){
 		topicsChart.redraw()
 		languagesChart.redraw()
 		beChart.redraw()
-
-		resizeContent()
 
 		return
 	}
@@ -200,17 +202,32 @@ topicsChart.on('preRedraw', function(chart){
 	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
 })
 topicsChart.on('postRedraw', function(chart){
+	$.unblockUI()
 	filterData(null)
 })
 
 //Split functions
 function getRemoteData(searchStr){
+
+	if(!cachedAllData) {
+		d3.json('json/users.json/search', function (data) {
+			cachedAllData = data
+			if(searchStr==""){
+				renderAll(cachedAllData)
+			}
+		})
+	} else {
+		if(searchStr==""){
+			renderAll(cachedAllData)
+		}
+	}
+
 	if(searchStr!=""){
 		searchStr = '/' + searchStr
+		d3.json('json/users.json/search'+searchStr, function (data) {
+			renderAll(data)
+		})
 	}
-	d3.json('json/users.json/search'+searchStr, function (data) {
-		renderAll(data);
-	})
 
 }
 
@@ -379,16 +396,16 @@ function renderAll(data){
 			return d.key + '\n' + (d.value ? d.value : 0) + ' twittos'
 		})
 
-	languagesChart.width(400)
-		.height(300)
-		.margins({top: 10, right: 0, bottom: 35, left: 35})
-		.dimension(languagesDimension)
+	languagesChart.width(300)
+		.height(200)
+		.margins({top: 20, left: 10, right: 10, bottom: 20})
 		.group(languagesGroup)
+		.dimension(languagesDimension)
 		.title(function(d){return d.value + ' twittos'})
-		.elasticY(true)
-		.centerBar(true)
-		.x(d3.scale.ordinal().domain(languagesDomain))
-		.xUnits(dc.units.ordinal)
+		.colors(["#ffb380"])
+		.elasticX(true)
+		.xAxis().ticks(4)
+
 
 	dc.renderAll()
 	var xHR
@@ -544,75 +561,41 @@ function renderAll(data){
 
 	// Keep the following disabled so that we actually see the difference between
 	// just rendering the charts and how much time the datatable takes to load
+		filterData(urlFilters)
+	if(enterPressed){
+		filterData(urlFilters)
+	} else {
+		filterData(null)
+	}
 
-	filterData(urlFilters)
 
 } //renderAll END
 
-function resizeContent() {
-	var topicsOldWidth = topicsChart.width()
-		, topicsNewWidth = $('#topics-chart').width()
-		, topicsNewHeight = Math.round($('#topics-chart').height() * topicsNewWidth / topicsOldWidth)
+// renderlet function
+topicsChart.renderlet(function(chart){
+	// Select all rows of the topicsChart
+	// and loopover them to replace the IDs with Topic names
+	topicsRows = topicsChart.selectAll("text.row")
+	topicsRows[0].forEach (function(val) {
+		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
+		val.textContent = topicsMap[val.__data__.key]
+	})
 
-	//Min-Max Height
-	if(topicsNewHeight > 300) {
-		topicsNewHeight = 300
-	}
-	if(topicsNewHeight < 200) {
-		topicsNewHeight = 200
-	}
+	// Solution based on https://groups.google.com/forum/#!topic/dc-js-user-group/JsgSb9103Wg
+	chart.select("svg").attr("width", $('#topics-chart').width() ).attr("height", $('#topics-chart').height() ).attr("viewBox",
+		"0 0 300 200").attr("preserveAspectRatio", "xMinYMin")
 
-	if(topicsNewWidth != topicsOldWidth) {
-		topicsChart.width(topicsNewWidth)
-		topicsChart.height(topicsNewHeight)
+})
 
-		topicsChart.redraw()
-		topicsChart.render()
-	}
+beChart.renderlet(function(chart){
+	chart.select("svg").attr("width", $('#be-chart').width() ).attr("height",$('#be-chart').width() ).attr("viewBox",
+		"0 0 300 300").attr("preserveAspectRatio", "xMinYMin")
+})
 
-	var beOldWidth = beChart.width()
-		, beNewWidth = $('#be-chart').width()
-		, beNewHeight = Math.round(beChart.height() * beNewWidth / beOldWidth)
-// console.log(beNewWidth, beNewHeight)
-
-	if(beNewWidth > 300) {
-		beNewWidth = 300
-	}
-	if(beNewWidth != beOldWidth) {
-		beChart.width(beNewWidth)
-		beChart.height(beNewHeight)
-		beChart
-			.projection(d3.geo.mercator()
-				.center([5, 48.9])
-				.scale(beNewWidth * 7)
-				.translate([beNewHeight/2 + 50, beNewHeight])
-			)
-
-		beChart.render()
-
-	}
-
-	var langOldWidth = languagesChart.width()
-		, langNewWidth = $('#languages-chart').width()
-		, langNewHeight = Math.round($('#languages-chart').height() * langNewWidth / langOldWidth)
-
-	//Min-Max Width
-	if(langNewWidth > 400) {
-		langNewWidth = 400
-	}
-	if(langNewWidth < 200) {
-		langNewWidth = 200
-	}
-
-	if(langNewWidth != langOldWidth) {
-		languagesChart.width(langNewWidth)
-		languagesChart.height(langNewHeight)
-
-		//Strange that we need to do a redraw. The url filters are not shown if we do not render.redraw
-		languagesChart.render().redraw()
-	}
-
-}
+languagesChart.renderlet(function(chart){
+	chart.select("svg").attr("width", $('#languages-chart').width() ).attr("height",$('#languages-chart').width() ).attr("viewBox",
+		"0 0 300 200").attr("preserveAspectRatio", "xMinYMin")
+})
 
 // debouncing resize event based on http://stackoverflow.com/questions/5489946/jquery-how-to-wait-for-the-end-or-resize-event-and-only-then-perform-an-ac
 var rtime = new Date(1, 1, 1970, 12,00,00)
@@ -630,36 +613,44 @@ function resizeend() {
 		setTimeout(resizeend, delta)
 	} else {
 		timeout = false
-		resizeContent()
+		dc.redrawAll()
 	}
 }
 
-// renderlet function
-topicsChart.renderlet(function(chart){
-	// Select all rows of the topicsChart
-	// and loopover them to replace the IDs with Topic names
-	topicsRows = topicsChart.selectAll("text.row")
-	topicsRows[0].forEach (function(val) {
-		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
-		val.textContent = topicsMap[val.__data__.key]
-	})
-})
-
 // On enter call the function which retrieves new data
 $searchField = $('#searchfield')
+$searchButton = $('#searchbutton')
 $searchField.val(urlFilters['searchString'])
 $searchField.on('keypress',function(e){
 	var keyPressed = e.which
 	if(keyPressed == 13){
+		blockPage(' Loading ... ')
 		getRemoteData($searchField.val())
 		historyPushState()
 		e.preventDefault()
 	}
 });
 
-$(function() {
+$searchButton.on('click',function(e){
+	blockPage(' Loading ... ')
+	enterPressed  = true
 	getRemoteData($searchField.val())
+	historyPushState()
+	e.preventDefault()
+});
+
+$(function() {
+	blockPage(' Initializing ... ')
+	getRemoteData($searchField.val())
+
 })
+
+function blockPage(msg) {
+	$.blockUI({
+		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
+		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}
+	})
+}
 
 </script>
 @stop
