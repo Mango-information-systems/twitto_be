@@ -506,7 +506,7 @@ function renderAll(data){
 				, {
 					"sTitle": "Rank"
 					, "fnRender": function ( oObj ) {
-						return '<p class="lead">' + oObj.aData[6] + '</p>'
+						return '<p class="tw_rank">' + oObj.aData[6] + '</p>'
 					}
 					, "aTargets": [ 1 ]
 					, "bSearchable": false
@@ -515,7 +515,7 @@ function renderAll(data){
 				}
 				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
 				, {
-					"sTitle": "Profile"
+					'sTitle': '<a href="http://klout.com" target="_blank"><img src="../assets/img/klout-logo.png"/></a>'
 					, "fnRender": function ( oObj ) {
 						if (! twittosDetails[oObj.aData[0]]) {
 							// create empty details object in case it does not exist yet.

@@ -111,3 +111,10 @@
 	min-width: 300px;
 	max-width: 380px;
 }
+
+.tw_rank {
+	margin-top: 20px;
+	margin-left: 10px;
+	font-size: 32px;
+    font-weight: bold;
+}
