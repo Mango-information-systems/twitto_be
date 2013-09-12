@@ -107,13 +107,13 @@ var provincesMap = {
 	, filteredData // full dataset (crossfilter dimension)
 	, fdata // top infinity of filteredData
 	, twittosDetails = {} // cache of all twittos for which details have already been extracted
+	, allTwittos = null //cache of all twittos metadata: province, topics, language, klout score...
 	, topics
 	, provincesGroup
 	, topicsRows
 	, $searchField
 	, $searchButton
 	, enterPressed = false
-	, cachedAllData = null //cached all initial data
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -210,22 +210,21 @@ topicsChart.on('postRedraw', function(chart){
 //Split functions
 function getRemoteData(searchStr){
 
-	if(!cachedAllData) {
+	if(!allTwittos) {
 		d3.json('json/users.json/search', function (data) {
-			cachedAllData = data
-			if(searchStr==""){
-				renderAll(cachedAllData)
+			allTwittos = data
+			if(searchStr==''){
+				renderAll(allTwittos)
 			}
 		})
 	} else {
-		if(searchStr==""){
-			renderAll(cachedAllData)
+		if(searchStr==''){
+			renderAll(allTwittos)
 		}
 	}
 
-	if(searchStr!=""){
-		searchStr = '/' + searchStr
-		d3.json('json/users.json/search'+searchStr, function (data) {
+	if(searchStr!=''){
+		d3.json('json/users.json/search/'+searchStr, function (data) {
 			renderAll(data)
 		})
 	}
@@ -264,12 +263,6 @@ function renderAll(data){
 		//var topics = d[4]
 
 		var topics = d[4].split(',')
-		/*
-		 //Replace the topic ID with the equivalent text from the topicsMap
-		 topics.forEach (function(val, idx) {
-		 topics[idx] = topicsMap[val]
-		 })
-		 */
 		return topics
 	});
 
