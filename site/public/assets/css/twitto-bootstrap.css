@@ -216,7 +216,7 @@ a {
   text-decoration: none;
 }
 a:hover {
-  color: #00350f;
+  color: #351E00;
   text-decoration: underline;
 }
 .img-rounded {
@@ -2785,7 +2785,7 @@ input[type="button"].btn-block {
 }
 .btn-primary:active,
 .btn-primary.active {
-  background-color: #00350f \9;
+  background-color: #351E00 \9;
 }
 .btn-warning {
   color: #ffffff;
@@ -2985,7 +2985,7 @@ input[type="submit"].btn.btn-mini {
   border-radius: 0;
 }
 .btn-link:hover {
-  color: #00350f;
+  color: #351E00;
   text-decoration: underline;
   background-color: transparent;
 }
@@ -3455,8 +3455,8 @@ input[type="submit"].btn.btn-mini {
   margin-top: 6px;
 }
 .nav .dropdown-toggle:hover .caret {
-  border-top-color: #00350f;
-  border-bottom-color: #00350f;
+  border-top-color: #351E00;
+  border-bottom-color: #351E00;
 }
 /* move down carets for tabs */
 .nav-tabs .dropdown-toggle .caret {
