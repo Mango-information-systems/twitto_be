@@ -33,7 +33,7 @@
 }
 
 .dc-chart .pie-slice {
-	fill: white;
+	fill: #000;
 	font-size: 12px;
 	cursor: pointer;
 }
@@ -229,10 +229,10 @@
 }
 
 .dc-chart g.row text {
-	fill: black;
+	fill: #000;
 	font-size: 14px;
 	cursor: pointer;
-	stroke: white;
+	stroke: #fff;
 	stroke-width: .4;
 	stroke-opacity: .5;
 }
