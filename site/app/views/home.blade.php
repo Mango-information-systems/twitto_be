@@ -357,7 +357,7 @@ function renderAll(data){
 	})
 
 	topicsChart.width(300)
-		.height(200)
+		.height(250)
 		.margins({top: 20, left: 10, right: 10, bottom: 20})
 		.group(topicsGroup)
 		.dimension(topicsDimension)
@@ -576,26 +576,42 @@ function renderAll(data){
 topicsChart.renderlet(function(chart){
 	// Select all rows of the topicsChart
 	// and loopover them to replace the IDs with Topic names
-	topicsRows = topicsChart.selectAll("text.row")
+	topicsRows = topicsChart.selectAll('text.row')
 	topicsRows[0].forEach (function(val) {
 		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
 		val.textContent = topicsMap[val.__data__.key]
 	})
 
 	// Solution based on https://groups.google.com/forum/#!topic/dc-js-user-group/JsgSb9103Wg
-	chart.select("svg").attr("width", $('#topics-chart').width() ).attr("height", $('#topics-chart').height() ).attr("viewBox",
-		"0 0 300 200").attr("preserveAspectRatio", "xMinYMin")
+	var newWidth = $('#topics-chart').width()
+	chart.select('svg')
+		.attr('width', newWidth )
+		.attr('height', newWidth * 25 / 30  )
+		.attr('viewBox', '0 0 300 250')
+		.attr('preserveAspectRatio', 'xMinYMin')
 
 })
 
 beChart.renderlet(function(chart){
-	chart.select("svg").attr("width", $('#be-chart').width() ).attr("height",$('#be-chart').width() ).attr("viewBox",
-		"0 0 300 300").attr("preserveAspectRatio", "xMinYMin")
+	var newWidth = $('#be-chart').width()
+	chart.select('svg')
+		.attr('width', newWidth)
+		.attr('height', newWidth )
+		.attr('viewBox', '0 0 300 300')
+		.attr('preserveAspectRatio', 'xMinYMin')
+	// adapt containers' height
+	$('#be-chart').height(newWidth)
 })
 
 languagesChart.renderlet(function(chart){
-	chart.select("svg").attr("width", $('#languages-chart').width() ).attr("height",$('#languages-chart').width() ).attr("viewBox",
-		"0 0 300 200").attr("preserveAspectRatio", "xMinYMin")
+	var newWidth = $('#languages-chart').width()
+	chart.select('svg')
+		.attr('width', newWidth )
+		.attr('height', newWidth * 2 / 3 )
+		.attr('viewBox', '0 0 300 200')
+		.attr('preserveAspectRatio', 'xMinYMin')
+	// adapt containers' height
+	$('#languages-chart').height(newWidth * 2 / 3 + 10)
 })
 
 // debouncing resize event based on http://stackoverflow.com/questions/5489946/jquery-how-to-wait-for-the-end-or-resize-event-and-only-then-perform-an-ac
