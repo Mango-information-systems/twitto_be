@@ -91,6 +91,7 @@ var provincesMap = {
 		, 6 : 'Politics'
 		, 7 : 'Sport'
 		, 8 : 'Technology'
+		, 9 : 'Media'
 	}
 	, projection = d3.geo.mercator()
 		.center([5, 48.9])
