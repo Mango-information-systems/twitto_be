@@ -355,7 +355,7 @@ function renderAll(data){
 		.group(topicsGroup)
 		.dimension(topicsDimension)
 		.title(function(d){return d.value + ' twittos'})
-		.colors(["#ffb380"])
+		.colors(["#ff7F2A"])
 		.elasticX(true)
 		.filterHandler(function(dimension, filter){
 			dimension.filter(function(d) {
@@ -396,7 +396,7 @@ function renderAll(data){
 		.group(languagesGroup)
 		.dimension(languagesDimension)
 		.title(function(d){return d.value + ' twittos'})
-		.colors(["#ffb380"])
+		.colors(["#ff7F2A"])
 		.elasticX(true)
 		.xAxis().ticks(4)
 
