@@ -2,7 +2,7 @@
 @section('main')
 <div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
-	<div class="span12">
+	<div class="span12">		
 		<div class="row-fluid">
 			<div class="span3" id="topics-chart">
 				<strong>Topics filters</strong>
@@ -26,10 +26,18 @@
 			</div>
 			
 			<div class="span3">
-				<p><strong>Search</strong></p>
+				<p>
+					<strong>Search</strong>
+					<a class="reset" id="clearbutton" href="#" style="display: none;">reset</a>
+				</p>
 				<div class="input-append">
-					<input type="text" class="input-medium" id="searchfield" placeholder="keyword(s) or @username(s)">
-					<button class="btn" type="button" id="searchbutton">Search</button>
+					<input type="text" class="input-large" id="searchfield" placeholder="keyword(s) or @username(s)">
+					<button class="btn" type="button" id="searchbutton"><i class="icon-search"></i></button>
+					
+				</div>
+				<div class="alert" id="nodata">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					<strong>Warning!</strong> Your search didn't retrieve any data.
 				</div>
 			</div>
 		</div>
@@ -114,6 +122,10 @@ var provincesMap = {
 	, $searchField
 	, $searchButton
 	, enterPressed = false
+	, $nodata = $('#nodata')
+	, $searchField = $('#searchfield')
+	, $searchButton = $('#searchbutton')
+	, $clearButton = $('#clearbutton')
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -250,6 +262,11 @@ function renderAll(data){
 	 */
 
 // TODO: make server return numeric data type instead of string
+	if(data.tw_user.length == 0){
+		$nodata.show()
+		$.unblockUI()
+		return
+	}
 
 	// feed it through crossfilter
 	var ndx = crossfilter(data.tw_user)
@@ -628,8 +645,6 @@ function resizeend() {
 }
 
 // On enter call the function which retrieves new data
-$searchField = $('#searchfield')
-$searchButton = $('#searchbutton')
 $searchField.val(urlFilters['searchString'])
 $searchField.on('keypress',function(e){
 	var keyPressed = e.which
@@ -649,6 +664,14 @@ $searchButton.on('click',function(e){
 	e.preventDefault()
 });
 
+$clearButton.on('click',function(e){
+	$searchField.val('')
+	blockPage(' Loading ... ')
+	getRemoteData('')
+	historyPushState()
+	e.preventDefault()
+});
+
 $(function() {
 	blockPage(' Initializing ... ')
 	getRemoteData($searchField.val())
@@ -656,6 +679,12 @@ $(function() {
 })
 
 function blockPage(msg) {
+	if($searchField.val() == ''){
+		$clearButton.hide()
+	} else {
+		$clearButton.show()
+	}
+	$nodata.hide()
 	$.blockUI({
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
 		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}

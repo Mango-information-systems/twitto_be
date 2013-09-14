@@ -118,3 +118,7 @@
 	font-size: 32px;
     font-weight: bold;
 }
+
+#nodata {
+	display: none;
+}
