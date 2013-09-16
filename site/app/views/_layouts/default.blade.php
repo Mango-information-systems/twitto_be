@@ -157,62 +157,9 @@
 </script>
 @endif
 
-
-<script lang="text/javascript">
-
-	var page = 1;
-	var perpagejs = 100;
-	var lochash    = window.location.hash.substr(1),
-		page = lochash.substr(lochash.indexOf('page='))
-			.split('&')[0]
-			.split('=')[1],
-		perpagejs = lochash.substr(lochash.indexOf('perpage='))
-			.split('&')[0]
-			.split('=')[1]
-		;
-
-	if(!page){
-		page=1;
-	}
-
-	if(!perpagejs	){
-		perpagejs = 100;
-	}
-	</script>
-
 @section('inline-javascript')
 @show
 
-<script lang="text/javascript">
-
-	function search_username(){
-		var dt = $("#twitter-datatable").data("datatable");
-		var postdata = dt.options.post;
-
-		//Set page to 1 when searching
-		dt.options.currentPage = 1;
-
-		postdata.search_username = $('#search_username').val();
-		dt.render();
-	}
-
-	$('#search_username_button').click( function() {
-		search_username();
-	});
-
-	$('#search_username').keypress(function(event) {
-		if (event.which == 13) {
-			event.preventDefault();
-			search_username();
-		}
-	});
-
-	$(function() {
-		$('input, textarea').placeholder();
-	});
-
-
-</script>
 
 </body>
 </html>
