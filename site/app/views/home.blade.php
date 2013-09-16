@@ -27,18 +27,8 @@
 			
 			<div class="span3">
 				<p>
-					<strong>Search</strong>
-					<a class="reset" id="clearbutton" href="#" style="display: none;">reset</a>
+					<strong>Share</strong>
 				</p>
-				<div class="input-append">
-					<input type="text" class="input-large" id="searchfield" placeholder="keyword(s) or @username(s)">
-					<button class="btn" type="button" id="searchbutton"><i class="icon-search"></i></button>
-					
-				</div>
-				<div class="alert" id="nodata">
-					<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<strong>Warning!</strong> Your search didn't retrieve any data.
-				</div>
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -119,13 +109,6 @@ var provincesMap = {
 	, topics
 	, provincesGroup
 	, topicsRows
-	, $searchField
-	, $searchButton
-	, enterPressed = false
-	, $nodata = $('#nodata')
-	, $searchField = $('#searchfield')
-	, $searchButton = $('#searchbutton')
-	, $clearButton = $('#clearbutton')
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -134,7 +117,6 @@ urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
 urlFilters['locations'] = urlFilters['locations'].split(',')
 urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
 urlFilters['languages'] = urlFilters['languages'].split(',')
-urlFilters['searchString'] = '<?php echo $filters['searchString']; ?>'
 
 function filterData(urlFilter){
 // crossfilter data
@@ -211,9 +193,7 @@ function historyPushState(){
 	var topicsFilter = topicsChart.filters().join(',')
 		, provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
-		, searchFilter = $searchField.val()
-	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter +
-		'&search=' + searchFilter)
+	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter)
 }
 
 topicsChart.on('preRedraw', function(chart){
@@ -224,53 +204,16 @@ topicsChart.on('postRedraw', function(chart){
 })
 
 //Split functions
-function getRemoteData(searchStr){
-
-	if(!allTwittos) {
-		d3.json('json/users.json/search', function (data) {
-			allTwittos = data
-			if(searchStr==''){
-				renderAll(allTwittos)
-			}
-		})
-	} else {
-		if(searchStr==''){
-			renderAll(allTwittos)
-		}
-	}
-
-	if(searchStr!=''){
-		d3.json('json/users.json/search/'+searchStr, function (data) {
-			renderAll(data)
-		})
-	}
-
+function getRemoteData(){
+	d3.json('json/users.json/search', function (data) {
+		allTwittos = data
+		renderAll(allTwittos)
+	})
 }
 
 function renderAll(data){
 
-	/*
-	 data.tw_user.forEach(function(val, idx){
-
-	 var topics = val[4].split(',')
-	 var replacedTopics = []
-
-	 topics.forEach (function(val, idx) {
-	 topics[idx] = topicsMap[val]
-	 if(topics[idx] != undefined){
-	 replacedTopics.push(topicsMap[val])
-	 }
-	 })
-	 data.tw_user[idx][4] = replacedTopics;
-	 })
-	 */
-
 // TODO: make server return numeric data type instead of string
-	if(data.tw_user.length == 0){
-		$nodata.show()
-		$.unblockUI()
-		return
-	}
 
 	// feed it through crossfilter
 	var ndx = crossfilter(data.tw_user)
@@ -315,12 +258,13 @@ function renderAll(data){
 		
 		var topicName = ''
 		
-		 topics.forEach (function(val, idx) {
-		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
-		 topicName = topicsMap[val]
-		 if(topicName != undefined)
-		 p[topicName] = (p[topicName] || 0) + 1 //increment counts
-		 })
+		topics.forEach (function(val, idx) {
+			//Add new entries with the text from the topicsMap, keep the rest - should be removed
+			topicName = topicsMap[val]
+			if(topicName != undefined){
+				p[topicName] = (p[topicName] || 0) + 1 //increment counts
+			}
+		})
 		 
 		 /*
 		topics.forEach (function(val, idx) {
@@ -336,12 +280,13 @@ function renderAll(data){
 		var topicName = ''
 	
 		 topics.forEach (function(val, idx) {
-		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
-		 topicName = topicsMap[val]
-		 if(topicName != undefined)
-		 p[topicName] = (p[topicName] || 0) - 1 //decrement counts
+			//Add new entries with the text from the topicsMap, keep the rest - should be removed
+			topicName = topicsMap[val]
+			if(topicName != undefined) {
+			   p[topicName] = (p[topicName] || 0) - 1 //decrement counts
+			}
+		 
 		 })
-
 		 
 /*
 		topics.forEach (function(val, idx) {
@@ -580,21 +525,8 @@ function renderAll(data){
 
 	filteredData = languagesDimension;
 	
-	if(enterPressed == false) {
-		//entered from url
-		filterData(urlFilters)
-	} else {
-		filterData(null)
-	}
-		
-	/*
-	if(enterPressed){
-		filterData(urlFilters)
-	} else {
-		filterData(null)
-	}*/
-
-
+	filterData(urlFilters)
+	
 } //renderAll END
 
 // renderlet function
@@ -660,49 +592,12 @@ function resizeend() {
 	}
 }
 
-// On enter call the function which retrieves new data
-$searchField.val(urlFilters['searchString'])
-$searchField.on('keypress',function(e){
-	var keyPressed = e.which
-	if(keyPressed == 13){
-		blockPage(' Loading ... ')
-		enterPressed  = true
-		getRemoteData($searchField.val())
-		historyPushState()
-		e.preventDefault()
-	}
-});
-
-$searchButton.on('click',function(e){
-	blockPage(' Loading ... ')
-	enterPressed  = true
-	getRemoteData($searchField.val())
-	historyPushState()
-	e.preventDefault()
-});
-
-$clearButton.on('click',function(e){
-	$searchField.val('')
-	enterPressed  = true
-	blockPage(' Loading ... ')
-	getRemoteData('')
-	historyPushState()
-	e.preventDefault()
-});
-
 $(function() {
 	blockPage(' Initializing ... ')
-	getRemoteData($searchField.val())
-
+	getRemoteData()
 })
 
 function blockPage(msg) {
-	if($searchField.val() == ''){
-		$clearButton.hide()
-	} else {
-		$clearButton.show()
-	}
-	$nodata.hide()
 	$.blockUI({
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
 		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}
