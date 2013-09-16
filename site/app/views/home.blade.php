@@ -199,9 +199,15 @@ function filterData(urlFilter){
 	pageSliceIndex = Math.min(50, fdata.length)
 	dataTable.fnAddData(fdata.slice(0, pageSliceIndex))
 	
+	$.unblockUI()
+	
 }
 
 function historyPushState(){
+	//After every filter we need to refresh the chart to get the correct color range
+	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
+	beChart.redraw()
+	
 	var topicsFilter = topicsChart.filters().join(',')
 		, provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
@@ -212,10 +218,8 @@ function historyPushState(){
 
 topicsChart.on('preRedraw', function(chart){
 	historyPushState()
-	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
 })
 topicsChart.on('postRedraw', function(chart){
-	$.unblockUI()
 	filterData(null)
 })
 
@@ -569,15 +573,20 @@ function renderAll(data){
 	}// End check if datatable is initialized
 
 	filteredData = languagesDimension;
-
-	// Keep the following disabled so that we actually see the difference between
-	// just rendering the charts and how much time the datatable takes to load
-		filterData(urlFilters)
-	if(enterPressed){
+	
+	if(enterPressed == false) {
+		//entered from url
 		filterData(urlFilters)
 	} else {
 		filterData(null)
 	}
+		
+	/*
+	if(enterPressed){
+		filterData(urlFilters)
+	} else {
+		filterData(null)
+	}*/
 
 
 } //renderAll END
@@ -650,6 +659,7 @@ $searchField.on('keypress',function(e){
 	var keyPressed = e.which
 	if(keyPressed == 13){
 		blockPage(' Loading ... ')
+		enterPressed  = true
 		getRemoteData($searchField.val())
 		historyPushState()
 		e.preventDefault()
@@ -666,6 +676,7 @@ $searchButton.on('click',function(e){
 
 $clearButton.on('click',function(e){
 	$searchField.val('')
+	enterPressed  = true
 	blockPage(' Loading ... ')
 	getRemoteData('')
 	historyPushState()
