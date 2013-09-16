@@ -284,9 +284,14 @@ function renderAll(data){
 		//var topics = d[4]
 
 		var topics = d[4].split(',')
+		
+		topics.forEach (function(val, idx) {
+			topics[idx] = topicsMap[val]
+		})
+				
 		return topics
 	});
-
+	
 	var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
 	// hack to make dc.js charts work
@@ -307,20 +312,21 @@ function renderAll(data){
 	function reduceAdd(p, v) {
 		var topics = v[4].split(',')
 		//var topics = v[4]
-
+		
 		var topicName = ''
-		/*
+		
 		 topics.forEach (function(val, idx) {
 		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
 		 topicName = topicsMap[val]
 		 if(topicName != undefined)
 		 p[topicName] = (p[topicName] || 0) + 1 //increment counts
 		 })
-		 */
-
+		 
+		 /*
 		topics.forEach (function(val, idx) {
 			p[val] = (p[val] || 0) + 1; //increment counts
 		})
+	*/
 		return p
 	}
 
@@ -328,8 +334,7 @@ function renderAll(data){
 		var topics = v[4].split(',')
 		//var topics = v[4]
 		var topicName = ''
-
-		/*
+	
 		 topics.forEach (function(val, idx) {
 		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
 		 topicName = topicsMap[val]
@@ -337,11 +342,12 @@ function renderAll(data){
 		 p[topicName] = (p[topicName] || 0) - 1 //decrement counts
 		 })
 
-		 */
-
+		 
+/*
 		topics.forEach (function(val, idx) {
 			p[val] = (p[val] || 0) - 1; //increment counts
 		})
+	*/
 		return p
 	}
 
@@ -595,12 +601,13 @@ function renderAll(data){
 topicsChart.renderlet(function(chart){
 	// Select all rows of the topicsChart
 	// and loopover them to replace the IDs with Topic names
+	/*
 	topicsRows = topicsChart.selectAll('text.row')
 	topicsRows[0].forEach (function(val) {
 		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
 		val.textContent = topicsMap[val.__data__.key]
 	})
-
+	*/
 	// Solution based on https://groups.google.com/forum/#!topic/dc-js-user-group/JsgSb9103Wg
 	var newWidth = $('#topics-chart').width()
 	chart.select('svg')
