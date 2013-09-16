@@ -178,7 +178,7 @@ function filterData(urlFilter){
 	})
 
 	dataTable.fnClearTable()
-	pageSliceIndex = Math.min(50, fdata.length)
+	pageSliceIndex = Math.min(125, fdata.length)
 	dataTable.fnAddData(fdata.slice(0, pageSliceIndex))
 	
 	$.unblockUI()
@@ -424,8 +424,8 @@ function renderAll(data){
 
 	function addNextPageData(twids) {
 		if (pageSliceIndex < fdata.length) {
-			dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+11, fdata.length)), false)
-			pageSliceIndex = Math.min(pageSliceIndex+11, fdata.length)
+			dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+26, fdata.length)), false)
+			pageSliceIndex = Math.min(pageSliceIndex+26, fdata.length)
 			// launch a redraw keeping current pagination info (plugin)
 			dataTable.fnStandingRedraw()
 		}
