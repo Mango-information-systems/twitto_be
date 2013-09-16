@@ -436,15 +436,15 @@ function renderAll(data){
 	var ex = document.getElementById('twitter-datatable')
 	if ( ! $.fn.DataTable.fnIsDataTable( ex ) ) {
 		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "t<'row-fluid'<'span6 pull-right'p>",
-			"sAjaxDataProp": "",
-			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
-			"aaData": [	],
-			"asStripeClasses": [ ],
-
-			"sPaginationType": "bootstrap",
-			"aaSorting": [[ 3, "desc" ]],
-			"fnDrawCallback": function( oSettings ) {
+			"sDom": "t<'row-fluid'<'span6 pull-right'p>"
+			, "sAjaxDataProp": ""
+			, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
+			, "aaData": [	]
+			, "asStripeClasses": [ ]
+			, "iDisplayLength": 25
+			, "sPaginationType": "bootstrap"
+			, "aaSorting": [[ 3, "desc" ]]
+			, "fnDrawCallback": function( oSettings ) {
 				var pagination = this.fnPagingInfo()
 
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
@@ -457,16 +457,16 @@ function renderAll(data){
 					updateDataTable()
 				}
 
-			},
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			}
+			, "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				// identify users not yet cached, for which we should retrieve details via ajax call.
 				if (!twittosDetails[aData[0]].cached) {
 					twids.push(aData[0])
 				}
-			},
+			}
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
-			"aoColumnDefs": [
+			, "aoColumnDefs": [
 				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
 				, {
 					"sTitle": "Rank"
