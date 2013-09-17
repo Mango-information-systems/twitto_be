@@ -3,7 +3,7 @@
 <div class="row-fluid">
 	
 <div class="span8">
-	<h2 id="intro">Intro <small> What is twitto.be all about</small></h2>
+	<h2 id="intro">Intro <small> what is twitto.be all about</small></h2>
 	<p>
 		Twitto.be is a directory referencing Belgian twittos (users of twitter). It was launched in June 2013. It lets you explore the belgian twittosphere based on their location (province in Belgium), topics and language. <a href = "http://klout.com" target = "_blank">Klout</a> influence scores are used to rank the people.
 	</p>
