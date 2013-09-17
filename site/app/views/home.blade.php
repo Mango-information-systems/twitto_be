@@ -513,7 +513,7 @@ function renderAll(data){
 							+ oObj.aData[3]
 							+ '</a>'
 							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
-							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
+							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="profile pic" alt="profile pic" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
 							+ '</a>'
 							+ '</div>'
 							+ '<div class="media-body">'
