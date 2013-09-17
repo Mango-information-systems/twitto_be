@@ -640,7 +640,7 @@ function shareUrls(twittos) {
 		, shareUrl = ''
 		, shareText = ''
 		, shareVia = 'twitto_be'
-		, shareHashtags = 'twitto_be'
+		, shareHashtags = 'twittoBe'
 		, topThreeText = ''
 		, shareTitle = '90000+ Belgian tweeters ranked by influence - Twitto.be'
 	
