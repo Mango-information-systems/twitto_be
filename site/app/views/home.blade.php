@@ -29,6 +29,14 @@
 				<p>
 					<strong>Share</strong>
 				</p>
+				
+				<a id="sharetwitter" href="#" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
+				<a id="sharegoogle" href="#" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a>
+				<a id="sharefacebook" href="#" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
+				<a id="sharelinkedin" href="#" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a>
+				
+				
+				
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -109,6 +117,10 @@ var provincesMap = {
 	, topics
 	, provincesGroup
 	, topicsRows
+	, $shareTwitter = $('#sharetwitter')
+	, $shareGoogle = $('#sharegoogle')
+	, $shareFacebook = $('#sharefacebook')
+	, $shareLinkedin = $('#sharelinkedin')
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -123,7 +135,8 @@ function filterData(urlFilter){
 
 	fdata = filteredData.top(Infinity);
 	var scores = []
-
+		, topThree = []
+	
 	if(urlFilter != null){
 	// filter based on url params
 		if(urlFilter['topics'][0] != ''){
@@ -176,6 +189,12 @@ function filterData(urlFilter){
 	fdata.sort(function(a, b) {
 		return a[6] - b[6]
 	})
+	
+	
+	// Get top three twittos and pass them to the share function
+	topThree = fdata.slice(0,3)
+	topThree = _.pluck(topThree, 5)
+	shareUrls(topThree)
 
 	dataTable.fnClearTable()
 	pageSliceIndex = Math.min(125, fdata.length)
@@ -194,6 +213,7 @@ function historyPushState(){
 		, provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
 	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter)
+	$shareTwitter.attr('href', History.getState().url)
 }
 
 topicsChart.on('preRedraw', function(chart){
@@ -602,6 +622,45 @@ function blockPage(msg) {
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
 		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}
 	})
+}
+
+function shareUrls(twittos) {
+	var currentUrl = History.getState().url
+		, shareUrl = ''
+		, shareText = ''
+		, shareVia = 'twitto_be'
+		, shareHashtags = 'twitto_be'
+		, topThreeText = ''
+		, shareTitle = '90000+ Belgian tweeters ranked by influence - Twitto.be'
+	
+	shareUrl = History.getState().url
+	
+	twittos.forEach(function(val, idx){
+		twittos[idx] = '@' + val
+	})
+	
+	shareText = twittos.join(', ') + ' are in the ranking of top Belgian twittos'
+
+	//Twitter
+	shareUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(currentUrl) + 
+		'&text=' + encodeURIComponent(shareText) + '&via=' + encodeURIComponent(shareVia) + 
+		'&hashtags=' + encodeURIComponent(shareHashtags)
+	$shareTwitter.attr('href', shareUrl)
+	
+	//Google Plus
+	shareUrl = 'https://plus.google.com/share?url=' + encodeURIComponent(currentUrl) 
+	$shareGoogle.attr('href', shareUrl)
+	
+	//Facebook
+	shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentUrl) 
+	$shareFacebook.attr('href', shareUrl)
+
+	//Linkedin
+	shareUrl = 'http://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(currentUrl) +
+		'&title=' + encodeURIComponent(shareTitle) +  '&summary=' + encodeURIComponent(shareText) + 
+		'&source' + encodeURIComponent(shareVia)
+	$shareLinkedin.attr('href', shareUrl)
+
 }
 
 </script>

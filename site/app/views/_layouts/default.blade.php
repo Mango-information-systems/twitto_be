@@ -8,6 +8,12 @@
 	<meta name="author" content="Mango Information Systems SPRL">
 	<meta name="language" content="en">
 	<meta name="revised" content="{{ Config::get('app.reviseddate') }}" scheme="YYYY-MM-DD">
+	
+	<meta property="og:title" content="@yield('title') - Twitto.be" />
+	<meta property="og:image" content="{{ URL::asset('assets/img/twitto.be-0.4.png') }}"/>
+	<meta property="og:site_name" content="@yield('title') - Twitto.be"/>
+	<meta property="og:url" content="<?php echo Request::fullUrl(); ?>" />
+	<meta property="og:description" content="@yield('description')"/>
 
 	<!-- Le styles -->
 	{{ Basset::show('home.css') }}
@@ -49,7 +55,7 @@
 
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
-		<div class="container">
+		<div class="container-fluid">
 			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
