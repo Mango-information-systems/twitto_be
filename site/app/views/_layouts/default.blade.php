@@ -10,12 +10,7 @@
 	<meta name="revised" content="{{ Config::get('app.reviseddate') }}" scheme="YYYY-MM-DD">
 
 	<!-- Le styles -->
-	<link href="{{ URL::asset('assets/css/twitto-bootstrap.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/custom.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/feedback.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/dc.css') }}" rel="stylesheet">
-	<!-- DataTables CSS -->
-	<link href="{{ URL::asset('assets/css/jquery.dataTables.css') }}" rel="stylesheet">
+	{{ Basset::show('home.css') }}
 
 
 	<style type="text/css">
@@ -36,7 +31,6 @@
 			}
 		}
 	</style>
-	<link href="{{ URL::asset('assets/css/bootstrap-responsive.css') }}" rel="stylesheet">
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 	<!--[if lt IE 9]>
@@ -122,23 +116,7 @@
 <!-- Le javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
-<script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.placeholder.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/d3.js') }}"></script>
-<script src="{{ URL::asset('assets/js/crossfilter.v1.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dc.js') }}"></script>
-<script src="{{ URL::asset('assets/js/underscore-min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.history.js') }}"></script>
-<!-- DataTables -->
-<script src="{{ URL::asset('assets/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dataTables.bootstrap.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dataTables.paging.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dataTables.fnStandingRedraw.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.blockUI.js') }}"></script>
+{{ Basset::show('home.js') }}
 
 
 @if(!Config::get('app.debug'))
