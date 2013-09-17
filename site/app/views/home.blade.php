@@ -27,18 +27,8 @@
 			
 			<div class="span3">
 				<p>
-					<strong>Search</strong>
-					<a class="reset" id="clearbutton" href="#" style="display: none;">reset</a>
+					<strong>Share</strong>
 				</p>
-				<div class="input-append">
-					<input type="text" class="input-large" id="searchfield" placeholder="keyword(s) or @username(s)">
-					<button class="btn" type="button" id="searchbutton"><i class="icon-search"></i></button>
-					
-				</div>
-				<div class="alert" id="nodata">
-					<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<strong>Warning!</strong> Your search didn't retrieve any data.
-				</div>
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -119,13 +109,6 @@ var provincesMap = {
 	, topics
 	, provincesGroup
 	, topicsRows
-	, $searchField
-	, $searchButton
-	, enterPressed = false
-	, $nodata = $('#nodata')
-	, $searchField = $('#searchfield')
-	, $searchButton = $('#searchbutton')
-	, $clearButton = $('#clearbutton')
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -134,7 +117,6 @@ urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
 urlFilters['locations'] = urlFilters['locations'].split(',')
 urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
 urlFilters['languages'] = urlFilters['languages'].split(',')
-urlFilters['searchString'] = '<?php echo $filters['searchString']; ?>'
 
 function filterData(urlFilter){
 // crossfilter data
@@ -196,77 +178,42 @@ function filterData(urlFilter){
 	})
 
 	dataTable.fnClearTable()
-	pageSliceIndex = Math.min(50, fdata.length)
+	pageSliceIndex = Math.min(125, fdata.length)
 	dataTable.fnAddData(fdata.slice(0, pageSliceIndex))
+	
+	$.unblockUI()
 	
 }
 
 function historyPushState(){
+	//After every filter we need to refresh the chart to get the correct color range
+	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
+	beChart.redraw()
+	
 	var topicsFilter = topicsChart.filters().join(',')
 		, provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
-		, searchFilter = $searchField.val()
-	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter +
-		'&search=' + searchFilter)
+	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter)
 }
 
 topicsChart.on('preRedraw', function(chart){
 	historyPushState()
-	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
 })
 topicsChart.on('postRedraw', function(chart){
-	$.unblockUI()
 	filterData(null)
 })
 
 //Split functions
-function getRemoteData(searchStr){
-
-	if(!allTwittos) {
-		d3.json('json/users.json/search', function (data) {
-			allTwittos = data
-			if(searchStr==''){
-				renderAll(allTwittos)
-			}
-		})
-	} else {
-		if(searchStr==''){
-			renderAll(allTwittos)
-		}
-	}
-
-	if(searchStr!=''){
-		d3.json('json/users.json/search/'+searchStr, function (data) {
-			renderAll(data)
-		})
-	}
-
+function getRemoteData(){
+	d3.json('json/users.json/search', function (data) {
+		allTwittos = data
+		renderAll(allTwittos)
+	})
 }
 
 function renderAll(data){
 
-	/*
-	 data.tw_user.forEach(function(val, idx){
-
-	 var topics = val[4].split(',')
-	 var replacedTopics = []
-
-	 topics.forEach (function(val, idx) {
-	 topics[idx] = topicsMap[val]
-	 if(topics[idx] != undefined){
-	 replacedTopics.push(topicsMap[val])
-	 }
-	 })
-	 data.tw_user[idx][4] = replacedTopics;
-	 })
-	 */
-
 // TODO: make server return numeric data type instead of string
-	if(data.tw_user.length == 0){
-		$nodata.show()
-		$.unblockUI()
-		return
-	}
 
 	// feed it through crossfilter
 	var ndx = crossfilter(data.tw_user)
@@ -280,9 +227,14 @@ function renderAll(data){
 		//var topics = d[4]
 
 		var topics = d[4].split(',')
+		
+		topics.forEach (function(val, idx) {
+			topics[idx] = topicsMap[val]
+		})
+				
 		return topics
 	});
-
+	
 	var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
 	// hack to make dc.js charts work
@@ -303,20 +255,22 @@ function renderAll(data){
 	function reduceAdd(p, v) {
 		var topics = v[4].split(',')
 		//var topics = v[4]
-
+		
 		var topicName = ''
-		/*
-		 topics.forEach (function(val, idx) {
-		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
-		 topicName = topicsMap[val]
-		 if(topicName != undefined)
-		 p[topicName] = (p[topicName] || 0) + 1 //increment counts
-		 })
-		 */
-
+		
+		topics.forEach (function(val, idx) {
+			//Add new entries with the text from the topicsMap, keep the rest - should be removed
+			topicName = topicsMap[val]
+			if(topicName != undefined){
+				p[topicName] = (p[topicName] || 0) + 1 //increment counts
+			}
+		})
+		 
+		 /*
 		topics.forEach (function(val, idx) {
 			p[val] = (p[val] || 0) + 1; //increment counts
 		})
+	*/
 		return p
 	}
 
@@ -324,20 +278,21 @@ function renderAll(data){
 		var topics = v[4].split(',')
 		//var topics = v[4]
 		var topicName = ''
-
-		/*
+	
 		 topics.forEach (function(val, idx) {
-		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
-		 topicName = topicsMap[val]
-		 if(topicName != undefined)
-		 p[topicName] = (p[topicName] || 0) - 1 //decrement counts
+			//Add new entries with the text from the topicsMap, keep the rest - should be removed
+			topicName = topicsMap[val]
+			if(topicName != undefined) {
+			   p[topicName] = (p[topicName] || 0) - 1 //decrement counts
+			}
+		 
 		 })
-
-		 */
-
+		 
+/*
 		topics.forEach (function(val, idx) {
 			p[val] = (p[val] || 0) - 1; //increment counts
 		})
+	*/
 		return p
 	}
 
@@ -469,8 +424,8 @@ function renderAll(data){
 
 	function addNextPageData(twids) {
 		if (pageSliceIndex < fdata.length) {
-			dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+11, fdata.length)), false)
-			pageSliceIndex = Math.min(pageSliceIndex+11, fdata.length)
+			dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+26, fdata.length)), false)
+			pageSliceIndex = Math.min(pageSliceIndex+26, fdata.length)
 			// launch a redraw keeping current pagination info (plugin)
 			dataTable.fnStandingRedraw()
 		}
@@ -481,15 +436,15 @@ function renderAll(data){
 	var ex = document.getElementById('twitter-datatable')
 	if ( ! $.fn.DataTable.fnIsDataTable( ex ) ) {
 		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "t<'row-fluid'<'span6 pull-right'p>",
-			"sAjaxDataProp": "",
-			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
-			"aaData": [	],
-			"asStripeClasses": [ ],
-
-			"sPaginationType": "bootstrap",
-			"aaSorting": [[ 3, "desc" ]],
-			"fnDrawCallback": function( oSettings ) {
+			"sDom": "t<'row-fluid'<'span6 pull-right'p>"
+			, "sAjaxDataProp": ""
+			, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
+			, "aaData": [	]
+			, "asStripeClasses": [ ]
+			, "iDisplayLength": 25
+			, "sPaginationType": "bootstrap"
+			, "aaSorting": [[ 3, "desc" ]]
+			, "fnDrawCallback": function( oSettings ) {
 				var pagination = this.fnPagingInfo()
 
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
@@ -502,16 +457,16 @@ function renderAll(data){
 					updateDataTable()
 				}
 
-			},
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			}
+			, "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				// identify users not yet cached, for which we should retrieve details via ajax call.
 				if (!twittosDetails[aData[0]].cached) {
 					twids.push(aData[0])
 				}
-			},
+			}
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
-			"aoColumnDefs": [
+			, "aoColumnDefs": [
 				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
 				, {
 					"sTitle": "Rank"
@@ -569,29 +524,22 @@ function renderAll(data){
 	}// End check if datatable is initialized
 
 	filteredData = languagesDimension;
-
-	// Keep the following disabled so that we actually see the difference between
-	// just rendering the charts and how much time the datatable takes to load
-		filterData(urlFilters)
-	if(enterPressed){
-		filterData(urlFilters)
-	} else {
-		filterData(null)
-	}
-
-
+	
+	filterData(urlFilters)
+	
 } //renderAll END
 
 // renderlet function
 topicsChart.renderlet(function(chart){
 	// Select all rows of the topicsChart
 	// and loopover them to replace the IDs with Topic names
+	/*
 	topicsRows = topicsChart.selectAll('text.row')
 	topicsRows[0].forEach (function(val) {
 		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
 		val.textContent = topicsMap[val.__data__.key]
 	})
-
+	*/
 	// Solution based on https://groups.google.com/forum/#!topic/dc-js-user-group/JsgSb9103Wg
 	var newWidth = $('#topics-chart').width()
 	chart.select('svg')
@@ -644,47 +592,12 @@ function resizeend() {
 	}
 }
 
-// On enter call the function which retrieves new data
-$searchField.val(urlFilters['searchString'])
-$searchField.on('keypress',function(e){
-	var keyPressed = e.which
-	if(keyPressed == 13){
-		blockPage(' Loading ... ')
-		getRemoteData($searchField.val())
-		historyPushState()
-		e.preventDefault()
-	}
-});
-
-$searchButton.on('click',function(e){
-	blockPage(' Loading ... ')
-	enterPressed  = true
-	getRemoteData($searchField.val())
-	historyPushState()
-	e.preventDefault()
-});
-
-$clearButton.on('click',function(e){
-	$searchField.val('')
-	blockPage(' Loading ... ')
-	getRemoteData('')
-	historyPushState()
-	e.preventDefault()
-});
-
 $(function() {
 	blockPage(' Initializing ... ')
-	getRemoteData($searchField.val())
-
+	getRemoteData()
 })
 
 function blockPage(msg) {
-	if($searchField.val() == ''){
-		$clearButton.hide()
-	} else {
-		$clearButton.show()
-	}
-	$nodata.hide()
 	$.blockUI({
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
 		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}
