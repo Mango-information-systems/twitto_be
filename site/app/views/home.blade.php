@@ -121,6 +121,7 @@ var provincesMap = {
 	, $shareGoogle = $('#sharegoogle')
 	, $shareFacebook = $('#sharefacebook')
 	, $shareLinkedin = $('#sharelinkedin')
+	, resized = false
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -131,6 +132,12 @@ urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
 urlFilters['languages'] = urlFilters['languages'].split(',')
 
 function filterData(urlFilter){
+	// Check if we just resized. 
+	// If resized, we do not need to do the rest
+	if(resized){
+		resized = false
+		return
+	}
 // crossfilter data
 
 	fdata = filteredData.top(Infinity);
@@ -219,6 +226,9 @@ function historyPushState(){
 topicsChart.on('preRedraw', function(chart){
 	historyPushState()
 })
+
+// You might be wondering why I do this on postRedraw and not on filtered
+// Cause filtered only fires when we set a filter and not when we unset
 topicsChart.on('postRedraw', function(chart){
 	filterData(null)
 })
@@ -608,6 +618,7 @@ function resizeend() {
 		setTimeout(resizeend, delta)
 	} else {
 		timeout = false
+		resized = true
 		dc.redrawAll()
 	}
 }
@@ -642,21 +653,21 @@ function shareUrls(twittos) {
 	shareText = twittos.join(', ') + ' are in the ranking of top Belgian twittos'
 
 	//Twitter
-	shareUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(currentUrl) + 
+	shareUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(currentUrl.replace(' ', '+')) + 
 		'&text=' + encodeURIComponent(shareText) + '&via=' + encodeURIComponent(shareVia) + 
 		'&hashtags=' + encodeURIComponent(shareHashtags)
 	$shareTwitter.attr('href', shareUrl)
 	
 	//Google Plus
-	shareUrl = 'https://plus.google.com/share?url=' + encodeURIComponent(currentUrl) 
+	shareUrl = 'https://plus.google.com/share?url=' + encodeURIComponent(currentUrl.replace(' ', '+'))
 	$shareGoogle.attr('href', shareUrl)
 	
 	//Facebook
-	shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentUrl) 
+	shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentUrl.replace(' ', '+'))
 	$shareFacebook.attr('href', shareUrl)
 
 	//Linkedin
-	shareUrl = 'http://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(currentUrl) +
+	shareUrl = 'http://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(currentUrl	.replace(' ', '+')) +
 		'&title=' + encodeURIComponent(shareTitle) +  '&summary=' + encodeURIComponent(shareText) + 
 		'&source' + encodeURIComponent(shareVia)
 	$shareLinkedin.attr('href', shareUrl)
