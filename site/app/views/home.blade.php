@@ -47,6 +47,13 @@
 	</div>
 
 </div>
+<div class="row-fluid">
+	<div class="alert alert-success">
+		<h3>Audience segmentation for professionals</h3>
+		<p>Do you really know who is following you? <a target="_blank" href="http://tribalytics.com">Tribalytics</a> <strong>segments your twitter followers</strong> into like minded communities, identifies the most connected individuals and <strong>helps you monitor how the competition are doing</strong>.</p>
+		<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary">visit tribalytics.com »</a></p>
+	</div>
+</div>
 @stop
 
 {{-- Web site Title --}}
