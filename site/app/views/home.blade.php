@@ -151,19 +151,19 @@ function filterData(urlFilter){
 	if(urlFilter != null){
 	// filter based on url params
 		if(urlFilter['topics'][0] != ''){
-			urlFilter['topics'].forEach(function(d){
+			_.forEach(urlFilter['topics'], function(d){
 				topicsChart.filter(d)
 			})
 		}
 
 		if(urlFilter['locations'][0] != ''){
-			urlFilter['locations'].forEach(function(d){
+			_.forEach(urlFilter['locations'], function(d){
 				beChart.filter(d)
 			})
 		}
 
 		if(urlFilter['languages'][0] != ''){
-			urlFilter['languages'].forEach(function(d){
+			_.forEach(urlFilter['languages'], function(d){
 				languagesChart.filter(d)
 			})
 		}
@@ -283,7 +283,7 @@ function renderAll(data){
 	var topicsDimension = ndx.dimension(function(d){
 
 		var topics = d[4].split(',')
-		topics.forEach (function(val, idx) {
+		_.forEach (topics, function(val, idx) {
 			topics[idx] = topicsMap[val]
 		})
 				
@@ -313,7 +313,7 @@ function renderAll(data){
 		
 		var topicName = ''
 		
-		topics.forEach (function(val, idx) {
+		_.forEach(topics, function(val, idx) {
 			//Add new entries with the text from the topicsMap, keep the rest - should be removed
 			topicName = topicsMap[val]
 			if(topicName != undefined){
@@ -321,11 +321,6 @@ function renderAll(data){
 			}
 		})
 		 
-		 /*
-		topics.forEach (function(val, idx) {
-			p[val] = (p[val] || 0) + 1; //increment counts
-		})
-	*/
 		return p
 	}
 
@@ -334,7 +329,7 @@ function renderAll(data){
 		//var topics = v[4]
 		var topicName = ''
 	
-		 topics.forEach (function(val, idx) {
+		 _.forEach(topics, function(val, idx) {
 			//Add new entries with the text from the topicsMap, keep the rest - should be removed
 			topicName = topicsMap[val]
 			if(topicName != undefined) {
@@ -343,11 +338,6 @@ function renderAll(data){
 		 
 		 })
 		 
-/*
-		topics.forEach (function(val, idx) {
-			p[val] = (p[val] || 0) - 1; //increment counts
-		})
-	*/
 		return p
 	}
 
@@ -372,7 +362,7 @@ function renderAll(data){
 
 	var languagesDomain = ['']
 
-	languagesGroup.all().forEach(function (e){
+	_.forEach(languagesGroup.all(), function (e){
 		languagesDomain.push(e.key)
 	})
 
@@ -585,26 +575,17 @@ function renderAll(data){
 
 // renderlet function
 topicsChart.renderlet(function(chart){
-	// Select all rows of the topicsChart
-	// and loopover them to replace the IDs with Topic names
-	/*
-	topicsRows = topicsChart.selectAll('text.row')
-	topicsRows[0].forEach (function(val) {
-		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
-		val.textContent = topicsMap[val.__data__.key]
-	})
-	*/
-	// Solution based on https://groups.google.com/forum/#!topic/dc-js-user-group/JsgSb9103Wg
+// setup chart responsiveness
 	var newWidth = $('#topics-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth )
 		.attr('height', newWidth * 25 / 30  )
 		.attr('viewBox', '0 0 300 250')
 		.attr('preserveAspectRatio', 'xMinYMin')
-
 })
 
 beChart.renderlet(function(chart){
+// setup chart responsiveness
 	var newWidth = $('#be-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth)
@@ -616,6 +597,7 @@ beChart.renderlet(function(chart){
 })
 
 languagesChart.renderlet(function(chart){
+// setup chart responsiveness
 	var newWidth = $('#languages-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth )
@@ -670,7 +652,7 @@ function shareUrls(twittos) {
 	
 	shareUrl = History.getState().url
 	
-	twittos.forEach(function(val, idx){
+	_.forEach(twittos, function(val, idx){
 		twittos[idx] = '@' + val
 	})
 	
