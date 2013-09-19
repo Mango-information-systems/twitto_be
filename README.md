@@ -28,7 +28,8 @@ The website itself is contained in the directory `site`. [php composer](http://g
 6. update the google analytics tracking code in `twitto_be/site/app/views/_layouts/default.blade.php`, at line 31
 7. update the feedback form's email address in line 59 of `site/app/controllers/HomeController.php` (email address to which the feedback messages should be sent)
 8. make sure that all files and directories are readable by the server's user. folder `site/app/storage` and its content should also have write permissions
-9. Configure your web server (apache, nginx) to serve the location `site`
+9. run `php artisan basset:build --production` to compile all css and javascript files
+10. Configure your web server (apache, nginx) to serve the location `site`
 
 If you need help to customize the map display, have a look at @mbostock's [article](http://bost.ocks.org/mike/map/)
 
