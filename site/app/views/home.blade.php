@@ -30,10 +30,10 @@
 					<strong>Share</strong>
 				</p>
 				
-				<a id="sharetwitter" href="#" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
-				<a id="sharegoogle" href="#" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a>
-				<a id="sharefacebook" href="#" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
-				<a id="sharelinkedin" href="#" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a>
+				<p><a id="sharetwitter" href="#" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
+				<a id="sharegoogle" href="#" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a></p>
+				<p><a id="sharefacebook" href="#" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
+				<a id="sharelinkedin" href="#" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a></p>
 				
 				
 				
