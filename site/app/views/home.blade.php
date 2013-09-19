@@ -124,6 +124,7 @@ var provincesMap = {
 	, $shareGoogle = $('#sharegoogle')
 	, $shareFacebook = $('#sharefacebook')
 	, $shareLinkedin = $('#sharelinkedin')
+	, $inPageTitle = $('h1:first') // page title inside the page
 	, resized = false
 
 var urlFilters = []
@@ -151,7 +152,7 @@ function filterData(urlFilter){
 	// filter based on url params
 		if(urlFilter['topics'][0] != ''){
 			urlFilter['topics'].forEach(function(d){
-				topicsChart.filter(d);
+				topicsChart.filter(d)
 			})
 		}
 
@@ -214,16 +215,39 @@ function filterData(urlFilter){
 }
 
 function historyPushState(){
-	//After every filter we need to refresh the chart to get the correct color range
+// update page history state, page title, and chart color range
+	// after every filter we need to refresh the chart to update the correct color range
 	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
 	beChart.redraw()
 	
 	var topicsFilter = topicsChart.filters().join(',')
 		, provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
-	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter)
-	// is the line below here by mistake ?
-	//$shareTwitter.attr('href', History.getState().url)
+		, newTitle = 'top twitter influencers'
+		, queryString = '?'
+		
+	if (topicsFilter.length > 0) { 
+		newTitle += ' <small>about</small> ' + topicsFilter
+		queryString += 'topics=' + topicsFilter + '&'
+	}
+	if (provincesFilter.length > 0) {
+		 newTitle += ' <small>from</small> ' + provincesFilter.replace('not set', 'unknown location')
+		 queryString += 'locations=' + provincesFilter + '&'
+	}
+	if (languagesFilter.length > 0) {
+		newTitle += '<small> tweeting in ' + languagesFilter + '</small>'
+		queryString += 'languages=' + languagesFilter
+	}
+		
+	if (topicsFilter.length == 0 && provincesFilter.length == 0 && languagesFilter.length== 0) {
+		newTitle += ' in Belgium by topic, location and language'
+	}
+	
+	// this updates the title in page (h1)	
+	$inPageTitle.html(newTitle)
+	
+	// this updates the page url and title meta tag
+	History.pushState(null, newTitle.replace(/(<small>|<\/small>)/g,''), queryString)
 }
 
 topicsChart.on('preRedraw', function(chart){
@@ -257,10 +281,8 @@ function renderAll(data){
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
 	// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
 	var topicsDimension = ndx.dimension(function(d){
-		//var topics = d[4]
 
 		var topics = d[4].split(',')
-		
 		topics.forEach (function(val, idx) {
 			topics[idx] = topicsMap[val]
 		})
