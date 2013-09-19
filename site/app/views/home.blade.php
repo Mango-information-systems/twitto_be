@@ -30,13 +30,10 @@
 					<strong>Share</strong>
 				</p>
 				
-				<p><a id="sharetwitter" href="#" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
-				<a id="sharegoogle" href="#" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a></p>
-				<p><a id="sharefacebook" href="#" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
-				<a id="sharelinkedin" href="#" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a></p>
-				
-				
-				
+				<p><a id="sharetwitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fdtwitto.be&text=Exploring%20top%20twitter%20influencers%20in%20Belgium&via=twitto_be&hashtags=twittoBe" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
+				<a id="sharegoogle" href="https://plus.google.com/share?url=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a></p>
+				<p><a id="sharefacebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
+				<a id="sharelinkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fdtwitto.be&title=90000%2B%20Belgian%20tweeters%20ranked%20by%20influence%20-%20Twitto.be&summary=%40NATO%2C%20%40EU_Commission%2C%20%40Clijsterskim%20are%20in%20the%20ranking%20of%20top%20Belgian%20twittos&sourcetwitto_be" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a></p>
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -225,7 +222,8 @@ function historyPushState(){
 		, provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
 	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter)
-	$shareTwitter.attr('href', History.getState().url)
+	// is the line below here by mistake ?
+	//$shareTwitter.attr('href', History.getState().url)
 }
 
 topicsChart.on('preRedraw', function(chart){
