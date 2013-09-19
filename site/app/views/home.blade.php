@@ -2,30 +2,28 @@
 @section('main')
 <div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
-	<div class="span12">		
+	<div class="span3">
 		<div class="row-fluid">
-			<div class="span3" id="topics-chart">
+			<div id="topics-chart">
 				<strong>Topics filters</strong>
 				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
 				<div class="clearfix"></div>
 			</div>
-			<div class="span3" id="be-chart">
+			<div id="be-chart">
 				<p><strong>Provinces filters</strong></p>
 				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
 
 				<div class="clearfix"></div>
 			</div>
-			
-			<div class="span3" id="languages-chart">
+			<div id="languages-chart">
 				<strong>Languages filters</strong>
 				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
 				<div class="clearfix"></div>
 			</div>
-			
-			<div class="span3">
+			<div>
 				<p>
 					<strong>Share</strong>
 				</p>
@@ -36,13 +34,14 @@
 				<a id="sharelinkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fdtwitto.be&title=90000%2B%20Belgian%20tweeters%20ranked%20by%20influence%20-%20Twitto.be&summary=%40NATO%2C%20%40EU_Commission%2C%20%40Clijsterskim%20are%20in%20the%20ranking%20of%20top%20Belgian%20twittos&sourcetwitto_be" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a></p>
 			</div>
 		</div>
+	</div>
+	<div class="span9">
 		<div class="row-fluid">
-			<div class="span10 offset1">
+			<div class="span12">
 				<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 			</div>
 		</div>
 	</div>
-
 </div>
 <div class="row-fluid">
 	<div class="alert alert-success">
