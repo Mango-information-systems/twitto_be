@@ -96,8 +96,7 @@ var provincesMap = {
 		, 'ot' : 'Other'
 	}
 	, topicsMap = {
-		'-1' : 'Unassigned'
-		, 1 : 'Belgium'
+		1 : 'Belgium'
 		, 2 : 'Business'
 		, 3 : 'Design'
 		, 4 : 'Entertainment'
@@ -109,9 +108,9 @@ var provincesMap = {
 	}
 	, projection = d3.geo.mercator()
 		.center([5, 48.9])
-		.scale(700 * 6)
+		.scale(600 * 6)
 // TODO: dynamically set width and height according to chart dimensions
-		.translate([370 / 2, 300])
+		.translate([370 / 2, 250])
     , topicsChart = dc.rowChart("#topics-chart")
 	, beChart = dc.geoChoroplethChart("#be-chart")
 	, languagesChart = dc.rowChart("#languages-chart")
@@ -203,7 +202,6 @@ function filterData(urlFilter){
 	fdata.sort(function(a, b) {
 		return a[6] - b[6]
 	})
-	
 	
 	// Get top three twittos and pass them to the share function
 	topThree = fdata.slice(0,3)
@@ -369,7 +367,6 @@ function renderAll(data){
 		.filterHandler(function(dimension, filter){
 			dimension.filter(function(d) {
 				var found = false
-
 				//if there are no filters, return true
 				if (topicsChart.filters().length == 0){
 					return true
@@ -387,7 +384,7 @@ function renderAll(data){
 		.xAxis().ticks(4)
 
 	beChart.width(300)
-		.height(300)
+		.height(200)
 		.dimension(provincesDimension)
 		.group(provincesGroup)
 		.colors(["#ffe6d5", "#ffccaa", "#ffb380", "#ff9955", "#ff7f2a", "#ff6600", "#d45500", "#aa4400", "#803300", "#803300"])
@@ -591,8 +588,8 @@ beChart.renderlet(function(chart){
 	var newWidth = $('#be-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth)
-		.attr('height', newWidth )
-		.attr('viewBox', '0 0 300 300')
+		.attr('height', newWidth * 2 / 3 )
+		.attr('viewBox', '0 0 300 200')
 		.attr('preserveAspectRatio', 'xMinYMin')
 	// adapt containers' height
 	$('#be-chart').height(newWidth)
