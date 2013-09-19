@@ -8,9 +8,9 @@ class HomeController extends BaseController {
 	|--------------------------------------------------------------------------
 	*/
 	public function index(){
-		$page_title = '90000+ Belgian tweeters ranked by influence';
-		$page_desc = 'twitto.be lets you explore the Belgian twitter users community.';
-		$h1_title = 'Belgians on twitter, ranked by influence';
+		$page_title = 'top twitter influencers in Belgium by topic, location and language';
+		$page_desc = 'twitto.be lets you explore the Belgian twittos, ranked by their Klout score, with powerful filters and visualizations';
+		$h1_title = 'top twitter influencers in Belgium by topic, location and language';
 
 		$category_id = 0;
 
