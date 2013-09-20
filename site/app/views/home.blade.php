@@ -23,28 +23,26 @@
 
 				<div class="clearfix"></div>
 			</div>
-			<div>
-				<p>
-					<strong>Share</strong>
-				</p>
-				
-				<p><a id="sharetwitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fdtwitto.be&text=Exploring%20top%20twitter%20influencers%20in%20Belgium&via=twitto_be&hashtags=twittoBe" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
-				<a id="sharegoogle" href="https://plus.google.com/share?url=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a></p>
-				<p><a id="sharefacebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
-				<a id="sharelinkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fdtwitto.be&title=90000%2B%20Belgian%20tweeters%20ranked%20by%20influence%20-%20Twitto.be&summary=%40NATO%2C%20%40EU_Commission%2C%20%40Clijsterskim%20are%20in%20the%20ranking%20of%20top%20Belgian%20twittos&sourcetwitto_be" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a></p>
-			</div>
 		</div>
 	</div>
-	<div class="span9">
-		<div class="row-fluid">
-			<div class="span12">
-				<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
-			</div>
-		</div>
+	<div class="span8">
+		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+	</div>
+	<div class="span1">
+		<p>
+			<strong>Share</strong>
+		</p>
+		
+		<p>
+			<a id="sharetwitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fdtwitto.be&text=Exploring%20top%20twitter%20influencers%20in%20Belgium&via=twitto_be&hashtags=twittoBe" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
+			<a id="sharegoogle" href="https://plus.google.com/share?url=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a>
+			<a id="sharefacebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
+			<a id="sharelinkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fdtwitto.be&title=90000%2B%20Belgian%20tweeters%20ranked%20by%20influence%20-%20Twitto.be&summary=%40NATO%2C%20%40EU_Commission%2C%20%40Clijsterskim%20are%20in%20the%20ranking%20of%20top%20Belgian%20twittos&sourcetwitto_be" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a>
+		</p>
 	</div>
 </div>
 <div class="row-fluid">
-	<div class="alert alert-success">
+	<div class="alert alert-info">
 		<h3>Audience segmentation for professionals</h3>
 		<p>Do you really know who is following you? <a target="_blank" href="http://tribalytics.com">Tribalytics</a> <strong>segments your twitter followers</strong> into like minded communities, identifies the most connected individuals and <strong>helps you monitor how the competition are doing</strong>.</p>
 		<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary">visit tribalytics.com »</a></p>
@@ -371,7 +369,7 @@ function renderAll(data){
 		.group(topicsGroup)
 		.dimension(topicsDimension)
 		.title(function(d){return d.value + ' twittos'})
-		.colors(["#ff7F2A"])
+		.colors(["#71c837"])
 		.elasticX(true)
 		.filterHandler(function(dimension, filter){
 			dimension.filter(function(d) {
@@ -396,7 +394,7 @@ function renderAll(data){
 		.height(200)
 		.dimension(provincesDimension)
 		.group(provincesGroup)
-		.colors(["#ffe6d5", "#ffccaa", "#ffb380", "#ff9955", "#ff7f2a", "#ff6600", "#d45500", "#aa4400", "#803300", "#803300"])
+		.colors(['#e3f4d7', '#c6e9af', '#aade87', '#8dd35f', '#71c837', '#5aa02c', '#447821', '#2d5016'])
 		.projection(projection)
 		.overlayGeoJson(provinces.features, 'state', function (d) {
 			return d.properties.name
@@ -411,7 +409,7 @@ function renderAll(data){
 		.group(languagesGroup)
 		.dimension(languagesDimension)
 		.title(function(d){return d.value + ' twittos'})
-		.colors(["#ff7F2A"])
+		.colors(["#71c837"])
 		.elasticX(true)
 		.xAxis().ticks(4)
 
