@@ -261,16 +261,6 @@ function historyPushState(){
 	History.pushState(null, newTitle.replace(/(<small>|<\/small>)/g,''), queryString)
 }
 
-topicsChart.on('preRedraw', function(chart){
-	historyPushState()
-})
-
-// You might be wondering why I do this on postRedraw and not on filtered
-// Cause filtered only fires when we set a filter and not when we unset
-topicsChart.on('postRedraw', function(chart){
-	filterData(null)
-})
-
 //Split functions
 function getRemoteData(){
 	d3.json('json/users.json/search', function (data) {
@@ -283,7 +273,6 @@ function getRemoteData(){
 function renderAll(data){
 
 // TODO: make server return numeric data type instead of string
-console.time('crossfilter data feed')
 	// feed it through crossfilter
 	var ndx = crossfilter(data.tw_user)
 
@@ -293,18 +282,13 @@ console.time('crossfilter data feed')
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
 	// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
 	
-console.time('topics dim')
 	var topicsDimension = ndx.dimension(function(d){
 
 		var topics = d[4].split(',')
-		_.forEach (topics, function(val, idx) {
-			topics[idx] = topicsMap[val]
-		})
-				
+
 		return topics
 	});
-console.timeEnd('topics dim')
-console.time('topics group')
+
 	var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
 	// hack to make dc.js charts work
@@ -324,34 +308,19 @@ console.time('topics group')
 	// Reduce functions to be used by topicsGroup
 	function reduceAdd(p, v) {
 		var topics = v[4].split(',')
-		//var topics = v[4]
-		
-		var topicName = ''
-		
-		_.forEach(topics, function(val, idx) {
-			//Add new entries with the text from the topicsMap, keep the rest - should be removed
-			topicName = topicsMap[val]
-			if(topicName != undefined){
-				p[topicName] = (p[topicName] || 0) + 1 //increment counts
-			}
+
+		_.forEach (topics, function(val, idx) {
+			p[val] = (p[val] || 0) + 1; //increment counts
 		})
-		 
 		return p
 	}
 
 	function reduceRemove(p, v) {
 		var topics = v[4].split(',')
-		//var topics = v[4]
-		var topicName = ''
-	
-		 _.forEach(topics, function(val, idx) {
-			//Add new entries with the text from the topicsMap, keep the rest - should be removed
-			topicName = topicsMap[val]
-			if(topicName != undefined) {
-			   p[topicName] = (p[topicName] || 0) - 1 //decrement counts
-			}
-		 })
 		 
+		_.forEach (topics, function(val, idx) {
+			p[val] = (p[val] || 0) - 1; // decrement counts
+		}) 
 		return p
 	}
 
@@ -359,35 +328,25 @@ console.time('topics group')
 		return {}
 	}
 
-console.timeEnd('topics group')
-console.time('provinces dim')
 	var provincesDimension = ndx.dimension(function (d) {
 		// lookup province name from province id
 		return provincesMap[d[2]]
 	})
-console.timeEnd('provinces dim')
-console.time('provinces group')
 	provincesGroup = provincesDimension.group()
-console.timeEnd('provinces group')
-console.time('lang dim')
 
 	var languagesDimension = ndx.dimension(function (d) {
+// grouping other languages
 		return languagesMap[d[1]] || 'Other'
 	})
-console.timeEnd('lang dim')
-console.time('lang group')
+
 	var languagesGroup = languagesDimension.group()
-console.timeEnd('lang group')
-
-console.timeEnd('crossfilter data feed')
-
-console.time('charts init')
 
 	topicsChart.width(300)
 		.height(250)
-		.margins({top: 20, left: 10, right: 10, bottom: 20})
+		.margins({top: 5, left: 10, right: 10, bottom: 20})
 		.group(topicsGroup)
 		.dimension(topicsDimension)
+		.label(function(d) { return topicsMap[d.key] })
 		.title(function(d){return d.value + ' twittos'})
 		.colors(["#71c837"])
 		.elasticX(true)
@@ -415,7 +374,6 @@ console.time('charts init')
 		.dimension(provincesDimension)
 		.group(provincesGroup)
 		.colors(['#c6e9af', '#aade87', '#8dd35f', '#71c837', '#5aa02c', '#447821'])
-		.colorDomain([0, 90000])
 		.projection(projection)
 		.overlayGeoJson(provinces.features, 'state', function (d) {
 			return d.properties.name
@@ -433,8 +391,6 @@ console.time('charts init')
 		.colors(["#71c837"])
 		.elasticX(true)
 		.xAxis().ticks(4)
-
-console.timeEnd('charts init')
 
 	dc.renderAll()
 	var xHR
@@ -613,18 +569,25 @@ console.timeEnd('charts init')
 	
 } //renderAll END
 
-// renderlet function
-topicsChart.renderlet(function(chart){
+// You might be wondering why I do this on postRedraw and not on filtered
+// Cause filtered only fires when we set a filter and not when we unset
+topicsChart.on('postRedraw', function(chart){
+	filterData(null)
+})
+
 // setup chart responsiveness
+topicsChart.on("preRedraw", function(chart) {
 	var newWidth = $('#topics-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth )
 		.attr('height', newWidth * 25 / 30  )
 		.attr('viewBox', '0 0 300 250')
 		.attr('preserveAspectRatio', 'xMinYMin')
+	historyPushState()
 })
 
-beChart.renderlet(function(chart){
+//beChart.renderlet(function(chart){
+beChart.on("preRedraw", function(chart){
 // setup chart responsiveness
 	var newWidth = $('#be-chart').width()
 	chart.select('svg')
@@ -636,7 +599,8 @@ beChart.renderlet(function(chart){
 	$('#be-chart').height(newWidth * 2 / 3 + 30)
 })
 
-languagesChart.renderlet(function(chart){
+//languagesChart.renderlet(function(chart){
+languagesChart.on("preRedraw", function(chart){
 // setup chart responsiveness
 	var newWidth = $('#languages-chart').width()
 	chart.select('svg')
