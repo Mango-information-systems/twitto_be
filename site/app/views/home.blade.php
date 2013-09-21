@@ -584,7 +584,6 @@ function renderAll(data){
 		} else {
 			timeout = false
 			resized = true
-			console.log('resize redraw')
 			dc.redrawAll()
 		}
 	}
