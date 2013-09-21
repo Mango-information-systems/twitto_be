@@ -47,10 +47,6 @@
     background-position: top;
 }
 
-#main-container {
-	min-height: 800px;
-}
-
 /* Datatable widths */
 #twitter-datatable td:nth-child(1){
 	max-width: 30px;

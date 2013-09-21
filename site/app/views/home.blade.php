@@ -25,9 +25,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="span8" id="main-container">
+	<div class="span8">
 		<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
 		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+		<div class="alert alert-info">
+			<h3>Audience segmentation for professionals</h3>
+			<p>Do you really know who is following you? <a target="_blank" href="http://tribalytics.com">Tribalytics</a> <strong>segments your twitter followers</strong> into like minded communities, identifies the most connected individuals and <strong>helps you monitor how the competition are doing</strong>.</p>
+			<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary">visit tribalytics.com »</a></p>
+		</div>
 	</div>
 	<div class="span1">
 		<p>
@@ -42,11 +47,7 @@
 	</div>
 </div>
 <div class="row-fluid">
-	<div class="alert alert-info">
-		<h3>Audience segmentation for professionals</h3>
-		<p>Do you really know who is following you? <a target="_blank" href="http://tribalytics.com">Tribalytics</a> <strong>segments your twitter followers</strong> into like minded communities, identifies the most connected individuals and <strong>helps you monitor how the competition are doing</strong>.</p>
-		<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary">visit tribalytics.com »</a></p>
-	</div>
+
 </div>
 @stop
 
