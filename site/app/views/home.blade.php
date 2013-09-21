@@ -4,7 +4,7 @@
 <div class="row-fluid">
 	<div class="span3">
 		<div class="row-fluid">
-			<h3>Filters <small>click on any chart to filter data</small></h3>
+			<h3>Filters <small>click charts to filter data</small></h3>
 			<div id="topics-chart" class="span12">
 				<strong>Topics</strong>
 				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
