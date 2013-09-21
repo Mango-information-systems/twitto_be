@@ -4,20 +4,20 @@
 <div class="row-fluid">
 	<div class="span3">
 		<div class="row-fluid">
-			<div id="topics-chart">
+			<div id="topics-chart" class="span12">
 				<strong>Topics filters</strong>
 				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
 				<div class="clearfix"></div>
 			</div>
-			<div id="be-chart">
+			<div id="be-chart" class="span12">
 				<p><strong>Provinces filters</strong></p>
 				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
 
 				<div class="clearfix"></div>
 			</div>
-			<div id="languages-chart">
+			<div id="languages-chart" class="span12">
 				<strong>Languages filters</strong>
 				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
@@ -25,14 +25,13 @@
 			</div>
 		</div>
 	</div>
-	<div class="span8">
+	<div class="span8" id="main-container">
 		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 	</div>
 	<div class="span1">
 		<p>
 			<strong>Share</strong>
 		</p>
-		
 		<p>
 			<a id="sharetwitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fdtwitto.be&text=Exploring%20top%20twitter%20influencers%20in%20Belgium&via=twitto_be&hashtags=twittoBe" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
 			<a id="sharegoogle" href="https://plus.google.com/share?url=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a>
@@ -207,7 +206,8 @@ function filterData(urlFilter){
 	pageSliceIndex = Math.min(125, fdata.length)
 	dataTable.fnAddData(fdata.slice(0, pageSliceIndex))
 	
-	$.unblockUI()
+	$('#main-container').unblock()
+	//$.unblockUI()
 	
 }
 
@@ -332,7 +332,6 @@ function renderAll(data){
 			if(topicName != undefined) {
 			   p[topicName] = (p[topicName] || 0) - 1 //decrement counts
 			}
-		 
 		 })
 		 
 		return p
@@ -341,7 +340,6 @@ function renderAll(data){
 	function reduceInitial() {
 		return {}
 	}
-
 
 	var provincesDimension = ndx.dimension(function (d) {
 		// lookup province name from province id
@@ -394,7 +392,8 @@ function renderAll(data){
 		.height(200)
 		.dimension(provincesDimension)
 		.group(provincesGroup)
-		.colors(['#e3f4d7', '#c6e9af', '#aade87', '#8dd35f', '#71c837', '#5aa02c', '#447821', '#2d5016'])
+		.colors(['#c6e9af', '#aade87', '#8dd35f', '#71c837', '#5aa02c', '#447821'])
+		.colorDomain([0, 90000])
 		.projection(projection)
 		.overlayGeoJson(provinces.features, 'state', function (d) {
 			return d.properties.name
@@ -465,8 +464,8 @@ function renderAll(data){
 
 	function addNextPageData(twids) {
 		if (pageSliceIndex < fdata.length) {
-			dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+26, fdata.length)), false)
-			pageSliceIndex = Math.min(pageSliceIndex+26, fdata.length)
+			dataTable.fnAddData(fdata.slice(pageSliceIndex+1, Math.min(pageSliceIndex+11, fdata.length)), false)
+			pageSliceIndex = Math.min(pageSliceIndex+11, fdata.length)
 			// launch a redraw keeping current pagination info (plugin)
 			dataTable.fnStandingRedraw()
 		}
@@ -482,7 +481,7 @@ function renderAll(data){
 			, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
 			, "aaData": [	]
 			, "asStripeClasses": [ ]
-			, "iDisplayLength": 25
+			, "iDisplayLength": 10
 			, "sPaginationType": "bootstrap"
 			, "aaSorting": [[ 3, "desc" ]]
 			, "fnDrawCallback": function( oSettings ) {
@@ -568,6 +567,28 @@ function renderAll(data){
 	
 	filterData(urlFilters)
 	
+	// debouncing resize event based on http://stackoverflow.com/questions/5489946/jquery-how-to-wait-for-the-end-or-resize-event-and-only-then-perform-an-ac
+	var rtime = new Date(1, 1, 1970, 12,00,00)
+		, timeout = false
+		, delta = 200
+	$(window).on("resize", function() {
+		rtime = new Date()
+		if (timeout === false) {
+			timeout = true
+			setTimeout(resizeend, delta)
+		}
+	})
+	function resizeend() {
+		if (new Date() - rtime < delta) {
+			setTimeout(resizeend, delta)
+		} else {
+			timeout = false
+			resized = true
+			console.log('resize redraw')
+			dc.redrawAll()
+		}
+	}
+	
 } //renderAll END
 
 // renderlet function
@@ -590,7 +611,7 @@ beChart.renderlet(function(chart){
 		.attr('viewBox', '0 0 300 200')
 		.attr('preserveAspectRatio', 'xMinYMin')
 	// adapt containers' height
-	$('#be-chart').height(newWidth)
+	$('#be-chart').height(newWidth * 2 / 3 + 30)
 })
 
 languagesChart.renderlet(function(chart){
@@ -602,40 +623,23 @@ languagesChart.renderlet(function(chart){
 		.attr('viewBox', '0 0 300 200')
 		.attr('preserveAspectRatio', 'xMinYMin')
 	// adapt containers' height
-	$('#languages-chart').height(newWidth * 2 / 3 + 10)
+	$('#languages-chart').height(newWidth * 2 / 3 + 30)
 })
 
-// debouncing resize event based on http://stackoverflow.com/questions/5489946/jquery-how-to-wait-for-the-end-or-resize-event-and-only-then-perform-an-ac
-var rtime = new Date(1, 1, 1970, 12,00,00)
-	, timeout = false
-	, delta = 200
-$(window).on("resize", function() {
-	rtime = new Date()
-	if (timeout === false) {
-		timeout = true
-		setTimeout(resizeend, delta)
-	}
-})
-function resizeend() {
-	if (new Date() - rtime < delta) {
-		setTimeout(resizeend, delta)
-	} else {
-		timeout = false
-		resized = true
-		dc.redrawAll()
-	}
-}
 
 $(function() {
-	blockPage(' Initializing ... ')
+	blockPage(' loading ... ')
 	getRemoteData()
 })
 
 function blockPage(msg) {
+	$('#main-container').block({message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'})
+	/*
 	$.blockUI({
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
 		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}
 	})
+	*/
 }
 
 function shareUrls(twittos) {
