@@ -283,7 +283,7 @@ function getRemoteData(){
 function renderAll(data){
 
 // TODO: make server return numeric data type instead of string
-
+console.time('crossfilter data feed')
 	// feed it through crossfilter
 	var ndx = crossfilter(data.tw_user)
 
@@ -292,6 +292,8 @@ function renderAll(data){
 	// Solution based on
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
 	// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
+	
+console.time('topics dim')
 	var topicsDimension = ndx.dimension(function(d){
 
 		var topics = d[4].split(',')
@@ -301,7 +303,8 @@ function renderAll(data){
 				
 		return topics
 	});
-	
+console.timeEnd('topics dim')
+console.time('topics group')
 	var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
 	// hack to make dc.js charts work
@@ -356,25 +359,29 @@ function renderAll(data){
 		return {}
 	}
 
+console.timeEnd('topics group')
+console.time('provinces dim')
 	var provincesDimension = ndx.dimension(function (d) {
 		// lookup province name from province id
 		return provincesMap[d[2]]
 	})
+console.timeEnd('provinces dim')
+console.time('provinces group')
 	provincesGroup = provincesDimension.group()
+console.timeEnd('provinces group')
+console.time('lang dim')
 
 	var languagesDimension = ndx.dimension(function (d) {
-		if (['en', 'fr', 'nl'].indexOf(d[1]) == -1 ) {
-			d[1] = 'ot'
-		}
-		return languagesMap[d[1]]
+		return languagesMap[d[1]] || 'Other'
 	})
+console.timeEnd('lang dim')
+console.time('lang group')
 	var languagesGroup = languagesDimension.group()
+console.timeEnd('lang group')
 
-	var languagesDomain = ['']
+console.timeEnd('crossfilter data feed')
 
-	_.forEach(languagesGroup.all(), function (e){
-		languagesDomain.push(e.key)
-	})
+console.time('charts init')
 
 	topicsChart.width(300)
 		.height(250)
@@ -427,6 +434,7 @@ function renderAll(data){
 		.elasticX(true)
 		.xAxis().ticks(4)
 
+console.timeEnd('charts init')
 
 	dc.renderAll()
 	var xHR
