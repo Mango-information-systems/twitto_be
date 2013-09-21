@@ -4,21 +4,22 @@
 <div class="row-fluid">
 	<div class="span3">
 		<div class="row-fluid">
+			<h3>Filters <small>click on any chart to filter data</small></h3>
 			<div id="topics-chart" class="span12">
-				<strong>Topics filters</strong>
+				<strong>Topics</strong>
 				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<img src="assets/img/topics-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
 			<div id="be-chart" class="span12">
-				<p><strong>Provinces filters</strong></p>
+				<strong>Provinces</strong>
 				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+				<span class="reset" style="display: none;"></span>
 				<img src="assets/img/provinces-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
 			<div id="languages-chart" class="span12">
-				<strong>Languages filters</strong>
+				<strong>Languages</strong>
 				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<img src="assets/img/languages-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
