@@ -102,6 +102,17 @@ var provincesMap = {
 		, 8 : 'Technology'
 		, 9 : 'Media'
 	}
+	, reverseTopicsMap = {
+		'Belgium' : 1
+		, 'Business' : 2
+		, 'Design' : 3
+		, 'Entertainment' : 4
+		, 'Health' : 5
+		, 'Politics' : 6
+		, 'Sport' : 7
+		, 'Technology' : 8
+		, 'Media' : 9
+	}
 	, projection = d3.geo.mercator()
 		.center([5, 48.9])
 		.scale(600 * 6)
@@ -151,10 +162,9 @@ function filterData(urlFilter){
 	// filter based on url params
 		if(urlFilter['topics'][0] != ''){
 			_.forEach(urlFilter['topics'], function(d){
-				topicsChart.filter(d)
+				topicsChart.filter('' + reverseTopicsMap[d])
 			})
 		}
-
 		if(urlFilter['locations'][0] != ''){
 			_.forEach(urlFilter['locations'], function(d){
 				beChart.filter(d)
@@ -166,10 +176,8 @@ function filterData(urlFilter){
 				languagesChart.filter(d)
 			})
 		}
-
-		topicsChart.redraw()
-		languagesChart.redraw()
-		beChart.redraw()
+		
+		dc.redrawAll()
 
 		return
 	}
@@ -217,10 +225,15 @@ function historyPushState(){
 // update page history state, page title, and chart color range
 	// after every filter we need to refresh the chart to update the correct color range
 	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
-	beChart.redraw()
 	
-	var topicsFilter = topicsChart.filters().join(',')
-		, provincesFilter = beChart.filters().join(',')
+	var topicsFilter = ''
+	_.each(topicsChart.filters(), function(item, idx) {
+		if (idx > 0)
+			topicsFilter +=',' + topicsMap[item]
+		else
+			topicsFilter = topicsMap[item]
+	})
+	var provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
 		, newTitle = 'top twitter influencers'
 		, queryString = '?'
@@ -245,6 +258,7 @@ function historyPushState(){
 		newTitle += ' <small>from</small> ' + locationsLabel
 		queryString += 'locations=' + provincesFilter + '&'
 	}
+	
 	if (languagesFilter.length > 0) {
 		newTitle += '<small> tweeting in ' + languagesFilter + '</small>'
 		queryString += 'languages=' + languagesFilter
