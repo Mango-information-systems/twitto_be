@@ -230,8 +230,20 @@ function historyPushState(){
 		queryString += 'topics=' + topicsFilter + '&'
 	}
 	if (provincesFilter.length > 0) {
-		 newTitle += ' <small>from</small> ' + provincesFilter.replace('not set', 'unknown location')
-		 queryString += 'locations=' + provincesFilter + '&'
+		var locationsLabel = provincesFilter.replace('not set', 'unknown location')
+			, provincesFiltersArray = beChart.filters()
+
+		if (provincesFiltersArray.length == 5) {
+		// override list of provinces in case whole region is selected
+			if (_.indexOf(provincesFiltersArray, 'Antwerp') != -1 && _.indexOf(provincesFiltersArray, 'Flemish Brabant') != -1 && _.indexOf(provincesFiltersArray, 'East Flanders') != -1 && _.indexOf(provincesFiltersArray, 'West Flanders') != -1 && _.indexOf(provincesFiltersArray, 'Limburg') != -1) {
+				locationsLabel = 'Flanders'
+			}
+			else if (_.indexOf(provincesFiltersArray, 'Hainaut') != -1 && _.indexOf(provincesFiltersArray, 'Walloon Brabant') != -1 && _.indexOf(provincesFiltersArray, 'Liege') != -1 && _.indexOf(provincesFiltersArray, 'Namur') != -1 && _.indexOf(provincesFiltersArray, 'Luxembourg') != -1) {
+				locationsLabel = 'Wallonia'
+			}
+		}
+		newTitle += ' <small>from</small> ' + locationsLabel
+		queryString += 'locations=' + provincesFilter + '&'
 	}
 	if (languagesFilter.length > 0) {
 		newTitle += '<small> tweeting in ' + languagesFilter + '</small>'
@@ -649,7 +661,7 @@ function shareUrls(twittos) {
 		, shareVia = 'twitto_be'
 		, shareHashtags = 'twittoBe'
 		, topThreeText = ''
-		, shareTitle = '90000+ Belgian tweeters ranked by influence - Twitto.be'
+		, shareTitle = 'top twitter influencers in Belgium by topic, location and language - Twitto.be'
 	
 	shareUrl = History.getState().url
 	
