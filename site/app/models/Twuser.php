@@ -29,6 +29,7 @@ ORDER BY klout_score DESC
 				'klout_score', DB::raw('GROUP_CONCAT( fact_topic.topic_id ) AS topic_id'),
 				'screen_name'
 			)
+			->where('fact_topic.topic_id', '!=', '-1')
 			->remember(1440)
 			->groupBy('tw_user.tw_id');
 
