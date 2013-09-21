@@ -7,25 +7,26 @@
 			<div id="topics-chart" class="span12">
 				<strong>Topics filters</strong>
 				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
+				<img src="assets/img/topics-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
 			<div id="be-chart" class="span12">
 				<p><strong>Provinces filters</strong></p>
 				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
-
+				<img src="assets/img/provinces-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
 			<div id="languages-chart" class="span12">
 				<strong>Languages filters</strong>
 				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
+				<img src="assets/img/languages-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
 		</div>
 	</div>
 	<div class="span8" id="main-container">
+		<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
 		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 	</div>
 	<div class="span1">
@@ -206,8 +207,7 @@ function filterData(urlFilter){
 	pageSliceIndex = Math.min(125, fdata.length)
 	dataTable.fnAddData(fdata.slice(0, pageSliceIndex))
 	
-	$('#main-container').unblock()
-	//$.unblockUI()
+	$.unblockUI()
 	
 }
 
@@ -260,6 +260,7 @@ topicsChart.on('postRedraw', function(chart){
 //Split functions
 function getRemoteData(){
 	d3.json('json/users.json/search', function (data) {
+		$('.placeholder').remove()
 		allTwittos = data
 		renderAll(allTwittos)
 	})
@@ -632,13 +633,11 @@ $(function() {
 })
 
 function blockPage(msg) {
-	$('#main-container').block({message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'})
-	/*
 	$.blockUI({
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
-		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}
+		, overlayCSS:  { cursor: 'wait'}
 	})
-	*/
+	
 }
 
 function shareUrls(twittos) {
