@@ -279,7 +279,6 @@ function historyPushState(){
 //Split functions
 function getRemoteData(){
 	d3.json('json/users.json/search', function (data) {
-		$('.placeholder').remove()
 		allTwittos = data
 		renderAll(allTwittos)
 	})
@@ -406,8 +405,11 @@ function renderAll(data){
 		.colors(["#71c837"])
 		.elasticX(true)
 		.xAxis().ticks(4)
+
+	$('.placeholder').remove()
 		
 	dc.renderAll()
+
 	var xHR
 		, twids = []
 		, ajaxErrCount = 0
