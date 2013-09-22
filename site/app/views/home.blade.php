@@ -136,6 +136,7 @@ var provincesMap = {
 	, $shareLinkedin = $('#sharelinkedin')
 	, $inPageTitle = $('h1:first') // page title inside the page
 	, resized = false
+	, all
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -235,7 +236,7 @@ function historyPushState(){
 	})
 	var provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
-		, newTitle = 'top twitter influencers'
+		, newTitle = all.value() + ' top twitter influencers'
 		, queryString = '?'
 		
 	if (topicsFilter.length > 0) { 
@@ -290,7 +291,7 @@ function renderAll(data){
 	// feed it through crossfilter
 	var ndx = crossfilter(data.tw_user)
 
-	var all = ndx.groupAll()
+	all = ndx.groupAll()
 
 	// Solution based on
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
@@ -405,7 +406,7 @@ function renderAll(data){
 		.colors(["#71c837"])
 		.elasticX(true)
 		.xAxis().ticks(4)
-
+		
 	dc.renderAll()
 	var xHR
 		, twids = []
