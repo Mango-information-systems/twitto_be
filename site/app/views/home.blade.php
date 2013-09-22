@@ -410,7 +410,7 @@ function renderAll(data){
 		
 	dc.renderAll()
 
-	var xHR
+	var userDetailsXHR // ajax request querying for user details
 		, twids = []
 		, ajaxErrCount = 0
 		, xHRRunning = false
@@ -418,13 +418,13 @@ function renderAll(data){
 	//https://datatables.net/
 	function updateDataTable() {
 		if (xHRRunning) {
-			// abort previous xHR in case is still running
-			xHR.abort()
+			// abort previous userDetailsXHR in case is still running
+			userDetailsXHR.abort()
 		}
 		xHRRunning = true
 		// get user details
 
-		xHR = $.ajax({
+		userDetailsXHR = $.ajax({
 			url : "/json/userDetails/" + twids.join(",")
 			, dataType : 'json'
 			, success : function(data, status, jqXHR) {
