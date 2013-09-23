@@ -3974,35 +3974,36 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar-inverse .brand,
 .navbar-inverse .nav > li > a {
-  color: #cccccc;
+  color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 .navbar-inverse .brand:hover,
 .navbar-inverse .nav > li > a:hover {
-  color: #ffffff;
+  color: #cccccc;
 }
 .navbar-inverse .brand {
-  color: #cccccc;
+  color: #ffffff;
+  font-weight: bold;
 }
 .navbar-inverse .navbar-text {
-  color: #cccccc;
+  color: #ffffff;
 }
 .navbar-inverse .nav > li > a:focus,
 .navbar-inverse .nav > li > a:hover {
   background-color: transparent;
-  color: #ffffff;
+  color: #cccccc;
 }
 .navbar-inverse .nav .active > a,
 .navbar-inverse .nav .active > a:hover,
 .navbar-inverse .nav .active > a:focus {
-  color: #ffffff;
+  color: #cccccc;
   background-color: #111111;
 }
 .navbar-inverse .navbar-link {
-  color: #cccccc;
+  color: #ffffff;
 }
 .navbar-inverse .navbar-link:hover {
-  color: #ffffff;
+  color: #cccccc;
 }
 .navbar-inverse .divider-vertical {
   border-left-color: #111111;
@@ -4012,7 +4013,7 @@ input[type="submit"].btn.btn-mini {
 .navbar-inverse .nav li.dropdown.active > .dropdown-toggle,
 .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle {
   background-color: #111111;
-  color: #ffffff;
+  color: #cccccc;
 }
 .navbar-inverse .nav li.dropdown > a:hover .caret {
   border-top-color: #ffffff;
