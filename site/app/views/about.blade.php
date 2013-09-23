@@ -64,8 +64,8 @@
 </div>
 <div class="span4">
 	<div class="well">
-	<h2>Audience segmentation for professionals</h2>
-	<p>Do you really know who is following you? <a target="_blank" href="http://tribalytics.com">Tribalytics</a> <strong>segments your twitter followers</strong> into like minded communities, identifies the most connected individuals and <strong>helps you monitor how the competition are doing</strong>.</p>
+	<h2>Marketing segmentation for professionals</h2>
+	<p>Do you really know who is following you? Segment your twitter followers into communities, identify the individuals that can amplify your message and see how the competition are doing.</p>
 	<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary btn-large">visit tribalytics.com »</a></p>
 	</div>
 </div>
