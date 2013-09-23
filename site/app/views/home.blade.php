@@ -228,23 +228,25 @@ function historyPushState(){
 	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
 	
 	var topicsFilter = ''
+		, provincesFilter = beChart.filters().join(',')
+		, languagesFilter = languagesChart.filters().join(',')
+		, newTitle = all.value() + ' top twitter influencers'
+		, queryString = '?'
+
 	_.each(topicsChart.filters(), function(item, idx) {
 		if (idx > 0)
 			topicsFilter +=',' + topicsMap[item]
 		else
 			topicsFilter = topicsMap[item]
-	})
-	var provincesFilter = beChart.filters().join(',')
-		, languagesFilter = languagesChart.filters().join(',')
-		, newTitle = all.value() + ' top twitter influencers'
-		, queryString = '?'
-		
+	})		
+
 	if (topicsFilter.length > 0) { 
 		newTitle += ' <small>about</small> ' + topicsFilter
 		queryString += 'topics=' + topicsFilter + '&'
 	}
+
 	if (provincesFilter.length > 0) {
-		var locationsLabel = provincesFilter.replace('not set', 'unknown location')
+		var locationsLabel = provincesFilter.replace('not set', '<small>unknown location</small>')
 			, provincesFiltersArray = beChart.filters()
 
 		if (provincesFiltersArray.length == 5) {
