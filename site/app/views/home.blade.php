@@ -274,6 +274,11 @@ function historyPushState(){
 	// this updates the title in page (h1)	
 	$inPageTitle.html(newTitle)
 	
+	// cleanup url: remove trailing '&'
+	if (queryString.slice(-1) == '&') {
+		queryString = queryString.substring(0, queryString.length - 1);
+	}
+	
 	// this updates the page url and title meta tag
 	History.pushState(null, newTitle.replace(/(<small>|<\/small>)/g,''), queryString)
 }
