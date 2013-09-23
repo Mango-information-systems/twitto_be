@@ -2,51 +2,52 @@
 @section('main')
 <div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
-	<div class="span12">		
+	<div class="span3">
 		<div class="row-fluid">
-			<div class="span3" id="topics-chart">
-				<strong>Topics filters</strong>
+			<h3>Filters <small>click charts to filter data</small></h3>
+			<div id="topics-chart" class="span12">
+				<strong>Topics</strong>
 				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
+				<img src="assets/img/topics-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
-			<div class="span3" id="be-chart">
-				<p><strong>Provinces filters</strong></p>
+			<div id="be-chart" class="span12">
+				<strong>Provinces</strong>
 				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-				<span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
-
+				<span class="reset" style="display: none;"></span>
+				<img src="assets/img/provinces-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
-			
-			<div class="span3" id="languages-chart">
-				<strong>Languages filters</strong>
+			<div id="languages-chart" class="span12">
+				<strong>Languages</strong>
 				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
+				<img src="assets/img/languages-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
-			</div>
-			
-			<div class="span3">
-				<p>
-					<strong>Search</strong>
-					<a class="reset" id="clearbutton" href="#" style="display: none;">reset</a>
-				</p>
-				<div class="input-append">
-					<input type="text" class="input-large" id="searchfield" placeholder="keyword(s) or @username(s)">
-					<button class="btn" type="button" id="searchbutton"><i class="icon-search"></i></button>
-					
-				</div>
-				<div class="alert" id="nodata">
-					<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<strong>Warning!</strong> Your search didn't retrieve any data.
-				</div>
-			</div>
-		</div>
-		<div class="row-fluid">
-			<div class="span10 offset1">
-				<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 			</div>
 		</div>
 	</div>
+	<div class="span8">
+		<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
+		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+		<div class="alert alert-info">
+			<h3>Marketing segmentation for professionals</h3>
+			<p>Do you really know who is following you? Segment your twitter followers into communities, identify the individuals that can amplify your message and see how the competition are doing.</p>
+			<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary">visit tribalytics.com »</a></p>
+		</div>
+	</div>
+	<div class="span1">
+		<p>
+			<strong>Share</strong>
+		</p>
+		<p>
+			<a id="sharetwitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fdtwitto.be&text=Exploring%20top%20twitter%20influencers%20in%20Belgium&via=twitto_be&hashtags=twittoBe" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
+			<a id="sharegoogle" href="https://plus.google.com/share?url=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a>
+			<a id="sharefacebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
+			<a id="sharelinkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fdtwitto.be&title=90000%2B%20Belgian%20tweeters%20ranked%20by%20influence%20-%20Twitto.be&summary=%40NATO%2C%20%40EU_Commission%2C%20%40Clijsterskim%20are%20in%20the%20ranking%20of%20top%20Belgian%20twittos&sourcetwitto_be" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a>
+		</p>
+	</div>
+</div>
+<div class="row-fluid">
 
 </div>
 @stop
@@ -91,8 +92,7 @@ var provincesMap = {
 		, 'ot' : 'Other'
 	}
 	, topicsMap = {
-		'-1' : 'Unassigned'
-		, 1 : 'Belgium'
+		1 : 'Belgium'
 		, 2 : 'Business'
 		, 3 : 'Design'
 		, 4 : 'Entertainment'
@@ -102,11 +102,22 @@ var provincesMap = {
 		, 8 : 'Technology'
 		, 9 : 'Media'
 	}
+	, reverseTopicsMap = {
+		'Belgium' : 1
+		, 'Business' : 2
+		, 'Design' : 3
+		, 'Entertainment' : 4
+		, 'Health' : 5
+		, 'Politics' : 6
+		, 'Sport' : 7
+		, 'Technology' : 8
+		, 'Media' : 9
+	}
 	, projection = d3.geo.mercator()
 		.center([5, 48.9])
-		.scale(700 * 6)
+		.scale(600 * 6)
 // TODO: dynamically set width and height according to chart dimensions
-		.translate([370 / 2, 300])
+		.translate([370 / 2, 250])
     , topicsChart = dc.rowChart("#topics-chart")
 	, beChart = dc.geoChoroplethChart("#be-chart")
 	, languagesChart = dc.rowChart("#languages-chart")
@@ -119,13 +130,13 @@ var provincesMap = {
 	, topics
 	, provincesGroup
 	, topicsRows
-	, $searchField
-	, $searchButton
-	, enterPressed = false
-	, $nodata = $('#nodata')
-	, $searchField = $('#searchfield')
-	, $searchButton = $('#searchbutton')
-	, $clearButton = $('#clearbutton')
+	, $shareTwitter = $('#sharetwitter')
+	, $shareGoogle = $('#sharegoogle')
+	, $shareFacebook = $('#sharefacebook')
+	, $shareLinkedin = $('#sharelinkedin')
+	, $inPageTitle = $('h1:first') // page title inside the page
+	, resized = false
+	, all
 
 var urlFilters = []
 urlFilters['topics'] = '<?php echo $filters['topics']; ?>'
@@ -134,37 +145,40 @@ urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
 urlFilters['locations'] = urlFilters['locations'].split(',')
 urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
 urlFilters['languages'] = urlFilters['languages'].split(',')
-urlFilters['searchString'] = '<?php echo $filters['searchString']; ?>'
 
 function filterData(urlFilter){
+	// Check if we just resized. 
+	// If resized, we do not need to do the rest
+	if(resized){
+		resized = false
+		return
+	}
 // crossfilter data
 
 	fdata = filteredData.top(Infinity);
 	var scores = []
-
+		, topThree = []
+	
 	if(urlFilter != null){
 	// filter based on url params
 		if(urlFilter['topics'][0] != ''){
-			urlFilter['topics'].forEach(function(d){
-				topicsChart.filter(d);
+			_.forEach(urlFilter['topics'], function(d){
+				topicsChart.filter('' + reverseTopicsMap[d])
 			})
 		}
-
 		if(urlFilter['locations'][0] != ''){
-			urlFilter['locations'].forEach(function(d){
+			_.forEach(urlFilter['locations'], function(d){
 				beChart.filter(d)
 			})
 		}
 
 		if(urlFilter['languages'][0] != ''){
-			urlFilter['languages'].forEach(function(d){
+			_.forEach(urlFilter['languages'], function(d){
 				languagesChart.filter(d)
 			})
 		}
-
-		topicsChart.redraw()
-		languagesChart.redraw()
-		beChart.redraw()
+		
+		dc.redrawAll()
 
 		return
 	}
@@ -194,9 +208,14 @@ function filterData(urlFilter){
 	fdata.sort(function(a, b) {
 		return a[6] - b[6]
 	})
+	
+	// Get top three twittos and pass them to the share function
+	topThree = fdata.slice(0,3)
+	topThree = _.pluck(topThree, 5)
+	shareUrls(topThree)
 
 	dataTable.fnClearTable()
-	pageSliceIndex = Math.min(50, fdata.length)
+	pageSliceIndex = Math.min(125, fdata.length)
 	dataTable.fnAddData(fdata.slice(0, pageSliceIndex))
 	
 	$.unblockUI()
@@ -204,94 +223,86 @@ function filterData(urlFilter){
 }
 
 function historyPushState(){
-	//After every filter we need to refresh the chart to get the correct color range
+// update page history state, page title, and chart color range
+	// after every filter we need to refresh the chart to update the correct color range
 	beChart.colorDomain([0, provincesGroup.top(1)[0].value])
-	beChart.redraw()
 	
-	var topicsFilter = topicsChart.filters().join(',')
-		, provincesFilter = beChart.filters().join(',')
+	var topicsFilter = ''
+	_.each(topicsChart.filters(), function(item, idx) {
+		if (idx > 0)
+			topicsFilter +=',' + topicsMap[item]
+		else
+			topicsFilter = topicsMap[item]
+	})
+	var provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
-		, searchFilter = $searchField.val()
-	History.pushState(null, null, '?topics=' + topicsFilter + '&locations=' + provincesFilter + '&languages=' + languagesFilter +
-		'&search=' + searchFilter)
+		, newTitle = all.value() + ' top twitter influencers'
+		, queryString = '?'
+		
+	if (topicsFilter.length > 0) { 
+		newTitle += ' <small>about</small> ' + topicsFilter
+		queryString += 'topics=' + topicsFilter + '&'
+	}
+	if (provincesFilter.length > 0) {
+		var locationsLabel = provincesFilter.replace('not set', 'unknown location')
+			, provincesFiltersArray = beChart.filters()
+
+		if (provincesFiltersArray.length == 5) {
+		// override list of provinces in case whole region is selected
+			if (_.indexOf(provincesFiltersArray, 'Antwerp') != -1 && _.indexOf(provincesFiltersArray, 'Flemish Brabant') != -1 && _.indexOf(provincesFiltersArray, 'East Flanders') != -1 && _.indexOf(provincesFiltersArray, 'West Flanders') != -1 && _.indexOf(provincesFiltersArray, 'Limburg') != -1) {
+				locationsLabel = 'Flanders'
+			}
+			else if (_.indexOf(provincesFiltersArray, 'Hainaut') != -1 && _.indexOf(provincesFiltersArray, 'Walloon Brabant') != -1 && _.indexOf(provincesFiltersArray, 'Liege') != -1 && _.indexOf(provincesFiltersArray, 'Namur') != -1 && _.indexOf(provincesFiltersArray, 'Luxembourg') != -1) {
+				locationsLabel = 'Wallonia'
+			}
+		}
+		newTitle += ' <small>from</small> ' + locationsLabel
+		queryString += 'locations=' + provincesFilter + '&'
+	}
+	
+	if (languagesFilter.length > 0) {
+		newTitle += '<small> tweeting in ' + languagesFilter + '</small>'
+		queryString += 'languages=' + languagesFilter
+	}
+		
+	if (topicsFilter.length == 0 && provincesFilter.length == 0 && languagesFilter.length== 0) {
+		newTitle += ' in Belgium by topic, location and language'
+	}
+	
+	// this updates the title in page (h1)	
+	$inPageTitle.html(newTitle)
+	
+	// this updates the page url and title meta tag
+	History.pushState(null, newTitle.replace(/(<small>|<\/small>)/g,''), queryString)
 }
 
-topicsChart.on('preRedraw', function(chart){
-	historyPushState()
-})
-topicsChart.on('postRedraw', function(chart){
-	filterData(null)
-})
-
 //Split functions
-function getRemoteData(searchStr){
-
-	if(!allTwittos) {
-		d3.json('json/users.json/search', function (data) {
-			allTwittos = data
-			if(searchStr==''){
-				renderAll(allTwittos)
-			}
-		})
-	} else {
-		if(searchStr==''){
-			renderAll(allTwittos)
-		}
-	}
-
-	if(searchStr!=''){
-		d3.json('json/users.json/search/'+searchStr, function (data) {
-			renderAll(data)
-		})
-	}
-
+function getRemoteData(){
+	d3.json('json/users.json/search', function (data) {
+		allTwittos = data
+		renderAll(allTwittos)
+	})
 }
 
 function renderAll(data){
 
-	/*
-	 data.tw_user.forEach(function(val, idx){
-
-	 var topics = val[4].split(',')
-	 var replacedTopics = []
-
-	 topics.forEach (function(val, idx) {
-	 topics[idx] = topicsMap[val]
-	 if(topics[idx] != undefined){
-	 replacedTopics.push(topicsMap[val])
-	 }
-	 })
-	 data.tw_user[idx][4] = replacedTopics;
-	 })
-	 */
-
 // TODO: make server return numeric data type instead of string
-	if(data.tw_user.length == 0){
-		$nodata.show()
-		$.unblockUI()
-		return
-	}
-
 	// feed it through crossfilter
 	var ndx = crossfilter(data.tw_user)
 
-	var all = ndx.groupAll()
+	all = ndx.groupAll()
 
 	// Solution based on
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
 	// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
+	
 	var topicsDimension = ndx.dimension(function(d){
-		//var topics = d[4]
 
 		var topics = d[4].split(',')
-		
-		topics.forEach (function(val, idx) {
-			topics[idx] = topicsMap[val]
-		})
-				
+
 		return topics
 	});
-	
+
 	var topicsGroup = topicsDimension.groupAll().reduce(reduceAdd, reduceRemove, reduceInitial).value();
 
 	// hack to make dc.js charts work
@@ -311,50 +322,25 @@ function renderAll(data){
 	// Reduce functions to be used by topicsGroup
 	function reduceAdd(p, v) {
 		var topics = v[4].split(',')
-		//var topics = v[4]
-		
-		var topicName = ''
-		
-		 topics.forEach (function(val, idx) {
-		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
-		 topicName = topicsMap[val]
-		 if(topicName != undefined)
-		 p[topicName] = (p[topicName] || 0) + 1 //increment counts
-		 })
-		 
-		 /*
-		topics.forEach (function(val, idx) {
+
+		_.forEach (topics, function(val, idx) {
 			p[val] = (p[val] || 0) + 1; //increment counts
 		})
-	*/
 		return p
 	}
 
 	function reduceRemove(p, v) {
 		var topics = v[4].split(',')
-		//var topics = v[4]
-		var topicName = ''
-	
-		 topics.forEach (function(val, idx) {
-		 //Add new entries with the text from the topicsMap, keep the rest - should be removed
-		 topicName = topicsMap[val]
-		 if(topicName != undefined)
-		 p[topicName] = (p[topicName] || 0) - 1 //decrement counts
-		 })
-
 		 
-/*
-		topics.forEach (function(val, idx) {
-			p[val] = (p[val] || 0) - 1; //increment counts
-		})
-	*/
+		_.forEach (topics, function(val, idx) {
+			p[val] = (p[val] || 0) - 1; // decrement counts
+		}) 
 		return p
 	}
 
 	function reduceInitial() {
 		return {}
 	}
-
 
 	var provincesDimension = ndx.dimension(function (d) {
 		// lookup province name from province id
@@ -363,31 +349,24 @@ function renderAll(data){
 	provincesGroup = provincesDimension.group()
 
 	var languagesDimension = ndx.dimension(function (d) {
-		if (['en', 'fr', 'nl'].indexOf(d[1]) == -1 ) {
-			d[1] = 'ot'
-		}
-		return languagesMap[d[1]]
+// grouping other languages
+		return languagesMap[d[1]] || 'Other'
 	})
+
 	var languagesGroup = languagesDimension.group()
-
-	var languagesDomain = ['']
-
-	languagesGroup.all().forEach(function (e){
-		languagesDomain.push(e.key)
-	})
 
 	topicsChart.width(300)
 		.height(250)
-		.margins({top: 20, left: 10, right: 10, bottom: 20})
+		.margins({top: 5, left: 10, right: 10, bottom: 20})
 		.group(topicsGroup)
 		.dimension(topicsDimension)
+		.label(function(d) { return topicsMap[d.key] })
 		.title(function(d){return d.value + ' twittos'})
-		.colors(["#ffb380"])
+		.colors(["#71c837"])
 		.elasticX(true)
 		.filterHandler(function(dimension, filter){
 			dimension.filter(function(d) {
 				var found = false
-
 				//if there are no filters, return true
 				if (topicsChart.filters().length == 0){
 					return true
@@ -405,10 +384,10 @@ function renderAll(data){
 		.xAxis().ticks(4)
 
 	beChart.width(300)
-		.height(300)
+		.height(200)
 		.dimension(provincesDimension)
 		.group(provincesGroup)
-		.colors(["#ffe6d5", "#ffccaa", "#ffb380", "#ff9955", "#ff7f2a", "#ff6600", "#d45500", "#aa4400", "#803300", "#803300"])
+		.colors(['#c6e9af', '#aade87', '#8dd35f', '#71c837', '#5aa02c', '#447821'])
 		.projection(projection)
 		.overlayGeoJson(provinces.features, 'state', function (d) {
 			return d.properties.name
@@ -423,13 +402,15 @@ function renderAll(data){
 		.group(languagesGroup)
 		.dimension(languagesDimension)
 		.title(function(d){return d.value + ' twittos'})
-		.colors(["#ffb380"])
+		.colors(["#71c837"])
 		.elasticX(true)
 		.xAxis().ticks(4)
 
-
+	$('.placeholder').remove()
+		
 	dc.renderAll()
-	var xHR
+
+	var userDetailsXHR // ajax request querying for user details
 		, twids = []
 		, ajaxErrCount = 0
 		, xHRRunning = false
@@ -437,13 +418,13 @@ function renderAll(data){
 	//https://datatables.net/
 	function updateDataTable() {
 		if (xHRRunning) {
-			// abort previous xHR in case is still running
-			xHR.abort()
+			// abort previous userDetailsXHR in case is still running
+			userDetailsXHR.abort()
 		}
 		xHRRunning = true
 		// get user details
 
-		xHR = $.ajax({
+		userDetailsXHR = $.ajax({
 			url : "/json/userDetails/" + twids.join(",")
 			, dataType : 'json'
 			, success : function(data, status, jqXHR) {
@@ -491,15 +472,15 @@ function renderAll(data){
 	var ex = document.getElementById('twitter-datatable')
 	if ( ! $.fn.DataTable.fnIsDataTable( ex ) ) {
 		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "t<'row-fluid'<'span6 pull-right'p>",
-			"sAjaxDataProp": "",
-			"bDeferRender": true, //speed  http://datatables.net/ref#bDeferRender
-			"aaData": [	],
-			"asStripeClasses": [ ],
-
-			"sPaginationType": "bootstrap",
-			"aaSorting": [[ 3, "desc" ]],
-			"fnDrawCallback": function( oSettings ) {
+			"sDom": "t<'row-fluid'<'span6 pull-right'p>"
+			, "sAjaxDataProp": ""
+			, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
+			, "aaData": [	]
+			, "asStripeClasses": [ ]
+			, "iDisplayLength": 10
+			, "sPaginationType": "bootstrap"
+			, "aaSorting": [[ 3, "desc" ]]
+			, "fnDrawCallback": function( oSettings ) {
 				var pagination = this.fnPagingInfo()
 
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
@@ -512,16 +493,16 @@ function renderAll(data){
 					updateDataTable()
 				}
 
-			},
-			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			}
+			, "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 				// identify users not yet cached, for which we should retrieve details via ajax call.
 				if (!twittosDetails[aData[0]].cached) {
 					twids.push(aData[0])
 				}
-			},
+			}
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
-			"aoColumnDefs": [
+			, "aoColumnDefs": [
 				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
 				, {
 					"sTitle": "Rank"
@@ -548,7 +529,7 @@ function renderAll(data){
 							+ oObj.aData[3]
 							+ '</a>'
 							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
-							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="' + oObj.aData[5] + '\'s profile picture" alt="' + oObj.aData[5] + '\'s profile picture" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
+							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="profile pic" alt="profile pic" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
 							+ '</a>'
 							+ '</div>'
 							+ '<div class="media-body">'
@@ -580,56 +561,64 @@ function renderAll(data){
 
 	filteredData = languagesDimension;
 	
-	if(enterPressed == false) {
-		//entered from url
-		filterData(urlFilters)
-	} else {
-		filterData(null)
+	filterData(urlFilters)
+	
+	// debouncing resize event based on http://stackoverflow.com/questions/5489946/jquery-how-to-wait-for-the-end-or-resize-event-and-only-then-perform-an-ac
+	var rtime = new Date(1, 1, 1970, 12,00,00)
+		, timeout = false
+		, delta = 200
+	$(window).on("resize", function() {
+		rtime = new Date()
+		if (timeout === false) {
+			timeout = true
+			setTimeout(resizeend, delta)
+		}
+	})
+	function resizeend() {
+		if (new Date() - rtime < delta) {
+			setTimeout(resizeend, delta)
+		} else {
+			timeout = false
+			resized = true
+			dc.redrawAll()
+		}
 	}
-		
-	/*
-	if(enterPressed){
-		filterData(urlFilters)
-	} else {
-		filterData(null)
-	}*/
-
-
+	
 } //renderAll END
 
-// renderlet function
-topicsChart.renderlet(function(chart){
-	// Select all rows of the topicsChart
-	// and loopover them to replace the IDs with Topic names
-	/*
-	topicsRows = topicsChart.selectAll('text.row')
-	topicsRows[0].forEach (function(val) {
-		//textContent instead of innerHTML works for Chrome http://stackoverflow.com/questions/9602715/js-on-svg-getting-innerhtml-of-an-element
-		val.textContent = topicsMap[val.__data__.key]
-	})
-	*/
-	// Solution based on https://groups.google.com/forum/#!topic/dc-js-user-group/JsgSb9103Wg
+// You might be wondering why I do this on postRedraw and not on filtered
+// Cause filtered only fires when we set a filter and not when we unset
+topicsChart.on('postRedraw', function(chart){
+	filterData(null)
+})
+
+// setup chart responsiveness
+topicsChart.on("preRedraw", function(chart) {
 	var newWidth = $('#topics-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth )
 		.attr('height', newWidth * 25 / 30  )
 		.attr('viewBox', '0 0 300 250')
 		.attr('preserveAspectRatio', 'xMinYMin')
-
+	historyPushState()
 })
 
-beChart.renderlet(function(chart){
+//beChart.renderlet(function(chart){
+beChart.on("preRedraw", function(chart){
+// setup chart responsiveness
 	var newWidth = $('#be-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth)
-		.attr('height', newWidth )
-		.attr('viewBox', '0 0 300 300')
+		.attr('height', newWidth * 2 / 3 )
+		.attr('viewBox', '0 0 300 200')
 		.attr('preserveAspectRatio', 'xMinYMin')
 	// adapt containers' height
-	$('#be-chart').height(newWidth)
+	$('#be-chart').height(newWidth * 2 / 3 + 30)
 })
 
-languagesChart.renderlet(function(chart){
+//languagesChart.renderlet(function(chart){
+languagesChart.on("preRedraw", function(chart){
+// setup chart responsiveness
 	var newWidth = $('#languages-chart').width()
 	chart.select('svg')
 		.attr('width', newWidth )
@@ -637,76 +626,60 @@ languagesChart.renderlet(function(chart){
 		.attr('viewBox', '0 0 300 200')
 		.attr('preserveAspectRatio', 'xMinYMin')
 	// adapt containers' height
-	$('#languages-chart').height(newWidth * 2 / 3 + 10)
+	$('#languages-chart').height(newWidth * 2 / 3 + 30)
 })
 
-// debouncing resize event based on http://stackoverflow.com/questions/5489946/jquery-how-to-wait-for-the-end-or-resize-event-and-only-then-perform-an-ac
-var rtime = new Date(1, 1, 1970, 12,00,00)
-	, timeout = false
-	, delta = 200
-$(window).on("resize", function() {
-	rtime = new Date()
-	if (timeout === false) {
-		timeout = true
-		setTimeout(resizeend, delta)
-	}
-})
-function resizeend() {
-	if (new Date() - rtime < delta) {
-		setTimeout(resizeend, delta)
-	} else {
-		timeout = false
-		dc.redrawAll()
-	}
-}
-
-// On enter call the function which retrieves new data
-$searchField.val(urlFilters['searchString'])
-$searchField.on('keypress',function(e){
-	var keyPressed = e.which
-	if(keyPressed == 13){
-		blockPage(' Loading ... ')
-		enterPressed  = true
-		getRemoteData($searchField.val())
-		historyPushState()
-		e.preventDefault()
-	}
-});
-
-$searchButton.on('click',function(e){
-	blockPage(' Loading ... ')
-	enterPressed  = true
-	getRemoteData($searchField.val())
-	historyPushState()
-	e.preventDefault()
-});
-
-$clearButton.on('click',function(e){
-	$searchField.val('')
-	enterPressed  = true
-	blockPage(' Loading ... ')
-	getRemoteData('')
-	historyPushState()
-	e.preventDefault()
-});
 
 $(function() {
-	blockPage(' Initializing ... ')
-	getRemoteData($searchField.val())
-
+	blockPage(' loading ... ')
+	getRemoteData()
 })
 
 function blockPage(msg) {
-	if($searchField.val() == ''){
-		$clearButton.hide()
-	} else {
-		$clearButton.show()
-	}
-	$nodata.hide()
 	$.blockUI({
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
-		, overlayCSS:  { backgroundColor: '#fff', opacity: 1, cursor: 'wait'}
+		, overlayCSS:  { cursor: 'wait'}
 	})
+	
+}
+
+function shareUrls(twittos) {
+	var currentUrl = History.getState().url
+		, shareUrl = ''
+		, shareText = ''
+		, shareVia = 'twitto_be'
+		, shareHashtags = 'twittoBe'
+		, topThreeText = ''
+		, shareTitle = 'top twitter influencers in Belgium by topic, location and language - Twitto.be'
+	
+	shareUrl = History.getState().url
+	
+	_.forEach(twittos, function(val, idx){
+		twittos[idx] = '@' + val
+	})
+	
+	shareText = twittos.join(', ') + ' are in the ranking of top Belgian twittos'
+
+	//Twitter
+	shareUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(currentUrl.replace(' ', '+')) + 
+		'&text=' + encodeURIComponent(shareText) + '&via=' + encodeURIComponent(shareVia) + 
+		'&hashtags=' + encodeURIComponent(shareHashtags)
+	$shareTwitter.attr('href', shareUrl)
+	
+	//Google Plus
+	shareUrl = 'https://plus.google.com/share?url=' + encodeURIComponent(currentUrl.replace(' ', '+'))
+	$shareGoogle.attr('href', shareUrl)
+	
+	//Facebook
+	shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentUrl.replace(' ', '+'))
+	$shareFacebook.attr('href', shareUrl)
+
+	//Linkedin
+	shareUrl = 'http://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(currentUrl	.replace(' ', '+')) +
+		'&title=' + encodeURIComponent(shareTitle) +  '&summary=' + encodeURIComponent(shareText) + 
+		'&source' + encodeURIComponent(shareVia)
+	$shareLinkedin.attr('href', shareUrl)
+
 }
 
 </script>

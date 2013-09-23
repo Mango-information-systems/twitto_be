@@ -8,21 +8,18 @@
 	<meta name="author" content="Mango Information Systems SPRL">
 	<meta name="language" content="en">
 	<meta name="revised" content="{{ Config::get('app.reviseddate') }}" scheme="YYYY-MM-DD">
+	
+	<meta property="og:title" content="@yield('title') - Twitto.be" />
+	<meta property="og:image" content="{{ URL::asset('assets/img/twitto.be-0.4.png') }}"/>
+	<meta property="og:site_name" content="@yield('title') - Twitto.be"/>
+	<meta property="og:url" content="<?php echo Request::fullUrl(); ?>" />
+	<meta property="og:description" content="@yield('description')"/>
 
 	<!-- Le styles -->
-	<link href="{{ URL::asset('assets/css/twitto-bootstrap.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/custom.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/feedback.css') }}" rel="stylesheet">
-	<link href="{{ URL::asset('assets/css/dc.css') }}" rel="stylesheet">
-	<!-- DataTables CSS -->
-	<link href="{{ URL::asset('assets/css/jquery.dataTables.css') }}" rel="stylesheet">
+	{{ Basset::show('home.css') }}
 
 
 	<style type="text/css">
-		body {
-			padding-top: 40px;
-			padding-bottom: 40px;
-		}
 		.sidebar-nav {
 			padding: 9px 0;
 		}
@@ -36,7 +33,6 @@
 			}
 		}
 	</style>
-	<link href="{{ URL::asset('assets/css/bootstrap-responsive.css') }}" rel="stylesheet">
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 	<!--[if lt IE 9]>
@@ -44,18 +40,14 @@
 	<![endif]-->
 
 	<!-- Fav and touch icons -->
-	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-	<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-	<link rel="shortcut icon" href="../assets/ico/favicon.png">
+	<link rel="apple-touch-icon-precomposed" href="/assets/img/favicon-152.png">
 </head>
 
 <body>
 
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-fixed-top navbar-inverse">
 	<div class="navbar-inner">
-		<div class="container">
+		<div class="container-fluid">
 			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -122,23 +114,7 @@
 <!-- Le javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/feedback.js') }}"></script>
-<script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/eldarion-ajax.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/spin.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.placeholder.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/d3.js') }}"></script>
-<script src="{{ URL::asset('assets/js/crossfilter.v1.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dc.js') }}"></script>
-<script src="{{ URL::asset('assets/js/underscore-min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.history.js') }}"></script>
-<!-- DataTables -->
-<script src="{{ URL::asset('assets/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dataTables.bootstrap.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dataTables.paging.js') }}"></script>
-<script src="{{ URL::asset('assets/js/dataTables.fnStandingRedraw.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.blockUI.js') }}"></script>
+{{ Basset::show('home.js') }}
 
 
 @if(!Config::get('app.debug'))
@@ -157,62 +133,9 @@
 </script>
 @endif
 
-
-<script lang="text/javascript">
-
-	var page = 1;
-	var perpagejs = 100;
-	var lochash    = window.location.hash.substr(1),
-		page = lochash.substr(lochash.indexOf('page='))
-			.split('&')[0]
-			.split('=')[1],
-		perpagejs = lochash.substr(lochash.indexOf('perpage='))
-			.split('&')[0]
-			.split('=')[1]
-		;
-
-	if(!page){
-		page=1;
-	}
-
-	if(!perpagejs	){
-		perpagejs = 100;
-	}
-	</script>
-
 @section('inline-javascript')
 @show
 
-<script lang="text/javascript">
-
-	function search_username(){
-		var dt = $("#twitter-datatable").data("datatable");
-		var postdata = dt.options.post;
-
-		//Set page to 1 when searching
-		dt.options.currentPage = 1;
-
-		postdata.search_username = $('#search_username').val();
-		dt.render();
-	}
-
-	$('#search_username_button').click( function() {
-		search_username();
-	});
-
-	$('#search_username').keypress(function(event) {
-		if (event.which == 13) {
-			event.preventDefault();
-			search_username();
-		}
-	});
-
-	$(function() {
-		$('input, textarea').placeholder();
-	});
-
-
-</script>
 
 </body>
 </html>
