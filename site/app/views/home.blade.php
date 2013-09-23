@@ -121,7 +121,7 @@ var provincesMap = {
     , topicsChart = dc.rowChart("#topics-chart")
 	, beChart = dc.geoChoroplethChart("#be-chart")
 	, languagesChart = dc.rowChart("#languages-chart")
-	, dataTable // cached selector of datatable
+	, dataTable // cached datatable instance
 	, pageSliceIndex // index to add next page to the data table
 	, filteredData // full dataset (crossfilter dimension)
 	, fdata // top infinity of filteredData
@@ -134,6 +134,7 @@ var provincesMap = {
 	, $shareGoogle = $('#sharegoogle')
 	, $shareFacebook = $('#sharefacebook')
 	, $shareLinkedin = $('#sharelinkedin')
+	, $searchField = $('#searchfield')
 	, $inPageTitle = $('h1:first') // page title inside the page
 	, resized = false
 	, all
@@ -230,6 +231,7 @@ function historyPushState(){
 	var topicsFilter = ''
 		, provincesFilter = beChart.filters().join(',')
 		, languagesFilter = languagesChart.filters().join(',')
+		, searchFilter = $searchField.val()
 		, newTitle = all.value() + ' top twitter influencers'
 		, queryString = '?'
 
@@ -264,9 +266,15 @@ function historyPushState(){
 	
 	if (languagesFilter.length > 0) {
 		newTitle += '<small> tweeting in ' + languagesFilter + '</small>'
-		queryString += 'languages=' + languagesFilter
+		queryString += 'languages=' + languagesFilter + '&'
 	}
-		
+	
+	if (searchFilter.length > 0) {
+		newTitle += '<small> matching</small> ' + searchFilter
+		queryString += 'search=' + searchFilter
+	}
+	
+	// fallback to default in case no filter and no search is set	
 	if (topicsFilter.length == 0 && provincesFilter.length == 0 && languagesFilter.length== 0) {
 		newTitle += ' in Belgium by topic, location and language'
 	}
