@@ -16,9 +16,9 @@
 	height:20px;
 	width:100px;
 	text-align:center;
-	background: #DD4814;
+	background: #008000;
 	border:1px solid #fff;
-	outline:1px solid #DD4814;
+	outline:1px solid #008000;
 	padding:5px;
 	float:right;
 	cursor:pointer;
@@ -33,7 +33,7 @@
 	clear:both;
 	height:350px;
 	width:450px;
-	border:1px solid #DD4814;
+	border:1px solid #008000;
 	background-color:#fff;
 	padding:15px;
 	display: none;
@@ -45,5 +45,5 @@
 }
 .feedback .feedback-status{
 	font-size:16px;
-	color: #DD4814;
+	color: #008000;
 }

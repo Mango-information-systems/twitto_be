@@ -22,11 +22,19 @@ Route::post('feedback', 'HomeController@feedback');
 Route::get('privacy', 'StaticController@privacy');
 Route::get('about', 'StaticController@about');
 
+# Json Get all users
+Route::get('json/users.json', 'TopicController@jsonUsers');
+Route::get('json/users.json/search/{searchStr?}', 'TopicController@jsonUsers');
+#Route::get('json/topics.json', 'TopicController@jsonTopics');
+
+# Json Get all users
+Route::get('json/userDetails/{username}', 'TopicController@jsonUserDetails');
+
 # Json Get users of category / pagination
-Route::post('json/users/category', 'CategoryController@jsonUsersCategory');
+#Route::post('json/users/category', 'CategoryController@jsonUsersCategory');
 
 # Categories - Second to last set, match slug
-Route::get('category/{categoryId}/{categorySlug?}', 'CategoryController@getCategory');
+#Route::get('category/{categoryId}/{categorySlug?}', 'CategoryController@getCategory');
 
 # Index Page - Last route, no matches
 Route::get('/', array('as' => 'home', 'uses' => 'HomeController@index'));

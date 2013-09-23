@@ -6,61 +6,6 @@
         Purpose of the stylesheet follows.
 */
 
-/* Start: Recommended Isotope styles */
-
-/**** Isotope Filtering ****/
-
-.isotope-item {
-	z-index: 0;
-}
-
-.isotope-hidden.isotope-item {
-	pointer-events: none;
-	z-index: -1;
-}
-
-/**** Isotope CSS3 transitions ****/
-
-.isotope,
-.isotope .isotope-item {
-	-webkit-transition-duration: 0.8s;
-	-moz-transition-duration: 0.8s;
-	-ms-transition-duration: 0.8s;
-	-o-transition-duration: 0.8s;
-	transition-duration: 0.8s;
-}
-
-.isotope {
-	-webkit-transition-property: height, width;
-	-moz-transition-property: height, width;
-	-ms-transition-property: height, width;
-	-o-transition-property: height, width;
-	transition-property: height, width;
-}
-
-.isotope .isotope-item {
-	-webkit-transition-property: -webkit-transform, opacity;
-	-moz-transition-property:    -moz-transform, opacity;
-	-ms-transition-property:     -ms-transform, opacity;
-	-o-transition-property:      -o-transform, opacity;
-	transition-property:         transform, opacity;
-}
-
-/**** disabling Isotope CSS3 transitions ****/
-
-.isotope.no-transition,
-.isotope.no-transition .isotope-item,
-.isotope .isotope-item.no-transition {
-	-webkit-transition-duration: 0s;
-	-moz-transition-duration: 0s;
-	-ms-transition-duration: 0s;
-	-o-transition-duration: 0s;
-	transition-duration: 0s;
-}
-
-/* End: Recommended Isotope styles */
-
-
 .category, .user {
 	max-width: 300px;
 	min-width: 300px;
@@ -82,4 +27,43 @@
 
 .size48{
 	height: 48px;
+}
+
+.klout {
+    display: inline-block;
+    *display: inline;/* for IE7*/
+    *zoom:1;/* for IE7*/
+    min-width: 48px;
+    min-height: 48px;
+    padding-left: 24px;
+    padding-top: 12px;
+    font-size: 23px;
+    font-weight: bold;
+    font-family: "DIN", Helvetica, Arial;
+    color: white;
+    background-image: url(/assets/img/klout-score-flag.png);
+    background-repeat: no-repeat;
+    background-size: 48px Auto;
+    background-position: top;
+}
+
+/* Datatable widths */
+#twitter-datatable td:nth-child(1){
+	max-width: 30px;
+}
+
+#twitter-datatable td:nth-child(2){
+	min-width: 300px;
+	max-width: 380px;
+}
+
+.tw_rank {
+	margin-top: 20px;
+	margin-left: 10px;
+	font-size: 32px;
+    font-weight: bold;
+}
+
+#nodata {
+	display: none;
 }

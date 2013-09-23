@@ -1,0 +1,1 @@
+insert into dim_topic (topic_id, klout_topic_id, topic_type, slug, display_name, image_url) values (-1, '-1', 'sub', 'unassigned', 'Unassigned', ''), (-2, '-2', 'entity', 'unassigned', 'Unassigned', '');

@@ -8,15 +8,19 @@ class HomeController extends BaseController {
 	|--------------------------------------------------------------------------
 	*/
 	public function index(){
-		$page_title = '90000+ Belgian tweeters ranked by influence';
-		$page_desc = 'twitto.be lets you explore the Belgian twitter users community.';
-		$h1_title = 'Belgians on twitter, ranked by influence';
+		$page_title = 'top twitter influencers in Belgium by topic, location and language';
+		$page_desc = 'twitto.be lets you explore the Belgian twittos, ranked by their Klout score, with powerful filters and visualizations';
+		$h1_title = 'top twitter influencers in Belgium by topic, location and language';
 
 		$category_id = 0;
 
-		$categories = Category::orderBy('sorting_order', 'asc')->get();
+		$input = Input::all();
+		$filters['topics'] = (isset($input['topics']) ? trim($input['topics']) : '');
+		$filters['locations'] = (isset($input['locations']) ? trim($input['locations']) : '');
+		$filters['languages'] = (isset($input['languages']) ? trim($input['languages']) : '');
+		$filters['searchString'] = (isset($input['search']) ? trim($input['search']) : '');
 
-		return View::make('home', compact('page_title', 'page_desc','h1_title', 'categories', 'category_id'));
+		return View::make('home', compact('page_title', 'page_desc','h1_title', 'category_id', 'filters'));
 	}
 
 	public function feedback() {
