@@ -232,9 +232,6 @@
 	fill: #000;
 	font-size: 12px;
 	cursor: pointer;
-	stroke: #fff;
-	stroke-width: .4;
-	stroke-opacity: .5;
 }
 
 .dc-chart g text {
