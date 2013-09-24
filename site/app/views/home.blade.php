@@ -1,5 +1,13 @@
 @extends('_layouts.default')
 @section('main')
+<!--[if lte IE 9]>
+	<div class="alert alert-error">
+		<h3>Browser not supported</h3>
+		<p>Twitto.be uses a technology that is not compatible with your browser. We are sorry about that. Please try to use Google Chrome, Firefox or Internet Explorer 10</p>
+	</div>
+	<img src="/assets/img/fallback.png">
+<![endif]-->
+<!--[if gt IE 9]><!-->
 <div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
 	<div class="span3">
@@ -47,9 +55,7 @@
 		</p>
 	</div>
 </div>
-<div class="row-fluid">
-
-</div>
+<!-- <![endif]-->
 @stop
 
 {{-- Web site Title --}}
