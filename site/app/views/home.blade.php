@@ -74,7 +74,7 @@
 @stop
 
 @section('inline-javascript')
-
+<!--[if gt IE 9]><!-->
 <script src="/assets/js/belgian-provinces.js"></script>
 <script type="text/javascript">
 var provincesMap = {
@@ -687,6 +687,6 @@ function shareUrls(twittos) {
 	$shareLinkedin.attr('href', shareUrl)
 
 }
-
+<!-- <![endif]-->
 </script>
 @stop
