@@ -43,6 +43,7 @@ class Twuser extends Eloquent {
 	public function getIds($searchString = ""){
 
 		$return_array = [];
+		$return_array_num = [];
 
 		// Change the fetch mode to "FETCH_NUM"
 		// So that an indexed array is returned
@@ -57,6 +58,14 @@ class Twuser extends Eloquent {
 			->groupBy('tw_id');
 
 		$return_array['tw_id'] = $query->get();
+		// Pull the array, one level up
+		// As seen in http://stackoverflow.com/questions/3863629/array-to-one-level-higher
+		$return_array['tw_id'] = call_user_func_array('array_merge', $return_array['tw_id']);
+		
+		// We need to take care of the string to int on our own
+		foreach ($return_array['tw_id'] as $key => $value) {
+			$return_array_num['tw_id'][$key] = (int) $value;
+		}
 		//$return_array['tw_id'] = (string)$query->get();
 		// $return_array['tw_id'] = implode(',', $query->get());
 
@@ -70,7 +79,7 @@ class Twuser extends Eloquent {
 		*/
 		DB::setFetchMode(PDO::FETCH_CLASS);
 
-		return $return_array;
+		return $return_array_num;
 	}
 
 	public function getUserDetails($tw_id){
