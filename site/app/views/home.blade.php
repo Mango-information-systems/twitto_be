@@ -35,6 +35,10 @@
 		</div>
 	</div>
 	<div class="span8">
+		<form  id='searchForm' class="form-search pull-right">
+			<input type="text" class="search-query input-xxlarge" id="searchfield" placeholder="search keyword(s) or @username(s)">
+			<button class="btn" type="button" id="searchbutton"><i class="icon-search"></i></button>
+		</form>
 		<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
 		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 		<div class="alert alert-info">
@@ -299,7 +303,7 @@ function historyPushState(){
 
 //Split functions
 function getRemoteData(){
-	d3.json('json/users.json/search', function (data) {
+	d3.json('json/users', function (data) {
 		allTwittos = data
 		renderAll(allTwittos)
 	})
@@ -652,9 +656,39 @@ languagesChart.on("preRedraw", function(chart){
 
 
 $(function() {
-	blockPage(' loading ... ')
+	//blockPage(' loading ... ')
 	getRemoteData()
+	
+	$('#searchForm').on('submit', function(evt) {
+		if ($searchField.val() != '') {
+			runSearch( $searchField.val(), 0)
+		}
+		return false;
+	})
 })
+
+function runSearch(searchTerms, errCount) {
+// run a search and filter data
+
+	$.ajax({
+		url : "/json/search/" + searchTerms
+		, dataType : 'json'
+		, success : function(data, status, jqXHR) {
+			// filter using data
+			console.log('query result', data)
+		}
+		, error : function(jqXHR, err) {
+			console.log('search error', err)
+			if (errCount < 2) {
+				console.log('reattempting...')
+				runSearch(searchTerms, errCount+1)
+			}
+			else {
+				// TODO: handle error (e.g. display alert)
+			}
+		}
+	})
+}
 
 function blockPage(msg) {
 	$.blockUI({

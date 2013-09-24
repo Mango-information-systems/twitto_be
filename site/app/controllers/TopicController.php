@@ -1,13 +1,21 @@
 <?php
 
 class TopicController extends BaseController {
-	public function jsonUsers($searchStr = "") {
+	public function jsonUsers() {
 		$_user = new Twuser();
-		$searchStr = trim($searchStr);;
 
-		$users = $_user->getUsers($searchStr);
+		$users = $_user->getUsers();
 
 		return Response::json($users, 200);
+	}
+	
+	public function jsonSearch($searchStr = "") {
+		$_id = new Twuser();
+		$searchStr = trim($searchStr);;
+
+		$ids = $_id->getIds($searchStr);
+
+		return Response::json($ids, 200);
 	}
 
 	public function jsonUserDetails($tw_id) {
@@ -22,13 +30,6 @@ class TopicController extends BaseController {
 		}
 
 		return Response::json($new_users, 200);
-	}
-
-	public function jsonTopics() {
-		$_user = new Twuser();
-		$topics = $_user->getTopics();
-
-		return Response::json($topics, 200);
 	}
 
 }
