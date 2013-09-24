@@ -128,6 +128,7 @@ var provincesMap = {
 		.scale(600 * 6)
 // TODO: dynamically set width and height according to chart dimensions
 		.translate([370 / 2, 250])
+    , idsDimension
     , topicsChart = dc.rowChart("#topics-chart")
 	, beChart = dc.geoChoroplethChart("#be-chart")
 	, languagesChart = dc.rowChart("#languages-chart")
@@ -316,6 +317,10 @@ function renderAll(data){
 	var ndx = crossfilter(data.tw_user)
 
 	all = ndx.groupAll()
+
+	idsDimension = ndx.dimension(function (d) {
+		return d[0]
+	})
 
 	// Solution based on
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
@@ -656,6 +661,7 @@ languagesChart.on("preRedraw", function(chart){
 
 
 $(function() {
+	// TODO temporarily disabled the loading indicator, to be reset before going to prod 
 	//blockPage(' loading ... ')
 	getRemoteData()
 	
@@ -674,8 +680,23 @@ function runSearch(searchTerms, errCount) {
 		url : "/json/search/" + searchTerms
 		, dataType : 'json'
 		, success : function(data, status, jqXHR) {
-			// filter using data
-			console.log('query result', data)
+			if (data.tw_id.length == 0) {
+			// search returned no result, inform user and offer to clear the search
+				
+			}
+			else {
+			// apply the filter
+				idsDimension.filter(function(d) {
+					return _.indexOf(data.tw_id, d) != -1
+				})
+				console.log(all.value())
+				if (all.value() == 0) {
+				// no result from the search with current filters, offer to clear them
+				}
+				else {
+					dc.redrawAll()
+				}
+			}
 		}
 		, error : function(jqXHR, err) {
 			console.log('search error', err)

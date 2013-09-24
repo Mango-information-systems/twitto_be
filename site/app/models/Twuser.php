@@ -27,6 +27,12 @@ class Twuser extends Eloquent {
 
 		$return_array['tw_user'] = $query->get();
 
+		// We need to take care of the string to int on our own
+		foreach ($return_array['tw_user'] as $key => $value) {
+			$return_array['tw_user'][$key][0] = (int) $value[0];
+			$return_array['tw_user'][$key][2] = (int) $value[2];
+			$return_array['tw_user'][$key][3] = (int) $value[3];
+		}
 		/*
 		$queries = DB::getQueryLog();
 		$last_query = end($queries);
@@ -43,7 +49,6 @@ class Twuser extends Eloquent {
 	public function getIds($searchString = ""){
 
 		$return_array = [];
-		$return_array_num = [];
 
 		// Change the fetch mode to "FETCH_NUM"
 		// So that an indexed array is returned
@@ -64,10 +69,8 @@ class Twuser extends Eloquent {
 		
 		// We need to take care of the string to int on our own
 		foreach ($return_array['tw_id'] as $key => $value) {
-			$return_array_num['tw_id'][$key] = (int) $value;
+			$return_array['tw_id'][$key] = (int) $value;
 		}
-		//$return_array['tw_id'] = (string)$query->get();
-		// $return_array['tw_id'] = implode(',', $query->get());
 
 		/*
 		$queries = DB::getQueryLog();
@@ -79,7 +82,7 @@ class Twuser extends Eloquent {
 		*/
 		DB::setFetchMode(PDO::FETCH_CLASS);
 
-		return $return_array_num;
+		return $return_array;
 	}
 
 	public function getUserDetails($tw_id){
