@@ -36,8 +36,8 @@
 	</div>
 	<div class="span8">
 		<form  id="searchForm" class="form-search pull-right">
-			<input type="text" class="search-query input-xxlarge" id="searchfield" placeholder="search keyword(s) or @username(s)">
-			<button class="btn btn-primary" type="button" id="searchButton"><i class="icon-search icon-white"></i></button>
+			<input type="text" class="search-query input-xlarge" id="searchfield" placeholder="search keyword(s) or @username(s)">
+			<button class="btn btn-primary" type="submit" id="searchButton"><i class="icon-search icon-white"></i></button>
 			<button class="btn disabled" type="button" id="clearSearchButton" title="clear the search"><i class="icon-remove"></i></button>
 		</form>
 		<div id="searchFeedback"></div>
@@ -163,7 +163,8 @@ urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
 urlFilters['languages'] = urlFilters['languages'].split(',')
 urlFilters['search'] = '<?php echo $filters['searchString']; ?>'
 
-if(urlFilters['search'][0] != ''){
+if(urlFilters['search'] != ''){
+	console.log(urlFilters['search'])
 	runSearch(urlFilters['search'], 0)
 	$searchField.val(urlFilters['search'])
 }
@@ -676,9 +677,7 @@ $(function() {
 	getRemoteData()
 	
 	$('#searchForm').on('submit', function(evt) {
-		if ($searchField.val() != '') {
-			runSearch( $searchField.val(), 0)
-		}
+		runSearch( $searchField.val(), 0)
 		return false
 	})
 	
@@ -714,7 +713,7 @@ function displaySearchResults(searchResults) {
 		// search returned no result, inform user and offer to clear the search
 			idsDimension.filter(-1)
 			dc.redrawAll()
-			$searchFeedback.html('<div class="alert alert-error"><h3>No result for this search</h3><p>There is no result for the search you entered, please try another search term or <a href="javascript:clearSearch()">clear the search</a></p></div>')
+			$searchFeedback.html('<div class="alert alert-error"><h3>No result for this search</h3><p>Please try another search term or <a href="javascript:clearSearch()">clear the search</a></p></div>')
 		}
 		else {
 		// apply the filter
@@ -736,25 +735,27 @@ function displaySearchResults(searchResults) {
 
 function runSearch(searchTerms, errCount) {
 // run a search and filter data
-	$clearSearchButton.removeClass('disabled')
-	$.ajax({
-		url : "/json/search/" + searchTerms
-		, dataType : 'json'
-		, success : function(data, status, jqXHR) {
-			displaySearchResults(data.tw_id)
-		}
-		, error : function(jqXHR, err) {
-			console.log('search error', err)
-			if (errCount < 2) {
-				console.log('reattempting...')
-				runSearch(searchTerms, errCount+1)
+	if ($searchField.val() != '') {
+		$clearSearchButton.removeClass('disabled')
+		$.ajax({
+			url : "/json/search/" + searchTerms
+			, dataType : 'json'
+			, success : function(data, status, jqXHR) {
+				displaySearchResults(data.tw_id)
 			}
-			else {
-				// TODO: handle error (e.g. display alert)
-				$searchFeedback.html('<div class="alert alert-error"><h3>Error occured while searching</h3><p>Sorry. For some reason, the search did not succeed. Please <a href="javascript:runSearch(searchTerms, 0)">try again</a> in a short moment, or <a href="javascript:clearSearch()">clear the search</a></p></div>')
+			, error : function(jqXHR, err) {
+				console.log('search error', err)
+				if (errCount < 2) {
+					console.log('reattempting...')
+					runSearch(searchTerms, errCount+1)
+				}
+				else {
+					// TODO: handle error (e.g. display alert)
+					$searchFeedback.html('<div class="alert alert-error"><h3>Error occured while searching</h3><p>Sorry. For some reason, the search did not succeed. Please <a href="javascript:runSearch(' + searchTerms + ', 0)">try again</a> in a short moment, or <a href="javascript:clearSearch()">clear the search</a></p></div>')
+				}
 			}
-		}
-	})
+		})
+	}
 }
 
 function blockPage(msg) {
