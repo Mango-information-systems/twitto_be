@@ -8,7 +8,6 @@
 	<img src="/assets/img/fallback.png">
 <![endif]-->
 <!--[if gt IE 9]><!-->
-<div id="scrolltop">&nbsp;</div>
 <div class="row-fluid">
 	<div class="span3">
 		<div class="row-fluid">
@@ -529,7 +528,7 @@ function renderAll(data){
 				var pagination = this.fnPagingInfo()
 				
 				//scroll to the top of the page
-				window.location.hash = 'scrolltop';
+				$('html, body').animate({ scrollTop: 0 });
 				
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
 					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
