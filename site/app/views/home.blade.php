@@ -35,10 +35,12 @@
 		</div>
 	</div>
 	<div class="span8">
-		<form  id='searchForm' class="form-search pull-right">
+		<form  id="searchForm" class="form-search pull-right">
 			<input type="text" class="search-query input-xxlarge" id="searchfield" placeholder="search keyword(s) or @username(s)">
-			<button class="btn" type="button" id="searchbutton"><i class="icon-search"></i></button>
+			<button class="btn btn-primary" type="button" id="searchButton"><i class="icon-search icon-white"></i></button>
+			<button class="btn disabled" type="button" id="clearSearchButton" title="clear the search"><i class="icon-remove"></i></button>
 		</form>
+		<div id="searchFeedback"></div>
 		<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
 		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 		<div class="alert alert-info">
@@ -137,7 +139,7 @@ var provincesMap = {
 	, filteredData // full dataset (crossfilter dimension)
 	, fdata // top infinity of filteredData
 	, twittosDetails = {} // cache of all twittos for which details have already been extracted
-	, allTwittos = null //cache of all twittos metadata: province, topics, language, klout score...
+	, usersLoaded // flag informing whether all twittos information has already been retrieved. Useful to run search in parallel of extraction
 	, topics
 	, provincesGroup
 	, topicsRows
@@ -146,6 +148,8 @@ var provincesMap = {
 	, $shareFacebook = $('#sharefacebook')
 	, $shareLinkedin = $('#sharelinkedin')
 	, $searchField = $('#searchfield')
+	, $searchFeedback = $('#searchFeedback')
+	, $clearSearchButton = $('#clearSearchButton')
 	, $inPageTitle = $('h1:first') // page title inside the page
 	, resized = false
 	, all
@@ -157,6 +161,12 @@ urlFilters['locations'] = '<?php echo $filters['locations']; ?>'
 urlFilters['locations'] = urlFilters['locations'].split(',')
 urlFilters['languages'] = '<?php echo $filters['languages']; ?>'
 urlFilters['languages'] = urlFilters['languages'].split(',')
+urlFilters['search'] = '<?php echo $filters['searchString']; ?>'
+
+if(urlFilters['search'][0] != ''){
+	runSearch(urlFilters['search'], 0)
+	$searchField.val(urlFilters['search'])
+}
 
 function filterData(urlFilter){
 	// Check if we just resized. 
@@ -178,6 +188,7 @@ function filterData(urlFilter){
 				topicsChart.filter('' + reverseTopicsMap[d])
 			})
 		}
+		
 		if(urlFilter['locations'][0] != ''){
 			_.forEach(urlFilter['locations'], function(d){
 				beChart.filter(d)
@@ -286,7 +297,7 @@ function historyPushState(){
 	}
 	
 	// fallback to default in case no filter and no search is set	
-	if (topicsFilter.length == 0 && provincesFilter.length == 0 && languagesFilter.length== 0) {
+	if (topicsFilter.length == 0 && provincesFilter.length == 0 && languagesFilter.length == 0 && searchFilter.length == 0) {
 		newTitle += ' in Belgium by topic, location and language'
 	}
 	
@@ -305,8 +316,7 @@ function historyPushState(){
 //Split functions
 function getRemoteData(){
 	d3.json('json/users', function (data) {
-		allTwittos = data
-		renderAll(allTwittos)
+		renderAll(data)
 	})
 }
 
@@ -321,7 +331,7 @@ function renderAll(data){
 	idsDimension = ndx.dimension(function (d) {
 		return d[0]
 	})
-
+	
 	// Solution based on
 	// http://stackoverflow.com/questions/17524627/is-there-a-way-to-tell-crossfilter-to-treat-elements-of-array-as-separate-
 	// Strange... Even if I replace the IDs with their values, when I ask the values from the reduce functions, I still get IDs...
@@ -437,7 +447,8 @@ function renderAll(data){
 		.xAxis().ticks(4)
 
 	$('.placeholder').remove()
-		
+
+	usersLoaded = true
 	dc.renderAll()
 
 	var userDetailsXHR // ajax request querying for user details
@@ -659,7 +670,6 @@ languagesChart.on("preRedraw", function(chart){
 	$('#languages-chart').height(newWidth * 2 / 3 + 30)
 })
 
-
 $(function() {
 	// TODO temporarily disabled the loading indicator, to be reset before going to prod 
 	//blockPage(' loading ... ')
@@ -669,34 +679,69 @@ $(function() {
 		if ($searchField.val() != '') {
 			runSearch( $searchField.val(), 0)
 		}
-		return false;
+		return false
 	})
+	
+	$clearSearchButton.on('click', function() {
+		clearSearch()
+		return false
+	})	
+
 })
+
+function clearSearch() {
+// clear search form and reset filter on ids
+	$searchField.val('')
+	idsDimension.filter()
+	dc.redrawAll()
+	historyPushState()
+	$clearSearchButton.addClass('disabled')
+	$searchFeedback.empty()
+}
+
+function clearFilters() {
+// clear all filters except search
+	topicsChart.filterAll()
+	beChart.filterAll()
+	languagesChart.filterAll()
+	dc.redrawAll()
+	$searchFeedback.empty()
+}
+
+function displaySearchResults(searchResults) {
+	if (usersLoaded) {
+		if (searchResults.length == 0) {
+		// search returned no result, inform user and offer to clear the search
+			idsDimension.filter(-1)
+			dc.redrawAll()
+			$searchFeedback.html('<div class="alert alert-error"><h3>No result for this search</h3><p>There is no result for the search you entered, please try another search term or <a href="javascript:clearSearch()">clear the search</a></p></div>')
+		}
+		else {
+		// apply the filter
+			idsDimension.filter(function(d) {
+				return _.indexOf(searchResults, d) != -1
+			})
+			dc.redrawAll()
+			if (all.value() == 0) {
+			// no result from the search with current filters, offer to clear them
+				$searchFeedback.html('<div class="alert alert-warning"><h3>Selection too narrow</h3><p>Results are not visible <strong>with the current combination of filters</strong>. <a href="javascript:clearFilters()">clear the filters</a> on topics, location and language to see search results</p></div>')
+			}
+		}
+	}
+	else {
+	// waiting for users.json to be loaded and processed, retry in a short delay
+		setTimeout(function() { displaySearchResults(searchResults) }, 100)
+	}
+}
 
 function runSearch(searchTerms, errCount) {
 // run a search and filter data
-
+	$clearSearchButton.removeClass('disabled')
 	$.ajax({
 		url : "/json/search/" + searchTerms
 		, dataType : 'json'
 		, success : function(data, status, jqXHR) {
-			if (data.tw_id.length == 0) {
-			// search returned no result, inform user and offer to clear the search
-				
-			}
-			else {
-			// apply the filter
-				idsDimension.filter(function(d) {
-					return _.indexOf(data.tw_id, d) != -1
-				})
-				console.log(all.value())
-				if (all.value() == 0) {
-				// no result from the search with current filters, offer to clear them
-				}
-				else {
-					dc.redrawAll()
-				}
-			}
+			displaySearchResults(data.tw_id)
 		}
 		, error : function(jqXHR, err) {
 			console.log('search error', err)
@@ -706,6 +751,7 @@ function runSearch(searchTerms, errCount) {
 			}
 			else {
 				// TODO: handle error (e.g. display alert)
+				$searchFeedback.html('<div class="alert alert-error"><h3>Error occured while searching</h3><p>Sorry. For some reason, the search did not succeed. Please <a href="javascript:runSearch(searchTerms, 0)">try again</a> in a short moment, or <a href="javascript:clearSearch()">clear the search</a></p></div>')
 			}
 		}
 	})
