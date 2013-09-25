@@ -34,14 +34,18 @@
 		</div>
 	</div>
 	<div class="span8">
-		<form  id="searchForm" class="form-search pull-right">
-			<input type="text" class="search-query input-xlarge" id="searchField" placeholder="search keyword(s) or @username(s)">
-			<button class="btn btn-primary" type="submit" id="searchButton"><i class="icon-search icon-white"></i></button>
-			<button class="btn disabled" type="button" id="clearSearchButton" title="clear the search"><i class="icon-remove"></i></button>
-		</form>
-		<div id="searchFeedback"></div>
-		<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
-		<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+		<div class="row-fluid">
+			<form id="searchForm" class="form-search pull-right">
+				<input type="text" class="search-query input-xlarge" id="searchField" placeholder="search keyword(s) or @username(s)">
+				<button class="btn btn-primary" type="submit" id="searchButton"><i class="icon-search icon-white"></i></button>
+				<button class="btn disabled" type="button" id="clearSearchButton" title="clear the search"><i class="icon-remove"></i></button>
+			</form>
+			<div id="searchFeedback"></div>
+		</div>
+		<div id="table-container" class="row-fluid">
+			<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
+			<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
+		</div>
 		<div class="alert alert-info">
 			<h3>Marketing segmentation for professionals</h3>
 			<p>Do you really know who is following you? Segment your twitter followers into communities, identify the individuals that can amplify your message and see how the competition are doing.</p>
@@ -473,12 +477,17 @@ function renderAll(data){
 			, success : function(data, status, jqXHR) {
 				$.each(data, function(index, item) {
 					// update data table content
+					$('#klout-' + index).attr('href', 'http://klout.com/user/' + item.screen_name)
+					$('#pic-link-' + index).attr('href', 'https://twitter.com/' + item.screen_name)
 					$('#pic-' + index).attr('src', item.profile_image_url)
 					$('#name-' + index).html(item.name)
+					$('#screen-name-' + index).html('@' + item.screen_name)
+					$('#screen-name-' + index).attr('href', 'https://twitter.com/' + item.screen_name)
 					$('#desc-' + index).html(item.description)
 					// add user details to cache
 					twittosDetails[index] = {
 						name : item.name
+						, screen_name : item.screen_name
 						, description : item.description
 						, profile_image_url: item.profile_image_url
 						, cached: true
@@ -571,16 +580,16 @@ function renderAll(data){
 						var profileHTML = ''
 							+ '<div class="media">'
 							+ '<div class="pull-left media-object">'
-							+ '<a class="klout" target="_blank" title="' + oObj.aData[5] + '\'s Klout score" alt="' + oObj.aData[5] + '\'s profile picture" href="http://klout.com/user/' + oObj.aData[5] + '">'
+							+ '<a id="klout-' + oObj.aData[0] + '" class="klout" target="_blank" title="Klout influence score" href="http://klout.com/user/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">'
 							+ oObj.aData[3]
 							+ '</a>'
-							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">'
-							+ '<img width="48" height="48" id="pic-' + oObj.aData[0] + '" title="profile pic" alt="profile pic" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
+							+ '<a id="pic-link-' + oObj.aData[0] + '" target="_blank" href="https://twitter.com/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">'
+							+ '<img id="pic-' + oObj.aData[0] + '" width="48" height="48" title="profile pic" alt="profile pic" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
 							+ '</a>'
 							+ '</div>'
 							+ '<div class="media-body">'
-							+ '<h4 class="media-heading" id="name-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
-							+ '<a target="_blank" href="https://www.twitter.com/' + oObj.aData[5] + '">@' + oObj.aData[5] + '</a>'
+							+ '<h4 id="name-' + oObj.aData[0] + '" class="media-heading">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
+							+ '<a id="screen-name-' + oObj.aData[0] + '" target="_blank" href="https://twitter.com/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">@' + (twittosDetails[oObj.aData[0]].screen_name || '') + '</a>'
 							+ '</div>'
 							+ '</div>'
 						return profileHTML
@@ -600,7 +609,6 @@ function renderAll(data){
 					, "bSortable": false
 					, "sWidth": "65%"
 				}
-				, { "sTitle": "Screen Name", "aTargets": [ 5 ],"bVisible": false, "bSearchable": false, "bSortable": false }
 			]
 		} )
 	}// End check if datatable is initialized
@@ -677,10 +685,11 @@ languagesChart.on("preRedraw", function(chart){
 
 $(function() {
 	// TODO temporarily disabled the loading indicator, to be reset before going to prod 
-	//blockPage(' loading ... ')
+	blockPage(' loading ... ')
 	getRemoteData()
 	
 	$('#searchForm').on('submit', function(evt) {
+		$('#table-container').block({message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />Loading...</h1>'})
 		runSearch( $searchField.val(), 0)
 		return false
 	})
@@ -713,6 +722,7 @@ function clearFilters() {
 
 function displaySearchResults(searchResults) {
 	if (usersLoaded) {
+		$('#table-container').unblock()
 		if (searchResults.length == 0) {
 		// search returned no result, inform user and offer to clear the search
 			idsDimension.filter(-1)
@@ -756,7 +766,7 @@ function runSearch(searchTerms, errCount) {
 					runSearch(searchTerms, errCount+1)
 				}
 				else {
-					// TODO: handle error (e.g. display alert)
+					$('#table-container').unblock()
 					$searchFeedback.html('<div class="alert alert-error"><h3>Error occured while searching</h3><p>Sorry. For some reason, the search did not succeed. Please <a href="javascript:runSearch(' + searchTerms + ', 0)">try again</a> in a short moment, or <a href="javascript:clearSearch()">clear the search</a></p></div>')
 				}
 			}
@@ -769,7 +779,6 @@ function blockPage(msg) {
 		message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />' + msg + '</h1>'
 		, overlayCSS:  { cursor: 'wait'}
 	})
-	
 }
 
 function shareUrls(twittos) {

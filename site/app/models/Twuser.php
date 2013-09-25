@@ -18,8 +18,7 @@ class Twuser extends Eloquent {
 			->join('fact_topic', 'tw_user.tw_id', '=', 'fact_topic.tw_id')
 			->orderBy('klout_score', 'desc')
 			->select('tw_user.tw_id as tw_id', 'lang', 'province_id',
-				'klout_score', DB::raw('GROUP_CONCAT( fact_topic.topic_id ) AS topic_id'),
-				'screen_name'
+				'klout_score', DB::raw('GROUP_CONCAT( fact_topic.topic_id ) AS topic_id')
 			)
 			->where('fact_topic.topic_id', '!=', '-1')
 			->remember(1440)
