@@ -518,101 +518,103 @@ function renderAll(data){
 		}
 	}
 
-	// Check if datatable is initialized
-	// Followed the documentation http://datatables.net/api
-	var ex = document.getElementById('twitter-datatable')
-	if ( ! $.fn.DataTable.fnIsDataTable( ex ) ) {
-		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "t<'row-fluid'<'pull-right'p>"
-			, "sAjaxDataProp": ""
-			, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
-			, "aaData": [	]
-			, "asStripeClasses": [ ]
-			, "iDisplayLength": 10
-			, "sPaginationType": "bootstrap"
-			, "aaSorting": [[ 3, "desc" ]]
-			, "fnDrawCallback": function( oSettings ) {
-				var pagination = this.fnPagingInfo()
-				
-				//scroll to the top of the page
-				$('html, body').animate({ scrollTop: 0 });
-				
-				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
-					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
-					addNextPageData(twids)
-					updateDataTable()
-				}
-				else if(twids.length != 0){
-					// update row
-					updateDataTable()
-				}
+	// initialize dataTables
+	dataTable = $('#twitter-datatable').dataTable( {
+		"sDom": "t<'row-fluid'<'pull-right'p>"
+		, "sAjaxDataProp": ""
+		, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
+		, "aaData": [	]
+		, "asStripeClasses": [ ]
+		, "iDisplayLength": 10
+		, "sPaginationType": "bootstrap"
+		, "aaSorting": [[ 3, "desc" ]]
+		, "fnDrawCallback": function( oSettings ) {
+			var pagination = this.fnPagingInfo()
+			
+			if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
+				// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
+				addNextPageData(twids)
+				updateDataTable()
+			}
+			else if(twids.length != 0){
+				// update row
+				updateDataTable()
+			}
 
+		}
+		, "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			// identify users not yet cached, for which we should retrieve details via ajax call.
+			if (!twittosDetails[aData[0]].cached) {
+				twids.push(aData[0])
 			}
-			, "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-				// identify users not yet cached, for which we should retrieve details via ajax call.
-				if (!twittosDetails[aData[0]].cached) {
-					twids.push(aData[0])
-				}
-			}
+		}
 // TODO: investigate way to remove all unnecessary columns from the dataset (indices 0 to 5)
 // will require reformating of fData and aData variables
-			, "aoColumnDefs": [
-				{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
-				, {
-					"sTitle": "Rank"
-					, "fnRender": function ( oObj ) {
-						return '<p class="tw_rank">' + oObj.aData[6] + '</p>'
-					}
-					, "aTargets": [ 1 ]
-					, "bSearchable": false
-					, "bSortable": false
-					, "sWidth": "5%"
+		, "aoColumnDefs": [
+			{ "sTitle": "Tw ID", "aTargets": [ 0 ], "bVisible": false, "bSearchable": false, "bSortable": false }
+			, {
+				"sTitle": "Rank"
+				, "fnRender": function ( oObj ) {
+					return '<p class="tw_rank">' + oObj.aData[6] + '</p>'
 				}
-				, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
-				, {
-					'sTitle': '<a href="http://klout.com" target="_blank"><img src="../assets/img/klout-logo.png"/></a>'
-					, "fnRender": function ( oObj ) {
-						if (! twittosDetails[oObj.aData[0]]) {
-							// create empty details object in case it does not exist yet.
-							twittosDetails[oObj.aData[0]] = {}
-						}
-						var profileHTML = ''
-							+ '<div class="media">'
-							+ '<div class="pull-left media-object">'
-							+ '<a id="klout-' + oObj.aData[0] + '" class="klout" target="_blank" title="Klout influence score" href="http://klout.com/user/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">'
-							+ oObj.aData[3]
-							+ '</a>'
-							+ '<a id="pic-link-' + oObj.aData[0] + '" target="_blank" href="https://twitter.com/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">'
-							+ '<img id="pic-' + oObj.aData[0] + '" width="48" height="48" title="profile pic" alt="profile pic" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
-							+ '</a>'
-							+ '</div>'
-							+ '<div class="media-body">'
-							+ '<h4 id="name-' + oObj.aData[0] + '" class="media-heading">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
-							+ '<a id="screen-name-' + oObj.aData[0] + '" target="_blank" href="https://twitter.com/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">@' + (twittosDetails[oObj.aData[0]].screen_name || '') + '</a>'
-							+ '</div>'
-							+ '</div>'
-						return profileHTML
+				, "aTargets": [ 1 ]
+				, "bSearchable": false
+				, "bSortable": false
+				, "sWidth": "5%"
+			}
+			, { "sTitle": "Klout Score", "aTargets": [ 3 ], "bVisible": false, "bSearchable": false }
+			, {
+				'sTitle': '<a href="http://klout.com" target="_blank"><img src="../assets/img/klout-logo.png"/></a>'
+				, "fnRender": function ( oObj ) {
+					if (! twittosDetails[oObj.aData[0]]) {
+						// create empty details object in case it does not exist yet.
+						twittosDetails[oObj.aData[0]] = {}
 					}
-					, "aTargets": [ 2 ]
-					, "bSearchable": false
-					, "bSortable": false
-					, "sWidth": "30%"
+					var profileHTML = ''
+						+ '<div class="media">'
+						+ '<div class="pull-left media-object">'
+						+ '<a id="klout-' + oObj.aData[0] + '" class="klout" target="_blank" title="Klout influence score" href="http://klout.com/user/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">'
+						+ oObj.aData[3]
+						+ '</a>'
+						+ '<a id="pic-link-' + oObj.aData[0] + '" target="_blank" href="https://twitter.com/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">'
+						+ '<img id="pic-' + oObj.aData[0] + '" width="48" height="48" title="profile pic" alt="profile pic" class="img-rounded size48" src="' + (twittosDetails[oObj.aData[0]].profile_image_url || 'http://placehold.it/48&text=loading...') + '">'
+						+ '</a>'
+						+ '</div>'
+						+ '<div class="media-body">'
+						+ '<h4 id="name-' + oObj.aData[0] + '" class="media-heading">' + (twittosDetails[oObj.aData[0]].name || '') + '</h4>'
+						+ '<a id="screen-name-' + oObj.aData[0] + '" target="_blank" href="https://twitter.com/' + (twittosDetails[oObj.aData[0]].screen_name || '') + '">@' + (twittosDetails[oObj.aData[0]].screen_name || '') + '</a>'
+						+ '</div>'
+						+ '</div>'
+					return profileHTML
 				}
-				, {
-					"sTitle": "Description"
-					, "fnRender": function ( oObj ) {
-						return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
-					}
-					, "aTargets": [ 4 ]
-					, "bSearchable": false
-					, "bSortable": false
-					, "sWidth": "65%"
+				, "aTargets": [ 2 ]
+				, "bSearchable": false
+				, "bSortable": false
+				, "sWidth": "30%"
+			}
+			, {
+				"sTitle": "Description"
+				, "fnRender": function ( oObj ) {
+					return '<p id="desc-' + oObj.aData[0] + '">' + (twittosDetails[oObj.aData[0]].description || '') + '</p>'
 				}
-			]
-		} )
-	}// End check if datatable is initialized
+				, "aTargets": [ 4 ]
+				, "bSearchable": false
+				, "bSortable": false
+				, "sWidth": "65%"
+			}
+		]
+	} )
+	
+	/*
+	// following does not always work:
+	dataTable.bind('page', function() {
+		//scroll to the top of the page when datatables page is changed
+		console.log('page change')
+		$('html, body').animate({ scrollTop: 0 })
+	})
+	*/
 
-	filteredData = languagesDimension;
+	filteredData = languagesDimension
 	
 	filterData(urlFilters)
 	
@@ -696,7 +698,7 @@ $(function() {
 	$clearSearchButton.on('click', function() {
 		clearSearch()
 		return false
-	})	
+	})
 
 })
 
