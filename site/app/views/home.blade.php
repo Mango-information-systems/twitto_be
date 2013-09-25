@@ -36,7 +36,7 @@
 	</div>
 	<div class="span8">
 		<form  id="searchForm" class="form-search pull-right">
-			<input type="text" class="search-query input-xlarge" id="searchfield" placeholder="search keyword(s) or @username(s)">
+			<input type="text" class="search-query input-xlarge" id="searchField" placeholder="search keyword(s) or @username(s)">
 			<button class="btn btn-primary" type="submit" id="searchButton"><i class="icon-search icon-white"></i></button>
 			<button class="btn disabled" type="button" id="clearSearchButton" title="clear the search"><i class="icon-remove"></i></button>
 		</form>
@@ -54,10 +54,12 @@
 			<strong>Share</strong>
 		</p>
 		<p>
-			<a id="sharetwitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fdtwitto.be&text=Exploring%20top%20twitter%20influencers%20in%20Belgium&via=twitto_be&hashtags=twittoBe" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
-			<a id="sharegoogle" href="https://plus.google.com/share?url=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a>
-			<a id="sharefacebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
-			<a id="sharelinkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fdtwitto.be&title=90000%2B%20Belgian%20tweeters%20ranked%20by%20influence%20-%20Twitto.be&summary=%40NATO%2C%20%40EU_Commission%2C%20%40Clijsterskim%20are%20in%20the%20ranking%20of%20top%20Belgian%20twittos&sourcetwitto_be" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a>
+			<a id="shareTwitter" href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fdtwitto.be&text=Exploring%20top%20twitter%20influencers%20in%20Belgium&via=twitto_be&hashtags=twittoBe" target="_blank"><img src="/assets/img/social_twitter_circle_color.png" width="48" height="48" alt="Share on Twitter"/></a>
+			<a id="shareGoogle" href="https://plus.google.com/share?url=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_google_circle_color.png" width="48" height="48" alt="Share on Google+"/></a>
+			<a id="shareFacebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fdtwitto.be" target="_blank"><img src="/assets/img/social_facebook_circle_color.png" width="48" height="48" alt="Share on Facebook"/></a>
+			<a id="shareLinkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Fdtwitto.be&title=90000%2B%20Belgian%20tweeters%20ranked%20by%20influence%20-%20Twitto.be&summary=%40NATO%2C%20%40EU_Commission%2C%20%40Clijsterskim%20are%20in%20the%20ranking%20of%20top%20Belgian%20twittos&sourcetwitto_be" target="_blank"><img src="/assets/img/social_linkedin_circle_color.png" width="48" height="48" alt="Share on Linkedin"/></a>
+			<br/>
+			<a class="btn" href="http://twitto.be" onclick = "javascript:copyToClipboard(this.href); return false" id="shareLink" title = "share permalink"> <i class="icon-share"></i> </a>
 		</p>
 	</div>
 </div>
@@ -143,11 +145,12 @@ var provincesMap = {
 	, topics
 	, provincesGroup
 	, topicsRows
-	, $shareTwitter = $('#sharetwitter')
-	, $shareGoogle = $('#sharegoogle')
-	, $shareFacebook = $('#sharefacebook')
-	, $shareLinkedin = $('#sharelinkedin')
-	, $searchField = $('#searchfield')
+	, $shareLink = $('#shareLink')
+	, $shareTwitter = $('#shareTwitter')
+	, $shareGoogle = $('#shareGoogle')
+	, $shareFacebook = $('#shareFacebook')
+	, $shareLinkedin = $('#shareLinkedin')
+	, $searchField = $('#searchField')
 	, $searchFeedback = $('#searchFeedback')
 	, $clearSearchButton = $('#clearSearchButton')
 	, $inPageTitle = $('h1:first') // page title inside the page
@@ -767,7 +770,7 @@ function blockPage(msg) {
 }
 
 function shareUrls(twittos) {
-	var currentUrl = History.getState().url
+	var currentUrl = History.getState().url.replace(/ /g, '+')
 		, shareUrl = ''
 		, shareText = ''
 		, shareVia = 'twitto_be'
@@ -775,34 +778,39 @@ function shareUrls(twittos) {
 		, topThreeText = ''
 		, shareTitle = 'top twitter influencers in Belgium by topic, location and language - Twitto.be'
 	
-	shareUrl = History.getState().url
-	
 	_.forEach(twittos, function(val, idx){
 		twittos[idx] = '@' + val
 	})
 	
 	shareText = twittos.join(', ') + ' are in the ranking of top Belgian twittos'
+	
+	// Permalink
+	$shareLink.attr('href', currentUrl)
 
 	//Twitter
-	shareUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(currentUrl.replace(' ', '+')) + 
+	shareUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(currentUrl) + 
 		'&text=' + encodeURIComponent(shareText) + '&via=' + encodeURIComponent(shareVia) + 
 		'&hashtags=' + encodeURIComponent(shareHashtags)
 	$shareTwitter.attr('href', shareUrl)
 	
 	//Google Plus
-	shareUrl = 'https://plus.google.com/share?url=' + encodeURIComponent(currentUrl.replace(' ', '+'))
+	shareUrl = 'https://plus.google.com/share?url=' + encodeURIComponent(currentUrl)
 	$shareGoogle.attr('href', shareUrl)
 	
 	//Facebook
-	shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentUrl.replace(' ', '+'))
+	shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentUrl)
 	$shareFacebook.attr('href', shareUrl)
 
 	//Linkedin
-	shareUrl = 'http://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(currentUrl	.replace(' ', '+')) +
+	shareUrl = 'http://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(currentUrl) +
 		'&title=' + encodeURIComponent(shareTitle) +  '&summary=' + encodeURIComponent(shareText) + 
 		'&source' + encodeURIComponent(shareVia)
 	$shareLinkedin.attr('href', shareUrl)
 
+}
+
+function copyToClipboard (text) {
+  window.prompt ("Permalink to the current page.\r\nCopy to clipboard: Ctrl+C, Enter", text);
 }
 <!-- <![endif]-->
 </script>
