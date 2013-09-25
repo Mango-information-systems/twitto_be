@@ -166,7 +166,6 @@ urlFilters['languages'] = urlFilters['languages'].split(',')
 urlFilters['search'] = '<?php echo $filters['searchString']; ?>'
 
 if(urlFilters['search'] != ''){
-	console.log(urlFilters['search'])
 	runSearch(urlFilters['search'], 0)
 	$searchField.val(urlFilters['search'])
 }
