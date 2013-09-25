@@ -514,7 +514,7 @@ function renderAll(data){
 	var ex = document.getElementById('twitter-datatable')
 	if ( ! $.fn.DataTable.fnIsDataTable( ex ) ) {
 		dataTable = $('#twitter-datatable').dataTable( {
-			"sDom": "t<'row-fluid'<'span6 pull-right'p>"
+			"sDom": "t<'row-fluid'<'pull-right'p>"
 			, "sAjaxDataProp": ""
 			, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
 			, "aaData": [	]
