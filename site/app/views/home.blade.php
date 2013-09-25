@@ -527,7 +527,10 @@ function renderAll(data){
 			, "aaSorting": [[ 3, "desc" ]]
 			, "fnDrawCallback": function( oSettings ) {
 				var pagination = this.fnPagingInfo()
-
+				
+				//scroll to the top of the page
+				window.location.hash = 'scrolltop';
+				
 				if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
 					// add data to dataTables as we are getting close to the current last page of the subset sent to dataTables
 					addNextPageData(twids)
