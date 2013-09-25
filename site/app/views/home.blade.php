@@ -15,20 +15,20 @@
 			<h3>Filters <small>click charts to filter data</small></h3>
 			<div id="topics-chart" class="span12">
 				<strong>Topics</strong>
-				<a class="reset" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+				<a class="btn btn-mini reset pull-right" href="javascript:topicsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<img src="assets/img/topics-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
 			<div id="be-chart" class="span12">
 				<strong>Provinces</strong>
-				<a class="reset" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+				<a class="btn btn-mini reset pull-right" href="javascript:beChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<span class="reset" style="display: none;"></span>
 				<img src="assets/img/provinces-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
 			<div id="languages-chart" class="span12">
 				<strong>Languages</strong>
-				<a class="reset" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+				<a class="btn btn-mini reset pull-right" href="javascript:languagesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 				<img src="assets/img/languages-chart-placeholder.png" class="placeholder"/>
 				<div class="clearfix"></div>
 			</div>
