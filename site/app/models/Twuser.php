@@ -65,7 +65,9 @@ class Twuser extends Eloquent {
 		$return_array['tw_id'] = $query->get();
 		// Pull the array, one level up
 		// As seen in http://stackoverflow.com/questions/3863629/array-to-one-level-higher
-		$return_array['tw_id'] = call_user_func_array('array_merge', $return_array['tw_id']);
+		if (!empty($return_array['tw_id'])) {
+			$return_array['tw_id'] = call_user_func_array('array_merge', $return_array['tw_id']);
+		}
 		
 		// We need to take care of the string to int on our own
 		foreach ($return_array['tw_id'] as $key => $value) {
