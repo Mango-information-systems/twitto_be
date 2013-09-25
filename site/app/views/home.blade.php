@@ -721,7 +721,8 @@ function displaySearchResults(searchResults) {
 			$searchFeedback.html('<div class="alert alert-error"><h3>No result for this search</h3><p>Please try another search term or <a href="javascript:clearSearch()">clear the search</a></p></div>')
 		}
 		else {
-		// apply the filter
+		// search returned results, apply the filter
+			$searchFeedback.empty()
 			idsDimension.filter(function(d) {
 				return _.indexOf(searchResults, d) != -1
 			})
@@ -740,7 +741,8 @@ function displaySearchResults(searchResults) {
 
 function runSearch(searchTerms, errCount) {
 // run a search and filter data
-	if ($searchField.val() != '') {
+
+	if (searchTerms != '') {
 		$clearSearchButton.removeClass('disabled')
 		$.ajax({
 			url : "/json/search/" + searchTerms
