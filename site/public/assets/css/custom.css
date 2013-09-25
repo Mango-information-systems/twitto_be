@@ -67,3 +67,8 @@
 #nodata {
 	display: none;
 }
+
+#shareLink {
+    margin-top:2px;
+    margin-left: 4px;
+}
