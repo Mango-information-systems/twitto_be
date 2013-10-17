@@ -7,7 +7,7 @@ Please also refer to the third-party libraries conditions of use:
 
 * Laravel	http://laravel.com/
 * Bootstrap	http://twitter.github.io/bootstrap/
-* Isotope	http://isotope.metafizzy.co/
+* datatables	http://datatables.net/
 * jQuery	http://jquery.com/
 
 Full text of the MIT License is available in the file MIT_LICENSE.txt in the same directory as the present file.
