@@ -1,4 +1,5 @@
-// extraction of klout ids for users to yet looked up
+// extraction of klout ids for users not yet linked to one
+// these users might already have been queried, but no result was returned by Klout
 var Mysql = require('mysql')
 	, _ = require('underscore')
 	, Klout = require("node_klout")
