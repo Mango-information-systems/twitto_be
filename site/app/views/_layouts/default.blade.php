@@ -128,7 +128,7 @@
 	ga('send', 'pageview')
 	
 	window.onerror = function(message, file, line) {
-		ga('send', 'event', 'Exceptions', file + ' - ' + line, message)
+		ga('send', 'event', 'Exceptions', file + ':' + line, message)
 	}
 </script>
 @endif
