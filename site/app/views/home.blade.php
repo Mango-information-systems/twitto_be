@@ -174,8 +174,8 @@ if(urlFilters['search'] != ''){
 }
 
 function filterData(urlFilter){
-	// Check if we just resized. 
-	// If resized, we do not need to do the rest
+	// check if we just resized. 
+	// if resized, we do not need to do the rest
 	if(resized){
 		resized = false
 		return
@@ -184,7 +184,6 @@ function filterData(urlFilter){
 
 	fdata = filteredData.top(Infinity);
 	var scores = []
-		, topThree = []
 	
 	if(urlFilter != null){
 	// filter based on url params
@@ -236,11 +235,9 @@ function filterData(urlFilter){
 	fdata.sort(function(a, b) {
 		return a[6] - b[6]
 	})
-	
-	// Get top three twittos and pass them to the share function
-	topThree = fdata.slice(0,3)
-	topThree = _.pluck(topThree, 5)
-	shareUrls(topThree)
+
+	// update social sharing intents urls
+	shareUrls()
 
 	dataTable.fnClearTable()
 	pageSliceIndex = Math.min(125, fdata.length)
@@ -492,6 +489,7 @@ function renderAll(data){
 						, cached: true
 					}
 				})
+				// reset variables
 				twids = []
 				ajaxErrCount = 0
 			}
@@ -520,15 +518,15 @@ function renderAll(data){
 
 	// initialize dataTables
 	dataTable = $('#twitter-datatable').dataTable( {
-		"sDom": "t<'row-fluid'<'pull-right'p>"
-		, "sAjaxDataProp": ""
-		, "bDeferRender": true //speed  http://datatables.net/ref#bDeferRender
-		, "aaData": [	]
-		, "asStripeClasses": [ ]
-		, "iDisplayLength": 10
-		, "sPaginationType": "bootstrap"
-		, "aaSorting": [[ 3, "desc" ]]
-		, "fnDrawCallback": function( oSettings ) {
+		'sDom': "t<'row-fluid'<'pull-right'p>"
+		, 'sAjaxDataProp': ''
+		, 'bDeferRender': true //speed  http://datatables.net/ref#bDeferRender
+		, 'aaData': [	]
+		, 'asStripeClasses': [ ]
+		, 'iDisplayLength': 10
+		, 'sPaginationType': 'bootstrap'
+		, 'aaSorting': [[ 3, 'desc' ]]
+		, 'fnDrawCallback': function( oSettings ) {
 			var pagination = this.fnPagingInfo()
 			
 			if (pagination.iTotalPages > 0 && pagination.iPage >= pagination.iTotalPages - 2 && twids.length != 0) {
@@ -537,12 +535,11 @@ function renderAll(data){
 				updateDataTable()
 			}
 			else if(twids.length != 0){
-				// update row
+				// update rows
 				updateDataTable()
 			}
-
 		}
-		, "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+		, 'fnRowCallback': function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			// identify users not yet cached, for which we should retrieve details via ajax call.
 			if (!twittosDetails[aData[0]].cached) {
 				twids.push(aData[0])
@@ -786,20 +783,15 @@ function blockPage(msg) {
 	})
 }
 
-function shareUrls(twittos) {
+function shareUrls() {
 	var currentUrl = History.getState().url.replace(/ /g, '+')
 		, shareUrl = ''
 		, shareText = ''
 		, shareVia = 'twitto_be'
 		, shareHashtags = 'twittoBe'
-		, topThreeText = ''
 		, shareTitle = 'top twitter influencers in Belgium by topic, location and language - Twitto.be'
-	
-	_.forEach(twittos, function(val, idx){
-		twittos[idx] = '@' + val
-	})
-	
-	shareText = twittos.join(', ') + ' are in the ranking of top Belgian twittos'
+		, topUserNames = []
+		, shareText = 'Exploring the top twitter influencers in Belgium'
 	
 	// Permalink
 	$shareLink.attr('href', currentUrl)
