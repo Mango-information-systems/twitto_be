@@ -316,10 +316,20 @@ function historyPushState(){
 }
 
 //Split functions
-function getRemoteData(){
-	d3.json('json/users', function (data) {
-		renderAll(data)
-	})
+function getRemoteData(errCount){
+	if (errCount >= 2) {
+		$.unblockUI()
+		$searchFeedback.html('<div class="alert alert-error"><h3>Error when downloading data</h3><p>The page will be reloaded in 3 seconds</p></div>')	
+		setTimeout(function() {location.reload()}, 3000)
+	}
+	else {
+		d3.json('json/users', function (err, data) {
+			if (err)
+				getRemoteData(errCount + 1)
+			else
+				renderAll(data)
+		})
+	}
 }
 
 function renderAll(data){
@@ -684,7 +694,7 @@ languagesChart.on("preRedraw", function(chart){
 $(function() {
 	// TODO temporarily disabled the loading indicator, to be reset before going to prod 
 	blockPage(' loading ... ')
-	getRemoteData()
+	getRemoteData(0)
 	
 	$('#searchForm').on('submit', function(evt) {
 		$('#table-container').block({message: '<h1><img src="../assets/img/twitto_be-0.4.0-square-logo-40x40.png" />Loading...</h1>'})
