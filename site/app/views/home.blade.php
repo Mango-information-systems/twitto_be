@@ -704,6 +704,7 @@ $(function() {
 
 function clearSearch() {
 // clear search form and reset filter on ids
+	$('#table-container').unblock()
 	$searchField.val('')
 	idsDimension.filter()
 	dc.redrawAll()
@@ -752,7 +753,10 @@ function displaySearchResults(searchResults) {
 function runSearch(searchTerms, errCount) {
 // run a search and filter data
 
-	if (searchTerms != '') {
+	if (searchTerms == '') {
+		clearSearch()
+	}
+	else {
 		$clearSearchButton.removeClass('disabled')
 		$.ajax({
 			url : "/json/search/" + searchTerms
