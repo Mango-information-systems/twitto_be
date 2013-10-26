@@ -46,9 +46,9 @@
 			<img src="assets/img/ranks-table-placeholder.png" class="placeholder"/>
 			<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 		</div>
-		<div class="alert alert-info">
+		<div class="well">
 			<h3>Marketing segmentation for professionals</h3>
-			<p>Do you really know who is following you? Segment your twitter followers into communities, identify the individuals that can amplify your message and see how the competition are doing.</p>
+			<p>Do you really know who is following you? <strong>Segment your twitter followers</strong> into communities, identify the individuals that can <strong>amplify your message</strong> and see how the competition are doing.</p>
 			<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary">visit tribalytics.com »</a></p>
 		</div>
 	</div>
