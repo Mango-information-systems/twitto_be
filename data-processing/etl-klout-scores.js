@@ -4,7 +4,7 @@ var Mysql = require('mysql')
 	, Klout = require("node_klout")
 	, params = require('./params.json')
     , klout = new Klout(params.klout.key, "json", "v2")
-    , processTimestamp = timeStampToMysqlFormat(new Date())
+    , processTimestamp
 
 console.log('-- Using environment settings: ' + params.profile_name)
 
@@ -185,7 +185,8 @@ function getKloutScores(currentIndex, errCount, ids) {
 
 function getUserIds() {
 // get user ids withklout scores not updated recently
-	console.log('------------------- looking up users in tw_user')
+	processTimestamp = timeStampToMysqlFormat(new Date())
+	console.log(processTimestamp, '------------------- looking up users in tw_user')
 	mysql.query('select tw_id, klout_id from tw_user where klout_id is not null and last_update_klout < CURDATE() - INTERVAL 1 DAY order by last_update_klout limit 5000', function(err, res) {
 		if (err) throw err
 		else {
