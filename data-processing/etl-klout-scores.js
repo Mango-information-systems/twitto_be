@@ -100,7 +100,7 @@ function storeResult(score) {
 			throw err
 		}
 		else {
-			console.log('results saved , affected rows:', data.affectedRows)
+			// console.log('results saved , affected rows:', data.affectedRows)
 			// console.log(data)
 		}
 	})
@@ -170,7 +170,7 @@ function getKloutScores(currentIndex, errCount, ids) {
 				}
 			}
 			else {
-				console.log('... klout response received')
+				// console.log('... klout response received')
 				storeResult([[ids[currentIndex].tw_id, klout_response.score, processTimestamp]])
 				if (currentIndex >= ids.length-1) {
 					getUserIds()
