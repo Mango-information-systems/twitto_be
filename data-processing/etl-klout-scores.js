@@ -115,8 +115,8 @@ function getKloutScores(currentIndex, errCount, ids) {
 // get twitter Ids of a given community
 
 	if (currentIndex < ids.length) {
-		console.log('-------------------------------------------------------------------')
-		console.log('requesting klout score... ')
+		// console.log('-------------------------------------------------------------------')
+		// console.log('requesting klout score... ')
 		klout.getUserScore(ids[currentIndex].klout_id, function(err, klout_response) {
 //console.log(ids[currentIndex].klout_id)
 			if (err || klout_response.validationErrors) {
