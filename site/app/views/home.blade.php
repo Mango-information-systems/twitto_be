@@ -259,6 +259,8 @@ function historyPushState(){
 		, newTitle = all.value() + ' top twitter influencers'
 		, queryString = '?'
 
+	searchFilter = decodeURIComponent(searchFilter)
+	searchFilter = encodeURIComponent(searchFilter)
 	_.each(topicsChart.filters(), function(item, idx) {
 		if (idx > 0)
 			topicsFilter +=',' + topicsMap[item]
@@ -294,7 +296,7 @@ function historyPushState(){
 	}
 	
 	if (searchFilter.length > 0) {
-		newTitle += '<small> matching</small> ' + searchFilter
+		newTitle += '<small> matching</small> ' + decodeURIComponent(searchFilter)
 		queryString += 'search=' + searchFilter
 	}
 	
@@ -759,7 +761,8 @@ function displaySearchResults(searchResults) {
 
 function runSearch(searchTerms, errCount) {
 // run a search and filter data
-
+	searchTerms = decodeURIComponent(searchTerms)
+	searchTerms = encodeURIComponent(searchTerms)
 	if (searchTerms == '') {
 		clearSearch()
 	}
