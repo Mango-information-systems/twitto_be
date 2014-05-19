@@ -47,9 +47,9 @@
 			<table class="table table-striped" id="twitter-datatable" border="0" cellpadding="0" cellspacing="0" width="100%"></table>
 		</div>
 		<div class="well">
-			<h3><img src="../assets/img/tribalytics-square-logo.png"/> Tribalytics - Twitter audience analysis</h3>
-			<p>Do you really know who is following you? <strong>Segment your twitter followers</strong> into communities, identify the individuals that can <strong>amplify your message</strong> and see how the competition are doing.</p>
-			<p><a target="_blank" href="http://tribalytics.com" class="btn btn-primary">visit tribalytics.com »</a></p>
+			<h3>Try the pro version</h3>
+			<p>Want to see more? Tribalytics allows you to effectively <strong>target your social media campaigns</strong> by providing you with social communities & influencers insights. Take a look! </p>
+			<p><a target="_blank" href="http://tribalytics.com/?utm_source=twitto.be&utm_medium=banner&utm_campaign=twitto.be" class="btn btn-primary">visit tribalytics.com »</a></p>
 		</div>
 	</div>
 	<div class="span1">
