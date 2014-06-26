@@ -78,7 +78,6 @@ function storeResult(res) {
 //	console.log(result)
 
 	var queryData = _.map(res, function(item) {
-		if (item.id == 22784222) console.log(timestamp)
 		return [item.id, item.screen_name, item.name, item.description, item.location, item.lang, item.id_str, item.url, item.created_at, item.statuses_count, item.followers_count, item.friends_count, item.favourites_count, item.listed_count, item.time_zone, item.utc_offset, item.profile_image_url, item.profile_image_url_https, item.profile_link_color, item.profile_text_color, item.profile_background_color, item.profile_background_image_url, item.profile_background_image_url_https, item.profile_sidebar_border_color, item.profile_sidebar_fill_color, item.notifications, item.contributors_enabled, item.verified, item.is_translator, item.protected, item.geo_enabled, item.show_all_inline_media, item.default_profile_image, item.default_profile, item.profile_use_background_image, item.profile_background_tile, timestamp]
 	})
 	 // console.log('queryData', queryData[0])
@@ -177,7 +176,7 @@ function getUserInfo(ids, errCount) {
 function getUserIds() {
 // get least recently updated twitter users
 	console.log('------------------- looking up users in stg_tw_user')
-	var qry = mysql.query('select id from stg_tw_user where (last_update < CURDATE() - INTERVAL 1 DAY OR last_update is null) and deleted = 0 order by last_update limit 100', function(err, res) {
+	var qry = mysql.query('select id_str from stg_tw_user where (last_update < CURDATE() - INTERVAL 1 DAY OR last_update is null) and deleted = 0 order by last_update limit 100', function(err, res) {
 		if (err) throw err
 		else {
 			if (res.length == 0) {
@@ -186,7 +185,7 @@ function getUserIds() {
 			}
 			else {
 				// console.log(res.length, 'results, first one: ', res[0].id)
-				var userIds = _.pluck(res, 'id')
+				var userIds = _.pluck(res, 'id_str')
 				getUserInfo(userIds, 0)
 			}
 		}

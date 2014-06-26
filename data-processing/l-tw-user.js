@@ -74,7 +74,7 @@ function loadUsers() {
 // update production table
 // uses etl audit table to select only records updated since last successful etl run
 
-	var qry = mysql.query('INSERT INTO tw_user (tw_id, screen_name, name, description, profile_image_url, lang) SELECT id, screen_name, name, description, profile_image_url, lang from stg_tw_user WHERE deleted = 0 and last_update > (SELECT last_run from audit_etl where process_name = "load_tw_user") ON DUPLICATE KEY UPDATE screen_name = VALUES(screen_name), name = VALUES(name), description = VALUES(description), profile_image_url = VALUES(profile_image_url), lang = VALUES(lang)', function(err, data) {
+	var qry = mysql.query('INSERT INTO tw_user (tw_id, screen_name, name, description, profile_image_url, lang) SELECT id_str, screen_name, name, description, profile_image_url, lang from stg_tw_user WHERE deleted = 0 and last_update > (SELECT last_run from audit_etl where process_name = "load_tw_user") ON DUPLICATE KEY UPDATE screen_name = VALUES(screen_name), name = VALUES(name), description = VALUES(description), profile_image_url = VALUES(profile_image_url), lang = VALUES(lang)', function(err, data) {
 		if (err) {
 			console.log('error updating users', data)
 			throw err
@@ -82,7 +82,7 @@ function loadUsers() {
 		else {
 			console.log('rows updated , affected rows:', data.affectedRows)
 			// remove users deleted from twitter
-			var qry = mysql.query('DELETE FROM tw_user where tw_id in (SELECT id from stg_tw_user WHERE deleted = 1 and last_update > (SELECT last_run from audit_etl where process_name = "load_tw_user"))', function(err, data) {
+			var qry = mysql.query('DELETE FROM tw_user where tw_id in (SELECT id_str from stg_tw_user WHERE deleted = 1 and last_update > (SELECT last_run from audit_etl where process_name = "load_tw_user"))', function(err, data) {
 				if (err) {
 					console.log('error removing users', data)
 					throw err
@@ -90,7 +90,7 @@ function loadUsers() {
 				else {
 					console.log('deleted users, affected rows:', data.affectedRows)
 					// cleanup fact topics
-					var qry = mysql.query('DELETE FROM fact_topic where tw_id in (SELECT id from stg_tw_user WHERE deleted = 1 and last_update > (SELECT last_run from audit_etl where process_name = "load_tw_user"))', function(err, data) {
+					var qry = mysql.query('DELETE FROM fact_topic where tw_id in (SELECT id_str from stg_tw_user WHERE deleted = 1 and last_update > (SELECT last_run from audit_etl where process_name = "load_tw_user"))', function(err, data) {
 						if (err) {
 							console.log('error deleting old users from fact_topic', data)
 							throw err
