@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `stg_tw_user` (
   `description` varchar(255),
   `location` varchar(255),
   `lang` varchar(255),
-  `id_str` varchar(255),
+  `id_str` varchar(255) NOT NULL,
   `url` varchar(255),
   `created_at` varchar(255),
   `statuses_count` int(20) unsigned,
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `stg_tw_user` (
   `profile_sidebar_fill_color` varchar(255),
   `last_update` datetime COMMENT 'Timestamp of last update of user info',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'flag telling whether the user is deleted from twitter',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id_str`)
 )
 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT 'staging table storing all tw_user info';
 
