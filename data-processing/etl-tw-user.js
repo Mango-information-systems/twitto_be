@@ -73,7 +73,34 @@ function timeStampToMysqlFormat(date1) {
  * statistics calculation functions
 ----------------------------------------------------------------------------------- */
 
-function storeResult(res) {
+
+function storeProdData(res) {
+// update production table
+
+	var queryData = _.map(res, function(item) {
+		return [item.id_str, item.screen_name, item.name, item.description, item.profile_image_url, item.lang]
+	})
+	
+	var qry = mysql.query('INSERT INTO tw_user (tw_id, screen_name, name, description, profile_image_url, lang) VALUES ' + mysql.escape(queryData) + ' ON DUPLICATE KEY UPDATE screen_name = VALUES(screen_name), name = VALUES(name), description = VALUES(description), profile_image_url = VALUES(profile_image_url), lang = VALUES(lang)', function(err, data) {
+		if (err) {
+			console.log('error updating users', data)
+			throw err
+		}
+		else {
+			//~ console.log('production rows updated , affected rows:', data.affectedRows)
+			// sleep few seconds then get next batch of userIds
+			_.delay(getUserIds, 90000)
+		}
+	})
+
+/*	console.log('-------------------------------------------------------------------')
+ 	console.log('rendered query', qry.sql)
+	console.log('-------------------------------------------------------------------')
+*/
+}
+
+
+function storeStagingData(res) {
 // store result in database
 //	console.log(result)
 
@@ -92,10 +119,9 @@ function storeResult(res) {
 			throw err
 		}
 		else {
-			// console.log('results saved , affected rows:', data.affectedRows)
-			// console.log('results saved:', data)
-			// sleep few seconds then get next batch of userIds
-			_.delay(getUserIds, 500)
+			//~ console.log('results saved in staging , affected rows:', data.affectedRows)
+			// console.log('results saved in staging:', data)
+			storeProdData(res)
 		}
 	})
 	/*
@@ -109,14 +135,22 @@ function markDeleted(ids) {
 // remove obsolete users, as they are not recognized in twitter anymore
 
 	if (ids.length >= 1) {
-		var qry = mysql.query('UPDATE stg_tw_user set deleted= 1 WHERE id IN (' + mysql.escape(ids) + ')', function(err, data) {
+		var qry = mysql.query('UPDATE stg_tw_user set deleted= 1 WHERE id_str IN (' + mysql.escape(ids) + ')', function(err, data) {
 			if (err) {
 				console.log('error marking obsolete users deleted ')
 				throw err
 			}
-			else {
-				// console.log('obsolete users removed, affected rows:', data.affectedRows)
-				// console.log('results saved:', data)
+		})
+		var qry = mysql.query('DELETE FROM tw_user where tw_id in (' + mysql.escape(ids) + ')', function(err, data) {
+			if (err) {
+				console.log('error deleting obsolete users')
+				throw err
+			}
+		})
+		var qry = mysql.query('DELETE FROM fact_topic where tw_id in (' + mysql.escape(ids) + ')', function(err, data) {
+			if (err) {
+				console.log('error deleting obsoleteuser topics')
+				throw err
 			}
 		})
 		/*
@@ -129,8 +163,8 @@ function markDeleted(ids) {
 
 function getUserInfo(ids, errCount) {
 // get twitter Ids of a given community
-	console.log('-------------------------------------------------------------------')
-	console.log('getting updated user info from twitter... ')
+	// console.log('-------------------------------------------------------------------')
+	// console.log('getting updated user info from twitter... ')
 	if (errCount >= 2) {
 		console.log('failed too many times, skipping...')
 		getUserIds()
@@ -165,9 +199,9 @@ function getUserInfo(ids, errCount) {
 			}
 			else {
 				// remove deleted users
-				markDeleted(_.difference(ids, _.pluck(data, 'id')))
+				markDeleted(_.difference(ids, _.pluck(data, 'id_str')))
 				// update users info
-				storeResult(data)
+				storeStagingData(data)
 			}
 		})
 	}
@@ -175,13 +209,20 @@ function getUserInfo(ids, errCount) {
 
 function getUserIds() {
 // get least recently updated twitter users
-	console.log('------------------- looking up users in stg_tw_user')
-	var qry = mysql.query('select id_str from stg_tw_user where (last_update < CURDATE() - INTERVAL 1 DAY OR last_update is null) and deleted = 0 order by last_update limit 100', function(err, res) {
+	// console.log('------------------- looking up users in stg_tw_user')
+	timestamp = timeStampToMysqlFormat(new Date())
+	var qry = mysql.query('select id_str from stg_tw_user where (last_update < CURDATE() - INTERVAL 3 DAY OR last_update is null) and deleted = 0 order by last_update limit 100', function(err, res) {
 		if (err) throw err
 		else {
 			if (res.length == 0) {
-				console.log('processing finished successfully')
-				shutdownProcess()
+				console.log(new Date(), 'all users updated, sleeping until next day')
+				// seconds until next day based on http://stackoverflow.com/a/25088591/1006854
+				var d = new Date()
+					, h = d.getHours()
+					, m = d.getMinutes()
+					, s = d.getSeconds()
+					, sleepUntilSeconds = (24*60*60) - (h*60*60) - (m*60) - s
+				_.delay(getUserIds, sleepUntilSeconds * 1000)
 			}
 			else {
 				// console.log(res.length, 'results, first one: ', res[0].id)
