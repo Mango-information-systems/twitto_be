@@ -21,6 +21,8 @@ class Twuser extends Eloquent {
 				'klout_score', DB::raw('GROUP_CONCAT( fact_topic.topic_id ) AS topic_id')
 			)
 			->where('fact_topic.topic_id', '!=', '-1')
+			->where('tw_user.klout_score', '>', '0')
+			->where('tw_user.province_id', '>=', '-1')
 			->remember(1440)
 			->groupBy('tw_user.tw_id');
 
