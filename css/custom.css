@@ -1,0 +1,81 @@
+/* 
+    Document   : custom
+    Created on : Jun 7, 2013, 2:09:59 PM
+    Author     : Panos
+    Description:
+        Purpose of the stylesheet follows.
+*/
+html { 
+  background: url("../img/bg.jpg") no-repeat top left fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.category, .user {
+	max-width: 300px;
+	min-width: 300px;
+	padding: 10px;
+}
+
+#welcome_check{
+	display: none;
+	visibility: hidden;
+}
+
+#scrolltop{
+	height: 1px;
+}
+
+.topcategories{
+	margin-bottom: 0px !important;
+}
+
+.size48{
+	height: 48px;
+}
+
+.klout {
+    display: inline-block;
+    *display: inline;/* for IE7*/
+    *zoom:1;/* for IE7*/
+    min-width: 48px;
+    min-height: 48px;
+    padding-left: 24px;
+    padding-top: 12px;
+    font-size: 23px;
+    font-weight: bold;
+    font-family: "DIN", Helvetica, Arial;
+    color: white;
+    background-image: url(/assets/img/klout-score-flag.png);
+    background-repeat: no-repeat;
+    background-size: 48px Auto;
+    background-position: top;
+}
+
+/* Datatable widths */
+#twitter-datatable td:nth-child(1){
+	max-width: 30px;
+}
+
+#twitter-datatable td:nth-child(2){
+	min-width: 300px;
+	max-width: 380px;
+}
+
+.tw_rank {
+	margin-top: 20px;
+	margin-left: 10px;
+	font-size: 32px;
+    font-weight: bold;
+}
+
+#nodata {
+	display: none;
+}
+
+#shareLink {
+    margin-top:2px;
+    margin-left: 4px;
+}
