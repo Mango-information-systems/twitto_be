@@ -18,5 +18,6 @@
   },
   "homepage": "https://github.com/Mango-information-systems/twitto_be#readme",
   "dependencies": {
+    "tuiter": "^0.2.12"
   }
 }
