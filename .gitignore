@@ -1,0 +1,10 @@
+archive
+site/__MACOSX/
+site/app/config/*
+site/public/assets/compiled/
+*.log
+*.dump
+sql/ddl/create-twitto-db.sql
+twitto_private
+*params.json*
+*node_modules/
