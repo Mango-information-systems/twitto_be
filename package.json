@@ -1,0 +1,22 @@
+{
+  "name": "twitto_be",
+  "version": "2.0.0",
+  "description": "real-time dashboard of geolocated tweets",
+  "main": "app.js",
+  "private": "true",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mango-information-systems/twitto_be.git"
+  },
+  "author": "Mehdi El Fadil",
+  "license": "(MIT OR LGPL-3.0)",
+  "bugs": {
+    "url": "https://github.com/Mango-information-systems/twitto_be/issues"
+  },
+  "homepage": "https://github.com/Mango-information-systems/twitto_be#readme",
+  "dependencies": {
+  }
+}
