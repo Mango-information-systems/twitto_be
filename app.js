@@ -6,18 +6,25 @@ var io = require('socket.io')({ path: '/ws/'})
 
 
 var tu = require('tuiter')(params.twitter)
-console.log('here')
+
+// validate that the connection works, cf. https://github.com/impronunciable/Tuiter/issues/40
+tu.rateLimitStatus(function(err, data){
+	if (err) {
+		console.log('error connecting to twitter API' , data)
+		throw err
+	}
+})
 
 tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
-	console.log('here')
 	stream.on('tweet', function(data){
 		//~ console.log(data.text)
-		io.sockets.emit('tweet', data.text)
+		io.sockets.emit('tweet', data)
 	})
-	stream.on('error', function(data){
-		console.log('error', data)
+	stream.on('error', function(err){
+		console.log('error', err.code, err.text)
 	})
 })
+
 
 io.on('connection', function(socket) {
 	
