@@ -13,10 +13,15 @@ app.socket.on('tweet', function(msg) {
 	//~ console.log('tweet', msg.geo, msg.place)
 	
 	if (msg.geo) {
-		console.log('tweet with .geo', msg.geo)
-		mapRenderer.updatePoints(msg.geo.coordinates)
+		//~ console.log('tweet with .geo', msg.geo)
+		mapRenderer.updatePoints([msg.geo.coordinates[1], msg.geo.coordinates[0]])
 	}
 	else {
+		 //~ console.log('place', msg.place)
+		//~ var coordinates = [msg.place.bounding_box.coordinates[0][0]]
+		var coordinates = generateRandomPointwithinBbox(msg.place.bounding_box.coordinates[0])
+		//~ console.log('generated coordinates', coordinates)
+		mapRenderer.updatePoints(coordinates)
 		
 	}
 })
@@ -25,6 +30,15 @@ var svg = d3.select('#mapContainer')
 	, mapRenderer = new MapRenderer(svg)
 
 mapRenderer.init()
+
+function generateRandomPointwithinBbox(bbox) {
+	
+	return [
+		((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0]
+		, ((bbox[3][1] - bbox[1][1])  / 2) + bbox[1][1]
+	]
+	
+}
 
 },{"../view/mapRenderer":52,"d3":4,"socket.io-client":8}],2:[function(require,module,exports){
 module.exports={"type":"FeatureCollection","features":[
@@ -23570,8 +23584,8 @@ function MapRenderer (svg) {
 	}
 	
 	this.updatePoints = function(newCoordinates) {
-		
-		points.coordinates.push([newCoordinates[1], newCoordinates[0]])
+		console.log('updatePoint', newCoordinates)
+		points.coordinates.push([newCoordinates[0], newCoordinates[1]])
 		
 		pointsPath.datum(points)
 		
