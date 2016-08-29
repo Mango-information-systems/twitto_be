@@ -9,17 +9,16 @@ var suffix = ':3030'
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
 app.socket.on('tweet', function(msg) {
-	//~ console.log('tweet', msg.geo, msg.place)
+	//~ // console.log('tweet', msg.geo, msg.place)
 	
 	if (msg.geo) {
-		//~ console.log('tweet with .geo', msg.geo)
+		//~ // console.log('tweet with .geo', msg.geo)
 		mapRenderer.updatePoints([msg.geo.coordinates[1], msg.geo.coordinates[0]])
 	}
 	else {
-		 //~ console.log('place', msg.place)
-		//~ var coordinates = [msg.place.bounding_box.coordinates[0][0]]
+		 //~ console.log('place', JSON.stringify(msg.place.bounding_box.coordinates))
 		var coordinates = generateRandomPointwithinBbox(msg.place.bounding_box.coordinates[0])
-		//~ console.log('generated coordinates', coordinates)
+		
 		mapRenderer.updatePoints(coordinates)
 		
 	}
@@ -32,9 +31,12 @@ mapRenderer.init()
 
 function generateRandomPointwithinBbox(bbox) {
 	
+	deltaSign = Math.sign(Math.round(Math.random()) - .5)
+		, delta = Math.random() / 75 * deltaSign
+	
 	return [
-		((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0]
-		, ((bbox[3][1] - bbox[1][1])  / 2) + bbox[1][1]
+		((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + delta
+		, ((bbox[3][1] - bbox[1][1])  / 2) + bbox[1][1] + delta
 	]
 	
 }

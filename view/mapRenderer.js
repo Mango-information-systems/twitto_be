@@ -53,7 +53,7 @@ function MapRenderer (svg) {
 	}
 	
 	this.updatePoints = function(newCoordinates) {
-		console.log('updatePoint', newCoordinates)
+		//~ console.log('updatePoint', newCoordinates)
 		points.coordinates.push([newCoordinates[0], newCoordinates[1]])
 		
 		pointsPath.datum(points)
