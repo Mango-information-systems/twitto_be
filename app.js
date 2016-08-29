@@ -18,7 +18,8 @@ tu.rateLimitStatus(function(err, data){
 tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
 	stream.on('tweet', function(data){
 		//~ console.log(data.text)
-		io.sockets.emit('tweet', data)
+		if (data.place.country_code === 'BE')
+			io.sockets.emit('tweet', data)
 	})
 	stream.on('error', function(err){
 		console.log('error', err.code, err.text)
