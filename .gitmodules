@@ -1,0 +1,4 @@
+[submodule "git_submodules/skeleton-framework"]
+	path = git_submodules/skeleton-framework
+	url = https://github.com/Mango-information-systems/skeleton-framework.git
+	branch = twitto_be
