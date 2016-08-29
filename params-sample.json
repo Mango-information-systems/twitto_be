@@ -1,6 +1,5 @@
 {
 	"profile_name" : "local dev version"
-	, "node_env" : "development"
 	, "twitter" : {
 		"consumer_key" : "--fill-me--"
 		, "consumer_secret" : "--fill-me--"

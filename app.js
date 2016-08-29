@@ -22,7 +22,7 @@ tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6
 			io.sockets.emit('tweet', data)
 	})
 	stream.on('error', function(err){
-		console.log('error', err.code, err.text)
+		console.log('error with twitter streaming API', err)
 	})
 })
 
@@ -31,16 +31,16 @@ io.on('connection', function(socket) {
 	
 	debug('connection event', socket.id)
 
-	/**
-	* listener: contact request
-	*
-	* @private
-	*/
-	socket.on('contact', function(formData, callback) {
-		
-		debug('contact request received', socket.id, formData)
-		
-	})
+	//~ /**
+	//~ * listener: msg request
+	//~ *
+	//~ * @private
+	//~ */
+	//~ socket.on('msg', function(msg) {
+		//~ 
+		//~ debug('msg received', socket.id, msg)
+		//~ 
+	//~ })
 
 })
 
