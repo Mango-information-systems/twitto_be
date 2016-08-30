@@ -33,17 +33,24 @@ tu.rateLimitStatus(function(err, data){
 	}
 })
 
-tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
-	stream.on('tweet', function(data){
-		//~ console.log(data.text)
-		if (data.place.country_code === 'BE')
-			io.sockets.emit('tweet', data)
+function streamTweets(errCount) {
+	
+	tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
+		stream.on('tweet', function(data){
+			//~ console.log(data.text)
+			if (data.place.country_code === 'BE')
+				io.sockets.emit('tweet', data)
+		})
+		stream.on('error', function(err){
+			console.log('error with twitter streaming API', err)
+			setTimeout(function() {
+				streamTweets(errCount+1)
+			}, 250 * (1+ errCount * 700))
+		})
 	})
-	stream.on('error', function(err){
-		console.log('error with twitter streaming API', err)
-	})
-})
+}
 
+streamTweets(0)
 
 io.on('connection', function(socket) {
 	
