@@ -10,9 +10,8 @@ var d3 = require('d3')
 */
 function MapRenderer (svg) {
 
-	var points = {type: "MultiPoint", coordinates: []}
+	var pointsData = []
 		, pointsLayer
-		, pointsPath
 		, projection = d3.geoMercator()
 		  .center([5, 48.9])
 		  .scale(960 * 6)
@@ -46,24 +45,35 @@ function MapRenderer (svg) {
 		countryPath.attr('d', countryLayer)
 		
 		// add tweet points layer
-		var pointsLayer = d3.geoPath()
-			.projection(projection)
-			
-		pointsPath = svg.append('path')
+		pointsLayer = svg.append('g').selectAll('.tweet')
 		
 	}
 	
 	this.updatePoints = function(newCoordinates) {
 		//~ console.log('updatePoint', newCoordinates)
-		points.coordinates.push([newCoordinates[0], newCoordinates[1]])
+		pointsData.push([newCoordinates[0], newCoordinates[1]])
 		
-		pointsPath.datum(points)
-		
-		// add tweet points layer
-		pointsLayer = d3.geoPath()
-			.projection(projection)
-			
-		pointsPath.attr('d', pointsLayer)
+		pointsLayer.data(pointsData)
+			.enter()
+			.append('circle')
+			.attr('cx', function(d) {
+				return projection(d)[0]
+			})
+			.attr('cy', function(d) {
+				return projection(d)[1]
+			})
+			.attr('fill', '#008000')
+			.attr('r', '1.5')
+			.attr('class', 'tweet')
+			.attr('opacity', 0)
+			.transition()
+			.attr('opacity', .2)
+		//~ 
+		//~ // add tweet points layer
+		//~ pointsLayer = d3.geoPath()
+			//~ .projection(projection)
+			//~ 
+		//~ pointsPath.attr('d', pointsLayer)
 		
 	}
 	
