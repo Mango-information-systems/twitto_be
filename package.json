@@ -5,14 +5,15 @@
   "main": "app.js",
   "private": true,
   "scripts": {
-    "start": "npm run watch:client & http-server & npm run watch:server & npm run watch:skeleton",
+    "start": "npm run watch:client & http-server & mkdir public/js & mkdir public/css & npm run watch:server & npm run watch:skeleton & npm run cp",
     "build:client": "browserify -t uglifyify controller/client.js | uglifyjs -c > public/js/app.js",
     "build:skeleton": "cd git_submodules/skeleton-framework && npm run build",
     "postinstall": "git submodule update --init --recursive; cd git_submodules/skeleton-framework; npm install",
     "watch:client": "watchify controller/client.js -o public/js/app.js -v",
     "watch:server": "nodemon --ignore public/ app.js",
     "watch:skeleton": "cd git_submodules/skeleton-framework && npm run watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cp": "cp git_submodules/skeleton-framework/dist/skeleton.min.css public/css/"
   },
   "repository": {
     "type": "git",
