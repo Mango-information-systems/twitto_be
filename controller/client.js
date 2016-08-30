@@ -28,8 +28,6 @@ app.socket.on('tweet', function(msg) {
 var svg = d3.select('#mapContainer')
 	, mapRenderer = new MapRenderer(svg)
 
-mapRenderer.init()
-
 function generateRandomPointwithinBbox(bbox) {
 	
 	deltaSign = Math.sign(Math.round(Math.random()) - .5)

@@ -3,7 +3,7 @@ var d3 = require('d3')
 	, debug = require('debug')('mapRenderer')
 
 /**
-* Draw the map
+* Set of functions to manage map and map content
 *
 * @constructor
 * 
@@ -11,7 +11,7 @@ var d3 = require('d3')
 function MapRenderer (svg) {
 
 	var pointsData = []
-		, pointsLayer
+		, pointsLayer = svg.selectAll('circle')
 		, projection = d3.geoMercator()
 		  .center([5, 48.9])
 		  .scale(960 * 6)
@@ -44,8 +44,6 @@ function MapRenderer (svg) {
 		// draw the country
 		countryPath.attr('d', countryLayer)
 		
-		pointsLayer = svg.selectAll('circle')
-		
 	}
 	
 	this.updatePoints = function(newTweet) {
@@ -73,12 +71,6 @@ function MapRenderer (svg) {
 				.attr('opacity', .3)
 
 	}
-	
-	/****************************************
-	* 
-	* Event listeners
-	* 
-	****************************************/
 	
 	return this	
 }

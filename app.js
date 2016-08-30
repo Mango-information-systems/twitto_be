@@ -2,6 +2,7 @@ var io = require('socket.io')({ path: '/ws/'})
 	, express = require('express')
 	, tuiter = require('tuiter')
 	, utils = require('./controller/utils')
+	, ServerMap = require('./views/serverMap')
 	, params = require('./params')
 	, debug = require('debug')('server')
 	, app = express()
@@ -13,7 +14,10 @@ app.use(express.static('public'))
 
 // index page
 app.get('/', function (req, res) {
-	res.render('pages/index')
+	var serverMap = new ServerMap() 
+	
+	var svgMap = serverMap.generate()
+	res.render('pages/index', {svg: svgMap})
 })
 
 app.listen(8080);
