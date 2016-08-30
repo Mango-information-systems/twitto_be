@@ -5,7 +5,7 @@
   "main": "app.js",
   "private": true,
   "scripts": {
-    "start": "npm run watch:client & http-server & mkdir public/js & mkdir public/css & npm run watch:server & npm run watch:skeleton & npm run cp",
+    "start": "npm run watch:client & npm run watch:server & npm run watch:skeleton",
     "build:client": "browserify -t uglifyify controller/client.js | uglifyjs -c > public/js/app.js",
     "build:skeleton": "cd git_submodules/skeleton-framework && npm run build",
     "postinstall": "git submodule update --init --recursive; cd git_submodules/skeleton-framework; npm install",
@@ -28,6 +28,8 @@
   "dependencies": {
     "d3": "^4.2.2",
     "debug": "^2.2.0",
+    "ejs": "^2.5.1",
+    "express": "^4.14.0",
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.4.8",
     "tuiter": "^0.2.12"
