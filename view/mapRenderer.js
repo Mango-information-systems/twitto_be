@@ -38,6 +38,7 @@ function MapRenderer (svg) {
 			
 		var countryPath = svg.append('path')
 			.attr('fill', '#dddddd')
+			.attr('stroke', '#666666')
 				
 		countryPath.datum(mapData)
 		
