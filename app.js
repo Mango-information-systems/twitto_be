@@ -40,6 +40,7 @@ tu.rateLimitStatus(function(err, data){
 setInterval(function() {
 // refresh pre-rendered svg 
 	appData.tweets.getAll(function(tweets) {
+		console.log('tweets', tweets.length)
 		svgMap = serverMap.generate(tweets)
 //~ console.log('res', svgMap)
 	})

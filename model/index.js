@@ -10,12 +10,12 @@ var storage = require('node-persist')
 *********************************************************/
 function Storage() {
 
-	storage.init({
+	storage.initSync({
 		dir: path.resolve(__dirname + '/../persist')
 	})
-	
-	this.tweets = new tweetsModel(storage)
 
+	this.tweets = new tweetsModel(storage)
+	
 }
 
 module.exports = Storage

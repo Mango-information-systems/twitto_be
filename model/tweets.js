@@ -10,13 +10,9 @@ var debug = require('debug')('tweetsModel')
 *********************************************************/
 function Tweets(storage) {
 
-	//~ storage.getItem('tweets')
-	  //~ .then(function(value) {
-		//~ if (typeof value === 'undefined') {
-			//~ console.log('reseting cache')
-			//~ storage.setItem('tweets', [])
-		//~ }
-	  //~ })
+	if (storage.keys().indexOf('tweets') === -1) {
+		storage.setItemSync('tweets', [])
+	}
 
 	/********************************************************
 	* 
