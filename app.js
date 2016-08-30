@@ -2,11 +2,14 @@ var io = require('socket.io')({ path: '/ws/'})
 	, express = require('express')
 	, tuiter = require('tuiter')
 	, utils = require('./controller/utils')
+	, Datastore = require('./model/index')
 	, ServerMap = require('./views/serverMap')
 	, params = require('./params')
 	, debug = require('debug')('server')
 	, app = express()
 
+
+var appData = new Datastore()
 
 // set the view engine to ejs
 app.set('view engine', 'ejs')
@@ -20,8 +23,8 @@ app.get('/', function (req, res) {
 	res.render('pages/index', {svg: svgMap})
 })
 
-app.listen(8080);
-console.log('knock on the magic 8080 port');
+app.listen(8080)
+console.log('knock on the magic 8080 port')
 
 var tu = require('tuiter')(params.twitter)
 
@@ -38,14 +41,18 @@ function streamTweets(errCount) {
 	tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
 		stream.on('tweet', function(data){
 			//~ console.log(data.text)
-			if (data.place.country_code === 'BE')
+			if (data.place.country_code === 'BE') {
+				appData.tweets.add(data)
 				io.sockets.emit('tweet', data)
+			}
 		})
 		stream.on('error', function(err){
 			console.log('error with twitter streaming API', err)
+			
 			setTimeout(function() {
 				streamTweets(errCount+1)
 			}, 250 * (1+ errCount * 700))
+			
 		})
 	})
 }

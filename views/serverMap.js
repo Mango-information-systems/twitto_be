@@ -38,6 +38,3 @@ function serverMap () {
 }
 
 module.exports = serverMap
-
-
-
