@@ -18,7 +18,7 @@ function serverMap () {
 	* @return {string} the generated svg
 	* 
 	*/
-	this.generate = function () {
+	this.generate = function (tweets) {
 		
 		var svg = d3n.createSVG()
 			.attr('id', 'mapContainer')
@@ -27,9 +27,10 @@ function serverMap () {
 			.attr('preserveAspectRatio', 'xMinYMin')
 			.attr('viewBox', '0 0 960 500')
 
-		var mapRenderer = new MapRenderer(svg)
+		var mapRenderer = new MapRenderer(svg, tweets)
 
 		mapRenderer.init()
+		mapRenderer.updatePoints()
 
 		return d3n.svgString()
 	}

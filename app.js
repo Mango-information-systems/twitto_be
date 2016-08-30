@@ -6,6 +6,8 @@ var io = require('socket.io')({ path: '/ws/'})
 	, ServerMap = require('./views/serverMap')
 	, params = require('./params')
 	, debug = require('debug')('server')
+	, serverMap = new ServerMap() 
+	, svgMap
 	, app = express()
 
 
@@ -17,9 +19,7 @@ app.use(express.static('public'))
 
 // index page
 app.get('/', function (req, res) {
-	var serverMap = new ServerMap() 
-	
-	var svgMap = serverMap.generate()
+	//~ console.log('serving svgmap', svgMap)
 	res.render('pages/index', {svg: svgMap})
 })
 
@@ -36,14 +36,37 @@ tu.rateLimitStatus(function(err, data){
 	}
 })
 
+
+setInterval(function() {
+// refresh pre-rendered svg 
+	appData.tweets.getAll(function(tweets) {
+		svgMap = serverMap.generate(tweets)
+//~ console.log('res', svgMap)
+	})
+//~ }, 120000)
+}, 3000)
+
+
+
 function streamTweets(errCount) {
 	
 	tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
-		stream.on('tweet', function(data){
-			//~ console.log(data.text)
-			if (data.place.country_code === 'BE') {
-				appData.tweets.add(data)
-				io.sockets.emit('tweet', data)
+		stream.on('tweet', function(tweet){
+
+			if (tweet.place.country_code === 'BE') {
+				//~ console.log('tweet', msg.geo, msg.place)
+				
+				if (tweet.geo) {
+					//~ // console.log('tweet with .geo', msg.geo)
+					tweet.coordinates = [tweet.geo.coordinates[1], tweet.geo.coordinates[0]]
+				}
+				else {
+					 //~ console.log('place', JSON.stringify(msg.place.bounding_box.coordinates))
+					tweet.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
+				}
+				
+				appData.tweets.add(tweet)
+				io.sockets.emit('tweet', tweet)
 			}
 		})
 		stream.on('error', function(err){
@@ -55,6 +78,20 @@ function streamTweets(errCount) {
 			
 		})
 	})
+	
+	
+	function generateRandomPointwithinBbox(bbox) {
+		
+		deltaSign = Math.sign(Math.round(Math.random()) - .5)
+			, delta = Math.random() / 75 * deltaSign
+		
+		return [
+			((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + delta
+			, ((bbox[3][1] - bbox[1][1])  / 2) + bbox[1][1] + delta
+		]
+
+	}
+
 }
 
 streamTweets(0)

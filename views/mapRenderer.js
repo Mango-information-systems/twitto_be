@@ -8,9 +8,9 @@ var d3 = require('d3')
 * @constructor
 * 
 */
-function MapRenderer (svg) {
+function MapRenderer (svg, tweets) {
 
-	var pointsData = []
+	var pointsData = tweets || []
 		, pointsLayer = svg.selectAll('circle')
 		, projection = d3.geoMercator()
 		  .center([5, 48.9])
@@ -47,13 +47,14 @@ function MapRenderer (svg) {
 	}
 	
 	this.updatePoints = function(newTweet) {
-		//~ console.log('updatePoint', newTweet)
+		//~ console.log('updatePoints', newTweet)
 		
-		pointsData.push(newTweet)
+		if (newTweet)
+			pointsData.push(newTweet)
 		
-//~ console.log('pointsLayer', pointsLayer)
+//~ console.log('pointsData', pointsData)
 		
-		svg.selectAll('circle').data(pointsData, function(d) { return d.id_str})
+		svg.selectAll('circle').data(pointsData, function(d) {return d.id_str})
 			.enter().append('circle')
 				.attr('cx', function(d) {
 					return projection(d.coordinates)[0]

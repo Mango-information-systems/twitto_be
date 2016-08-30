@@ -57,6 +57,7 @@ function Tweets(storage) {
 	*********************************************************/
 
 	this.add = function(tweet) {
+		//~ console.log('adding tweet', tweet)
 		storage.getItem('tweets')
 		  .then(function(tweets) {
 			storage.setItem('tweets', tweets.concat(tweet))
