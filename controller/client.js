@@ -1,6 +1,6 @@
 var d3 = require('d3')
 	, io = require('socket.io-client')
-	, MapRenderer = require('../view/mapRenderer')
+	, MapRenderer = require('../views/mapRenderer')
 	, app = {}
 
 //~ var suffix = window.location.hostname === 'localhost'? ':3030' : ''
