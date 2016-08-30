@@ -9,8 +9,7 @@ var io = require('socket.io')({ path: '/ws/'})
 
 // set the view engine to ejs
 app.set('view engine', 'ejs')
-
-// use res.render to load up an ejs view file
+app.use(express.static('public'))
 
 // index page
 app.get('/', function (req, res) {
