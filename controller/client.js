@@ -11,17 +11,18 @@ app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 app.socket.on('tweet', function(msg) {
 	//~ // console.log('tweet', msg.geo, msg.place)
 	
+	var record = {id_str: msg.id_str}
+	
 	if (msg.geo) {
 		//~ // console.log('tweet with .geo', msg.geo)
-		mapRenderer.updatePoints([msg.geo.coordinates[1], msg.geo.coordinates[0]])
+		record.coordinates = [msg.geo.coordinates[1], msg.geo.coordinates[0]]
 	}
 	else {
 		 //~ console.log('place', JSON.stringify(msg.place.bounding_box.coordinates))
-		var coordinates = generateRandomPointwithinBbox(msg.place.bounding_box.coordinates[0])
-		
-		mapRenderer.updatePoints(coordinates)
-		
+		record.coordinates = generateRandomPointwithinBbox(msg.place.bounding_box.coordinates[0])
 	}
+	
+	mapRenderer.updatePoints(record)
 })
 
 var svg = d3.select('#mapContainer')

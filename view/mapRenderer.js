@@ -17,7 +17,7 @@ function MapRenderer (svg) {
 		  .scale(960 * 6)
 // TODO: dynamically set width and height according to chart dimensions
 		  .translate([960 / 2, 500])
-
+		  
 	/****************************************
 	* 
 	* Public methods
@@ -44,37 +44,34 @@ function MapRenderer (svg) {
 		// draw the country
 		countryPath.attr('d', countryLayer)
 		
-		// add tweet points layer
-		pointsLayer = svg.append('g').selectAll('.tweet')
+		pointsLayer = svg.selectAll('circle')
 		
 	}
 	
-	this.updatePoints = function(newCoordinates) {
-		//~ console.log('updatePoint', newCoordinates)
-		pointsData.push([newCoordinates[0], newCoordinates[1]])
+	this.updatePoints = function(newTweet) {
+		//~ console.log('updatePoint', newTweet)
 		
-		pointsLayer.data(pointsData)
-			.enter()
-			.append('circle')
-			.attr('cx', function(d) {
-				return projection(d)[0]
-			})
-			.attr('cy', function(d) {
-				return projection(d)[1]
-			})
-			.attr('fill', '#008000')
-			.attr('r', '1.5')
-			.attr('class', 'tweet')
-			.attr('opacity', 0)
-			.transition()
-			.attr('opacity', .2)
-		//~ 
-		//~ // add tweet points layer
-		//~ pointsLayer = d3.geoPath()
-			//~ .projection(projection)
-			//~ 
-		//~ pointsPath.attr('d', pointsLayer)
+		pointsData.push(newTweet)
 		
+//~ console.log('pointsLayer', pointsLayer)
+		
+		svg.selectAll('circle').data(pointsData, function(d) { return d.id_str})
+			.enter().append('circle')
+				.attr('cx', function(d) {
+					return projection(d.coordinates)[0]
+				})
+				.attr('cy', function(d) {
+					return projection(d.coordinates)[1]
+				})
+				.attr('fill', '#B9EBB9')
+				.attr('r', '0')
+				.attr('class', 'tweet')
+				.attr('opacity', 0)
+				.transition()
+				.attr('r', '2')
+				.attr('fill', '#008000')
+				.attr('opacity', .3)
+
 	}
 	
 	/****************************************
