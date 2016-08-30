@@ -8,7 +8,7 @@
     "start": "npm run watch:client & npm run watch:server & npm run watch:skeleton",
     "build:client": "browserify -t uglifyify controller/client.js | uglifyjs -c > public/js/app.js",
     "build:skeleton": "cd git_submodules/skeleton-framework && npm run build",
-    "postinstall": "git submodule update --init --recursive; cd git_submodules/skeleton-framework; npm install",
+    "postinstall": "git submodule update --init --recursive; cd git_submodules/skeleton-framework; npm install; mkdir public/js & mkdir public/css",
     "watch:client": "watchify controller/client.js -o public/js/app.js -v",
     "watch:server": "nodemon --ignore public/ app.js",
     "watch:skeleton": "cd git_submodules/skeleton-framework && npm run watch",
