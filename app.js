@@ -1,9 +1,24 @@
 var io = require('socket.io')({ path: '/ws/'})
+	, express = require('express')
 	, tuiter = require('tuiter')
 	, utils = require('./controller/utils')
 	, params = require('./params')
 	, debug = require('debug')('server')
+	, app = express()
 
+
+// set the view engine to ejs
+app.set('view engine', 'ejs')
+
+// use res.render to load up an ejs view file
+
+// index page
+app.get('/', function (req, res) {
+	res.render('pages/index')
+})
+
+app.listen(8080);
+console.log('knock on the magic 8080 port');
 
 var tu = require('tuiter')(params.twitter)
 
