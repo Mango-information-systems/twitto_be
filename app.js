@@ -7,7 +7,10 @@ var io = require('socket.io')({ path: '/ws/'})
 	, params = require('./params')
 	, debug = require('debug')('server')
 	, serverMap = new ServerMap() 
-	, svgMap
+	, cache = {
+		svgMap: null
+		, tweets: null
+	}
 	, app = express()
 
 
@@ -19,8 +22,11 @@ app.use(express.static('public'))
 
 // index page
 app.get('/', function (req, res) {
-	//~ console.log('serving svgmap', svgMap)
-	res.render('pages/index', {svg: svgMap})
+	//~ console.log('serving svgmap', cache.svgMap)
+	res.render('pages/index', {
+		svg: cache.svgMap
+		, tweets: cache.tweets
+	})
 })
 
 app.listen(8080)
@@ -36,18 +42,26 @@ tu.rateLimitStatus(function(err, data){
 	}
 })
 
-
-setInterval(function() {
 // refresh pre-rendered svg 
+appData.tweets.getAll(function(tweets) {
+	cache.svgMap = serverMap.generate(tweets)
+})
+
+setInterval(updateCache, 120000)
+//~ , 3000)
+
+// refresh pre-rendered svg and tweets cache
+function updateCache () {
 	appData.tweets.getAll(function(tweets) {
-		console.log('tweets', tweets.length)
-		svgMap = serverMap.generate(tweets)
-//~ console.log('res', svgMap)
+		//~ console.log('tweets', tweets.length)
+		cache.tweets = tweets
+		cache.svgMap = serverMap.generate(tweets)
+//~ console.log('res', cache.svgMap)
 	})
-//~ }, 120000)
-}, 3000)
+	
+}
 
-
+updateCache ()
 
 function streamTweets(errCount) {
 	
@@ -72,10 +86,13 @@ function streamTweets(errCount) {
 		})
 		stream.on('error', function(err){
 			console.log('error with twitter streaming API', err)
+			console.log('reconnecting in (ms)', 700 * (1 + errCount * 3))
+			
+			stream.emit('end')
 			
 			setTimeout(function() {
 				streamTweets(errCount+1)
-			}, 250 * (1+ errCount * 700))
+			}, 700 * (1 + errCount * 3))
 			
 		})
 	})

@@ -9,8 +9,9 @@ var suffix = ':3030'
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
 app.socket.on('tweet', function(msg) {
+	//~ console.log('new tweet received', msg.id_str)
 	mapRenderer.updatePoints(msg)
 })
 
 var svg = d3.select('#mapContainer')
-	, mapRenderer = new MapRenderer(svg)
+	, mapRenderer = new MapRenderer(svg, tweetsCache)

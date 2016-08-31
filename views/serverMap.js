@@ -30,7 +30,7 @@ function serverMap () {
 		var mapRenderer = new MapRenderer(svg, tweets)
 
 		mapRenderer.init()
-		mapRenderer.updatePoints()
+		mapRenderer.initPoints()
 
 		return d3n.svgString()
 	}

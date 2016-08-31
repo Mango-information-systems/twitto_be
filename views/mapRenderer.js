@@ -10,6 +10,8 @@ var d3 = require('d3')
 */
 function MapRenderer (svg, tweets) {
 
+//~ console.log('pointsData', tweets)
+
 	var pointsData = tweets || []
 		, pointsLayer = svg.selectAll('circle')
 		, projection = d3.geoMercator()
@@ -18,6 +20,8 @@ function MapRenderer (svg, tweets) {
 // TODO: dynamically set width and height according to chart dimensions
 		  .translate([960 / 2, 500])
 		  
+	// bind existing circles (DOM nodes) to the corresponding tweets
+	svg.selectAll('circle').data(pointsData)
 	/****************************************
 	* 
 	* Public methods
@@ -46,6 +50,10 @@ function MapRenderer (svg, tweets) {
 		
 	}
 	
+	this.bindData = function(tweets) {
+		
+	}
+	
 	this.updatePoints = function(newTweet) {
 		//~ console.log('updatePoints', newTweet)
 		
@@ -67,6 +75,22 @@ function MapRenderer (svg, tweets) {
 				.attr('class', 'tweet')
 				.attr('opacity', 0)
 				.transition()
+				.attr('r', '2')
+				.attr('fill', '#008000')
+				.attr('opacity', .3)
+
+	}
+	this.initPoints = function() {
+		
+		svg.selectAll('circle').data(pointsData, function(d) {return d.id_str})
+			.enter().append('circle')
+				.attr('cx', function(d) {
+					return projection(d.coordinates)[0]
+				})
+				.attr('cy', function(d) {
+					return projection(d.coordinates)[1]
+				})
+				.attr('class', 'tweet')
 				.attr('r', '2')
 				.attr('fill', '#008000')
 				.attr('opacity', .3)
