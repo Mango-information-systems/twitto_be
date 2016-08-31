@@ -100,12 +100,14 @@ function streamTweets(errCount) {
 	
 	function generateRandomPointwithinBbox(bbox) {
 		
-		deltaSign = Math.sign(Math.round(Math.random()) - .5)
-			, delta = Math.random() / 75 * deltaSign
+		deltaSignLat = Math.sign(Math.round(Math.random()) - .5)
+			, deltaLat = Math.random() / 75 * deltaSignLat
+			, deltaSignLon = Math.sign(Math.round(Math.random()) - .5)
+			, deltaLon = Math.random() / 75 * deltaSignLon
 		
 		return [
-			((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + delta
-			, ((bbox[3][1] - bbox[1][1])  / 2) + bbox[1][1] + delta
+			((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + deltaLat
+			, ((bbox[3][1] - bbox[1][1])  / 2) + bbox[1][1] + deltaLon
 		]
 
 	}
