@@ -1,36 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<% include ../partials/head %>
+    <% include ../partials/head %>
 </head>
 <body>
 
-	<header>
-		<% include ../partials/header %>
-	</header>
+<header>
+    <% include ../partials/header %>
+</header>
 
-    <section class="stats">
-        <div class="container">
-            <div class="row">
-                <div class="one-third column">
-Stats
+<section class="stats">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="one-third column">
+                <div class="row">
+                    <div class="two-thirds column">
+                        Chart
+                    </div>
+                    <div class="one-third column">
+                        <div class="progress-bar">
+                            <div class="u-pull-left" data-value="100">Total tweets</div>
+                            <div class="u-pull-right" style="text-align: right">200</div>
+                            <progress style="width: 100%" max="100" value="100" class="html5">
+                                <div class="progress-bar">
+                                    <span style="width: 100%">100%</span>
+                                </div>
+                            </progress>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="u-pull-left" data-value="30">Retweets</div>
+                            <div class="u-pull-right" style="text-align: right">60</div>
+                            <progress style="width: 100%" max="100" value="30" class="html5">
+                                <div class="progress-bar">
+                                    <span style="width: 30%">30%</span>
+                                </div>
+                            </progress>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="u-pull-left" data-value="80">Original</div>
+                            <div class="u-pull-right" style="text-align: right">160</div>
+                            <progress style="width: 100%" max="100" value="80" class="html5">
+                                <div class="progress-bar">
+                                    <span style="width: 80%">80%</span>
+                                </div>
+                            </progress>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="u-pull-left" data-value="20">Replies</div>
+                            <div class="u-pull-right" style="text-align: right">160</div>
+                            <progress style="width: 100%" max="100" value="20" class="html5">
+                                <div class="progress-bar">
+                                    <span style="width: 20%">20%</span>
+                                </div>
+                            </progress>
+                        </div>
+                    </div>
                 </div>
-                <div class="two-thirds column">
-                    <%- svg %>
+                <div class="row">
+                    <div class="one-half column">
+                        Hashtags
+                    </div>
+                    <div class="one-half column">
+                        Mentions
+                    </div>
                 </div>
+
+            </div>
+            <div class="two-thirds column">
+                <%- svg %>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-	<footer>
-		<% include ../partials/footer %>
-	</footer>
-	
-	
-	<script>
-		
-	var tweetsCache = <%- JSON.stringify(tweets) %>
-	</script>
-	<script src="./js/app.js"></script>
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+
+<script>
+
+    var tweetsCache =
+    <%- JSON.stringify(tweets) %>
+</script>
+<script src="./js/app.js"></script>
 </body>
 </html>
