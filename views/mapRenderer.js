@@ -40,8 +40,8 @@ function MapRenderer (svg, tweets) {
 			.projection(projection)
 			
 		var countryPath = svg.append('path')
-			.attr('fill', '#dddddd')
-			.attr('stroke', '#666666')
+			.attr('fill', '#eeeeee')
+			.attr('stroke', '#aaaaaa')
 				
 		countryPath.datum(mapData)
 		
@@ -70,14 +70,18 @@ function MapRenderer (svg, tweets) {
 				.attr('cy', function(d) {
 					return projection(d.coordinates)[1]
 				})
-				.attr('fill', '#B9EBB9')
-				.attr('r', '0')
-				.attr('class', 'tweet')
-				.attr('opacity', 0)
+				.style('fill', 'none')
+				.style('stroke', '#008000')
+				.attr('r', '10')
+				.style('stroke-opacity', 0)
+				.style('fill-opacity', 0)
+				.transition()
+				.style('stroke-opacity', 1)
 				.transition()
 				.attr('r', '2')
-				.attr('fill', '#008000')
-				.attr('opacity', .3)
+				.style('fill', '#008000')
+				.style('stroke', 'none')
+				.style('fill-opacity', .3)
 
 	}
 	this.initPoints = function() {
