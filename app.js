@@ -6,26 +6,26 @@ var io = require('socket.io')({ path: '/ws/'})
 	, ServerMap = require('./views/serverMap')
 	, params = require('./params')
 	, debug = require('debug')('server')
-	, serverMap = new ServerMap() 
-	, cache = {
-		svgMap: null
-		, tweets: null
-	}
 	, app = express()
+	, twitto = {
+		controller: {}
+		, model: {}
+	}
 
-
-var appData = new Datastore()
+twitto.controller.serverMap = new ServerMap() 
+twitto.model = new Datastore(twitto)
 
 // set the view engine to ejs
 app.set('view engine', 'ejs')
+
 app.use(express.static('public'))
 
 // index page
 app.get('/', function (req, res) {
 	//~ console.log('serving svgmap', cache.svgMap)
 	res.render('pages/index', {
-		svg: cache.svgMap
-		, tweets: cache.tweets
+		svg: twitto.model.cache.svgMap
+		, tweets: twitto.model.cache.tweets
 	})
 })
 
@@ -39,21 +39,7 @@ tu.rateLimitStatus(function(err, data){
 	}
 })
 
-setInterval(updateCache, 120000)
-//~ , 3000)
-
-// refresh pre-rendered svg and tweets cache
-function updateCache (callback) {
-	appData.tweets.getAll(function(tweets) {
-		cache.tweets = tweets
-		cache.svgMap = serverMap.generate(tweets)
-		if (callback)
-			callback()
-	})
-	
-}
-
-updateCache (function() {
+twitto.model.updateCache (function() {
 	// launch express server once cache is refreshed
 	app.listen(8080)
 	console.log('knock on the magic 8080 port')
@@ -77,7 +63,7 @@ function streamTweets(errCount) {
 					tweet.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
 				}
 				
-				appData.tweets.add(tweet)
+				twitto.model.tweets.add(tweet)
 				io.sockets.emit('tweet', tweet)
 			}
 		})
@@ -98,9 +84,9 @@ function streamTweets(errCount) {
 	function generateRandomPointwithinBbox(bbox) {
 		
 		deltaSignLat = Math.sign(Math.round(Math.random()) - .5)
-			, deltaLat = Math.random() / 75 * deltaSignLat
+			, deltaLat = Math.random() / 60 * deltaSignLat
 			, deltaSignLon = Math.sign(Math.round(Math.random()) - .5)
-			, deltaLon = Math.random() / 60 * deltaSignLon
+			, deltaLon = Math.random() / 80 * deltaSignLon
 		
 		return [
 			((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + deltaLat
