@@ -1,5 +1,4 @@
 var d3 = require('d3')
-	, _ = require('underscore')
 	, debug = require('debug')('statsCalculator')
 
 /**
@@ -26,19 +25,29 @@ function StatsCalculator(tweetsCache) {
 	 */
 	this.calculate = function () {
 
-		var statsCalculation = _.countBy(tweetsCache, function (msg) {
-			// Original tweets, in_reply_to_user_id is null, retweeted is false
-			if(msg.in_reply_to_user_id == null && msg.retweeted == false) {
-				return 'original'
+		var stats = tweetsCache.reduce(function (counts, msg) {
+			
+			switch(true) {
+				case msg.in_reply_to_user_id !== null:
+					counts.reply++
+				break
+				case msg.retweeted === true:
+					counts.retweet++
+				break
+				default:
+					counts.original++
+				break
+				
 			}
-		})
+			return counts
+			
+		}, {
+			original: 0
+			, retweet: 0
+			, reply: 0
+			})
 
-		stats = {
-			total: tweetsCache.length
-			, original: statsCalculation.original
-			, retweets: 0
-			, replies: 0
-		}
+		stats.total = tweetsCache.length
 
 		return stats
 

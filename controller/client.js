@@ -1,6 +1,5 @@
 var d3 = require('d3')
 	, io = require('socket.io-client')
-	, _ = require('underscore')
 	, MapRenderer = require('../views/mapRenderer')
 	, StatsCalculator = require('../views/statsCalculator')
 	, app = {}
