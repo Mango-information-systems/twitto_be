@@ -16,9 +16,9 @@ function MapRenderer (svg, tweets) {
 		, pointsLayer = svg.selectAll('circle')
 		, projection = d3.geoMercator()
 		  .center([5, 48.9])
-		  .scale(960 * 14)
-// TODO: dynamically set width and height according to chart dimensions
-		  .translate([1200 / 2, 1000])
+		  .scale(960 * 13)
+// TODO: dynamically set width and height according to page dimensions
+		  .translate([1200 / 2, 890])
 		  
 	// bind existing circles (DOM nodes) to the corresponding tweets
 	svg.selectAll('circle').data(pointsData)
