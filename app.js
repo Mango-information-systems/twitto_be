@@ -29,9 +29,6 @@ app.get('/', function (req, res) {
 	})
 })
 
-app.listen(8080)
-console.log('knock on the magic 8080 port')
-
 var tu = require('tuiter')(params.twitter)
 
 // validate that the connection works, cf. https://github.com/impronunciable/Tuiter/issues/40
@@ -42,26 +39,26 @@ tu.rateLimitStatus(function(err, data){
 	}
 })
 
-// refresh pre-rendered svg 
-appData.tweets.getAll(function(tweets) {
-	cache.svgMap = serverMap.generate(tweets)
-})
-
 setInterval(updateCache, 120000)
 //~ , 3000)
 
 // refresh pre-rendered svg and tweets cache
-function updateCache () {
+function updateCache (callback) {
 	appData.tweets.getAll(function(tweets) {
-		//~ console.log('tweets', tweets.length)
 		cache.tweets = tweets
 		cache.svgMap = serverMap.generate(tweets)
-//~ console.log('res', cache.svgMap)
+		if (callback)
+			callback()
 	})
 	
 }
 
-updateCache ()
+updateCache (function() {
+	// launch express server once cache is refreshed
+	app.listen(8080)
+	console.log('knock on the magic 8080 port')
+
+})
 
 function streamTweets(errCount) {
 	
@@ -86,13 +83,13 @@ function streamTweets(errCount) {
 		})
 		stream.on('error', function(err){
 			console.log('error with twitter streaming API', err)
-			console.log('reconnecting in (ms)', 700 * (1 + errCount * 3))
+			console.log('reconnecting in (ms)', 700 * (1 + errCount * 4))
 			
 			stream.emit('end')
 			
 			setTimeout(function() {
 				streamTweets(errCount+1)
-			}, 700 * (1 + errCount * 3))
+			}, Math.min(700 * (1 + errCount * 4), 120000))
 			
 		})
 	})
@@ -103,7 +100,7 @@ function streamTweets(errCount) {
 		deltaSignLat = Math.sign(Math.round(Math.random()) - .5)
 			, deltaLat = Math.random() / 75 * deltaSignLat
 			, deltaSignLon = Math.sign(Math.round(Math.random()) - .5)
-			, deltaLon = Math.random() / 75 * deltaSignLon
+			, deltaLon = Math.random() / 60 * deltaSignLon
 		
 		return [
 			((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + deltaLat
