@@ -2,28 +2,19 @@ var d3 = require('d3')
 	, io = require('socket.io-client')
 	, _ = require('underscore')
 	, MapRenderer = require('../views/mapRenderer')
+	, StatsCalculator = require('../views/statsCalculator')
 	, app = {}
 
 //~ var suffix = window.location.hostname === 'localhost'? ':3030' : ''
 var suffix = ':3030'
 	, svg = d3.select('#mapContainer')
 	, mapRenderer = new MapRenderer(svg, tweetsCache)
+	, statsCalculator = new StatsCalculator(tweetsCache)
 	, $statsTotalTweetsLabel = d3.select('#stats .total-tweets .label')
 	, $statsTotalTweetsProgress = d3.select('#stats .total-tweets progress')
 	, $statsOriginalTweetsLabel = d3.select('#stats .original-tweets .label')
 	, $statsOriginalTweetsProgress = d3.select('#stats .original-tweets progress')
-	, statsCalculation = _.countBy(tweetsCache, function (msg) {
-		// Original tweets, in_reply_to_user_id is null, retweeted is false
-		if(msg.in_reply_to_user_id == null && msg.retweeted == false) {
-			return 'original'
-		}
-	})
-	, stats = {
-		total: tweetsCache.length
-		, original: statsCalculation.original
-		, retweets: 0
-		, replies: 0
-	}
+	, stats = statsCalculator.calculate()
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
