@@ -116,6 +116,8 @@ console.log('nextMinute')
 				.attr('x', function(d, i) { return x(i - 30)})
 				.style('fill', '#66B366')
 		
+		yAxis.call(d3.axisLeft(y).ticks(6))
+		
 		 rect.exit().transition()
 			.duration(650)
 			.attr('y', height)
@@ -135,7 +137,7 @@ console.log('nextMinute')
 		
 		y.domain([0, maxCount])
 		
-		yAxis.call(d3.axisLeft(y))
+		yAxis.call(d3.axisLeft(y).ticks(6))
 		
 		bars.selectAll('rect').data(countByMinute, function(d) {return d.id})
 			.transition()
