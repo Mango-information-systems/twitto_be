@@ -21,7 +21,7 @@ function serverMap () {
 	this.generate = function (tweets) {
 		
 		var svg = d3n.createSVG()
-			.attr('id', 'mapContainer')
+			.attr('id', 'map')
 			.attr('width', '100%')
 			.attr('height', '100%')
 			.attr('preserveAspectRatio', 'xMinYMin')
