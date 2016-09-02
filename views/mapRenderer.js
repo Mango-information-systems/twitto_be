@@ -12,7 +12,9 @@ function MapRenderer (svg, tweets) {
 
 //~ console.log('pointsData', tweets)
 
-	var pointsData = tweets || []
+	var pointsData = tweets? tweets.filter(function(tweet) {
+			return typeof tweet.twitto.coordinates !== 'undefined'
+		}) : []
 		, pointsLayer = svg.selectAll('circle')
 		, projection = d3.geoMercator()
 		  .center([5, 48.9])
@@ -50,14 +52,10 @@ function MapRenderer (svg, tweets) {
 		
 	}
 	
-	this.bindData = function(tweets) {
-		
-	}
-	
 	this.updatePoints = function(newTweet) {
 		//~ console.log('updatePoints', newTweet)
 		
-		if (newTweet)
+		if (newTweet && typeof newTweet.twitto.coordinates !== 'undefined')
 			pointsData.push(newTweet)
 		
 //~ console.log('pointsData', pointsData)
@@ -65,10 +63,10 @@ function MapRenderer (svg, tweets) {
 		svg.selectAll('circle').data(pointsData, function(d) {return d.id_str})
 			.enter().append('circle')
 				.attr('cx', function(d) {
-					return projection(d.coordinates)[0]
+					return projection(d.twitto.coordinates)[0]
 				})
 				.attr('cy', function(d) {
-					return projection(d.coordinates)[1]
+					return projection(d.twitto.coordinates)[1]
 				})
 				.style('fill', 'none')
 				.style('stroke', '#008000')
@@ -89,10 +87,10 @@ function MapRenderer (svg, tweets) {
 		svg.selectAll('circle').data(pointsData, function(d) {return d.id_str})
 			.enter().append('circle')
 				.attr('cx', function(d) {
-					return projection(d.coordinates)[0]
+					return projection(d.twitto.coordinates)[0]
 				})
 				.attr('cy', function(d) {
-					return projection(d.coordinates)[1]
+					return projection(d.twitto.coordinates)[1]
 				})
 				.attr('class', 'tweet')
 				.attr('r', '2')

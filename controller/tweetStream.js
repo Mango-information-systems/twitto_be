@@ -42,15 +42,16 @@ function TweetStream (app) {
 			stream.on('tweet', function(tweet){
 
 				if (tweet.place.country_code === 'BE') {
-					//~ console.log('tweet', msg.geo, msg.place)
 					
+					tweet.twitto = {}
+
 					if (tweet.geo) {
 						//~ // console.log('tweet with .geo', msg.geo)
-						tweet.coordinates = [tweet.geo.coordinates[1], tweet.geo.coordinates[0]]
+						tweet.twitto.coordinates = [tweet.geo.coordinates[1], tweet.geo.coordinates[0]]
 					}
-					else {
+					else if (tweet.place.place_type !== 'country'){
 						 //~ console.log('place', JSON.stringify(msg.place.bounding_box.coordinates))
-						tweet.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
+						tweet.twitto.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
 					}
 					
 					app.model.tweets.add(tweet)
