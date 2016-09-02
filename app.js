@@ -18,7 +18,8 @@ twitto.controller.serverMap = new ServerMap()
 
 twitto.model = new Datastore(twitto)
 
-twitto.controller.tweetStream = new TweetStream() 
+twitto.controller.tweetStream = new TweetStream(twitto) 
+
 
 // set the view engine to ejs
 app.set('view engine', 'ejs')
@@ -31,6 +32,9 @@ twitto.model.updateCache (function() {
 	// launch express server once cache is refreshed
 	app.listen(8080)
 	console.log('knock on the magic 8080 port')
+	
+	
+	twitto.controller.tweetStream.start()
 
 })
 

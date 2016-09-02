@@ -19,7 +19,8 @@ function TweetStream (app) {
 			console.log('error connecting to twitter API' , data)
 			throw err
 		}
-		else console.log('rateLimitStatus', data)
+		else
+			debug('successfully tested twitter API connection')
 	})
 
 	/****************************************
@@ -35,7 +36,7 @@ function TweetStream (app) {
 	* 
 	*/
 	function streamTweets() {
-		console.log('running streamTweets')
+		debug('running streamTweets')
 		
 		tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
 			stream.on('tweet', function(tweet){
@@ -53,7 +54,7 @@ function TweetStream (app) {
 					}
 					
 					app.model.tweets.add(tweet)
-					app.io.sockets.emit('tweet', tweet)
+					app.controller.io.sockets.emit('tweet', tweet)
 				}
 			})
 			stream.on('error', function(err){
@@ -87,7 +88,10 @@ function TweetStream (app) {
 
 	}
 
-	streamTweets()
+	this.start = function() {
+		debug('starting streamTweets')
+		streamTweets()
+	}
 
 }
 
