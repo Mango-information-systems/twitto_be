@@ -1,10 +1,10 @@
 var D3Node = require('d3-node')
 	, d3 = D3Node.d3
 	, d3n = new D3Node()
-	, MapRenderer = require('./mapRenderer')
+	, Map = require('./map')
 
 /**
-* Wrapper around mapRenderer to generate the map on the server
+* Wrapper around map module to generate the map on the server
 *
 * @constructor
 * 
@@ -27,10 +27,10 @@ function serverMap () {
 			.attr('preserveAspectRatio', 'xMinYMin')
 			.attr('viewBox', '0 0 960 960')
 
-		var mapRenderer = new MapRenderer(svg, tweets)
+		var map = new Map(svg, tweets)
 
-		mapRenderer.init()
-		mapRenderer.initPoints()
+		map.init()
+		map.initPoints()
 
 		return d3n.svgString()
 	}

@@ -1,6 +1,6 @@
 var d3 = require('d3')
 	, mapData = require('../data/belgian-provinces')
-	, debug = require('debug')('mapRenderer')
+	, debug = require('debug')('map')
 
 /**
 * Set of functions to manage map and map content
@@ -8,7 +8,7 @@ var d3 = require('d3')
 * @constructor
 * 
 */
-function MapRenderer (svg, tweets) {
+function Map (svg, tweets) {
 
 //~ console.log('pointsData', tweets)
 
@@ -102,4 +102,4 @@ function MapRenderer (svg, tweets) {
 	return this	
 }
 
-module.exports = MapRenderer
+module.exports = Map
