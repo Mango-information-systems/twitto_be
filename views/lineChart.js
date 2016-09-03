@@ -56,8 +56,6 @@ function LineChart (svg, tweets, granularity) {
 
 	var maxCount = d3.max(self.countByTimeInterval, function(d) {return d.count})
 
-	console.log('self.countByTimeInterval', granularity, self.countByTimeInterval)
-	
 	/***********
 	* Render line chart
 	*
@@ -117,9 +115,6 @@ function LineChart (svg, tweets, granularity) {
 
 		self.countByTimeInterval.shift()
 		
-		if (granularity === 'm')
-		console.log('pushing interval record', idFunc(new Date()))
-		
 		self.countByTimeInterval.push({
 			id: idFunc(new Date())
 			, count: 0
@@ -145,7 +140,7 @@ function LineChart (svg, tweets, granularity) {
 				.attr('x', function(d, i) { return x(i - barCount)})
 				.style('fill', '#66B366')
 		
-		self.yAxis.call(d3.axisLeft(self.y))
+		self.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(maxCount)))
 		
 		rect.exit().transition()
 			.duration(650)
@@ -157,6 +152,13 @@ function LineChart (svg, tweets, granularity) {
 	}
 	
 	setInterval(nextTimeInterval, timeRes)
+	
+	function tickCountSetter(n){
+		if (n <=2)
+			return n
+		else
+			return 6
+	}
 	
 	/****************************************
 	* 
@@ -179,7 +181,7 @@ function LineChart (svg, tweets, granularity) {
 		
 		self.y.domain([0, maxCount])
 		
-		self.yAxis.call(d3.axisLeft(self.y))
+		self.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(maxCount)))
 		
 		bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
 			.transition()
