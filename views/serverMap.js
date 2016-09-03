@@ -25,7 +25,7 @@ function serverMap () {
 			.attr('width', '100%')
 			.attr('height', '100%')
 			.attr('preserveAspectRatio', 'xMinYMin')
-			.attr('viewBox', '0 0 960 960')
+			.attr('viewBox', '0 0 960 700')
 
 		var map = new Map(svg, tweets)
 
