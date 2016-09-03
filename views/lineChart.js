@@ -6,143 +6,185 @@ var d3 = require('d3')
 *
 * @constructor
 * 
+* @param {object} svg the d3 selection
+* @param {object} tweets the array of tweets
+* @param {object} granularity 'm' or 's' for minute or second
+* 
 */
-function LineChart (svg, tweets) {
+function LineChart (svg, tweets, granularity) {
 
-	/****************************************
-	* 
-	* Public methods
-	* 
-	****************************************/
+
 
 	var self = this
+	
+	if (granularity === 'm') {
+		var timeRes = 60000
+			, barCount = 30
+			, svgWidth = 600
+			, idFunc = function(d) { return d.getMinutes() }
+	}
+	else {
+		var timeRes = 1000
+			, barCount = 60
+			, svgWidth = 300
+			, idFunc = function(d) { return + ('' + d.getMinutes() + d.getSeconds()) }
+	}
 
 	var ts = Date.now()
 		, recentTweets = tweets.filter(function(tweet) {
-			return ts - new Date(tweet.created_at) < 30 * 60000
+			return ts - new Date(tweet.created_at) < barCount * timeRes
 		})
 		
-	 // initialize countStruct array init based on http://stackoverflow.com/a/13735425/1006854
-	var countStruct = Array.apply(null, Array(30)).map(function(d, i) {
+	var countStruct = d3.range(barCount).map(function(d, i) {
+		//~ if (granularity === 'm') 
+			//~ console.log('id', idFunc(new Date(ts - (barCount-1-i) * timeRes)))
+		
 		return {
-			id: new Date(ts - (29-i) * 60000).getMinutes()
+			id: idFunc(new Date(ts - (barCount-1-i) * timeRes))
 			, count: 0
 		}
 	})
+	
+	self.countByTimeInterval = recentTweets.reduce(function(memo, tweet){
+		var howLongAgo = Math.floor((ts - new Date(tweet.created_at)) / timeRes)
 		
-
-	countByMinute = recentTweets.reduce(function(memo, tweet){
-		var howLongAgo = Math.floor((ts - new Date(tweet.created_at)) / 60000)
-		
-		memo[29 - howLongAgo].count += 1
+		memo[barCount-1 - howLongAgo].count += 1
 
 		return memo
 		
 	}, countStruct)
 
-	var maxCount = d3.max(countByMinute, function(d) {return d.count})
+	var maxCount = d3.max(self.countByTimeInterval, function(d) {return d.count})
 
-	//~ console.log('countByMinute', countByMinute)
-
+	console.log('self.countByTimeInterval', granularity, self.countByTimeInterval)
+	
 	/***********
 	* Render line chart
 	*
 	************/
 
 	var margin = {top: 20, right: 20, bottom: 80, left: 40},
-		width = 600 - margin.left - margin.right,
-		height = 400 - margin.top - margin.bottom
+		width = svgWidth - margin.left - margin.right,
+		height = 300 - margin.top - margin.bottom
 	
 	this.g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
 	var x = d3.scaleLinear()
-		.domain([-29, 0])
+		.domain([-(barCount-1), 0])
 		.range([0, width])
 		.nice()
 
-	var y = d3.scaleLinear()
+	self.y = d3.scaleLinear()
 		.domain([0, maxCount])
 		.range([height, 0])
 		//~ .nice()
 
 	this.g.append("g")
 		.attr("class", "axis axis--x")
-		.attr("transform", "translate(0," + y(0) + ")")
+		.attr("transform", "translate(0," + self.y(0) + ")")
 		.call(d3.axisBottom(x).ticks(5))
 
-	var yAxis = this.g.append("g")
+	self.yAxis = this.g.append("g")
 		.attr("class", "axis axis--y")
-		.call(d3.axisLeft(y).ticks(6))
+		.call(d3.axisLeft(self.y).ticks(6))
 	
 	var bars = this.g.append('g')
 	
-	bars.selectAll('rect').data(countByMinute, function(d) {return d.id})
+	bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
 		.enter()
 		.append('rect')
-			.attr('x', function(d, i) { return x(i - 30)})
-			.attr('y', function(d) { return y(d.count)})
-			.attr('width', width / 30)
-			.attr('height', function(d) { return height - y(d.count)})
-			.style('fill', function(d, i) { return i === 29? '#008000' : '#66B366'})
+			.attr('x', function(d, i) { return x(i - barCount)})
+			.attr('y', function(d) { return self.y(d.count)})
+			.attr('width', width / barCount)
+			.attr('height', function(d) { return height - self.y(d.count)})
+			.style('fill', function(d, i) { return i === barCount-1? '#008000' : '#66B366'})
 			.style('stroke', 'white')
 			.style('stroke-width', '1')
 	
-	function nextMinute() {
-console.log('nextMinute')
-		countByMinute.shift()
+	
+	/****************************************
+	* 
+	* Private methods
+	* 
+	****************************************/
+	
+	/****************************************
+	* 
+	* slide bars as time goes on (every new minute or second, based on granularity)
+	* 
+	****************************************/
+	function nextTimeInterval() {
+
+		self.countByTimeInterval.shift()
 		
-		countByMinute.push({
-				id: new Date().getMinutes()
-				, count: 0
-			})
+		if (granularity === 'm')
+		console.log('pushing interval record', idFunc(new Date()))
+		
+		self.countByTimeInterval.push({
+			id: idFunc(new Date())
+			, count: 0
+		})
 
-		 var rect = bars.selectAll('rect').data(countByMinute, function(d) {return d.id})
+		var rect = bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
 
-		 rect.enter()
+		rect.enter()
 			.append('rect')
-				.attr('x', function(d, i) { console.log('adding record', d.id); return x(-1)})
+				.attr('x', function(d, i) { return x(-1)})
 				.attr('y', height)
-				.attr('width', width / 30)
-				.attr('height', function(d) { return height - y(d.count)})
+				.attr('width', width / barCount)
+				.attr('height', function(d) { return height - self.y(d.count)})
 				.style('fill', '#008000')
 				.style('stroke', 'white')
 				.style('stroke-width', '1')
 			.transition()
 				.duration(650)
-				.attr('y', function(d) { return y(d.count)})
+				.attr('y', function(d) { return self.y(d.count)})
 
-		 rect.transition()
+		rect.transition()
 			.duration(650)
-				.attr('x', function(d, i) { return x(i - 30)})
+				.attr('x', function(d, i) { return x(i - barCount)})
 				.style('fill', '#66B366')
 		
-		yAxis.call(d3.axisLeft(y).ticks(6))
+		self.yAxis.call(d3.axisLeft(self.y))
 		
-		 rect.exit().transition()
+		rect.exit().transition()
 			.duration(650)
 			.attr('y', height)
 			.attr('height', 0)
-			.attr('x', function(d, i) { return x(i - 30)})
+			.attr('x', function(d, i) { return x(i - barCount)})
 			.remove()
 	
 	}
 	
-	setInterval(nextMinute, 60000)
+	setInterval(nextTimeInterval, timeRes)
 	
+	/****************************************
+	* 
+	* Public methods
+	* 
+	****************************************/
+	
+	
+	/***********
+	* Add new tweet to latest bar
+	*
+	************/
 	this.addTweet = function() {
+
+		self.countByTimeInterval[self.countByTimeInterval.length-1].count++
 		
-		countByMinute[countByMinute.length-1].count++
+	//~ console.log('addTweet', granularity, self.countByTimeInterval)
 		
-		maxCount = d3.max(countByMinute, function(d) {return d.count})
+		maxCount = d3.max(self.countByTimeInterval, function(d) {return d.count})
 		
-		y.domain([0, maxCount])
+		self.y.domain([0, maxCount])
 		
-		yAxis.call(d3.axisLeft(y).ticks(6))
+		self.yAxis.call(d3.axisLeft(self.y))
 		
-		bars.selectAll('rect').data(countByMinute, function(d) {return d.id})
+		bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
 			.transition()
-				.attr('y', function(d) {return y(d.count)})
-				.attr('height', function(d) { return height - y(d.count)})
+				.attr('y', function(d) { return self.y(d.count) })
+				.attr('height', function(d) { return height - self.y(d.count)})
 	}
 
 

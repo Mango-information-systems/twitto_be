@@ -8,9 +8,11 @@ var d3 = require('d3')
 //~ var suffix = window.location.hostname === 'localhost'? ':3030' : ''
 var suffix = ':3030'
 	, mapSvg = d3.select('#map')
-	, lineChartSvg = d3.select('#lineChart')
+	, tweetsPerMinuteSvg = d3.select('#tweetsPerMinute')
+	, tweetsPerSecondSvg = d3.select('#tweetsPerSecond')
 	, map = new Map(mapSvg, tweetsCache)
-	, lineChart = new LineChart(lineChartSvg, tweetsCache)
+	, tweetsPerMinuteChart = new LineChart(tweetsPerMinuteSvg, tweetsCache, 'm')
+	, tweetsPerSecondChart = new LineChart(tweetsPerSecondSvg, tweetsCache, 's')
 	, statsCalculator = new StatsCalculator(tweetsCache)
 	, stats = statsCalculator.calculate()
 
@@ -18,7 +20,8 @@ app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
 app.socket.on('tweet', function (msg) {
 	map.updatePoints(msg)
-	lineChart.addTweet()
+	tweetsPerMinuteChart.addTweet()
+	tweetsPerSecondChart.addTweet()
 	stats = statsCalculator.increment(stats, msg)
 	statsCalculator.render(stats, msg)
 
