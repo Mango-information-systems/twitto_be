@@ -54,11 +54,7 @@ function StatsCalculator(tweetsCache) {
 
 		}
 
-		if(counts.total == 0) {
-			counts.total = tweetsCache.length
-		} else {
-			counts.total++
-		}
+		counts.total++
 
 		return counts
 
