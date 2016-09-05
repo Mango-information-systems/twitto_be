@@ -13,35 +13,23 @@
     <div class="container-fluid">
         <div class="row">
             <div class="one-half column">
+				<h6>Tweets in the last 30 minutes</h6>
                 <div class="row">
                     <div class="two-thirds column">
-						<h6>per minute</h6>
+						<p>per minute</p>
                         <svg xmlns="http://www.w3.org/2000/svg" id="tweetsPerMinute" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 600 300" />
                     </div>
                     <div class="one-third column">
-						<h6>per second</h6>
+						<p>per second</v>
                         <svg xmlns="http://www.w3.org/2000/svg" id="tweetsPerSecond" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 300 300" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="two-thirds column">
-                    </div>
                     <div class="one-third column" id="counter">
-                        <div id="total-tweets" class="progress-bar">
-                            <div class="u-pull-left" data-value="100">Total</div>
-                            <div class="u-pull-right label" style="text-align: right">-</div>
-                            <progress style="width: 100%" max="100" value="0" class="html5"/>
-                        </div>
-                        <div id="original-tweets" class="progress-bar">
-                            <div class="u-pull-left" data-value="80">Original</div>
-                            <div class="u-pull-right label" style="text-align: right">-</div>
-                            <progress style="width: 100%" max="100" value="0" class="html5"/>
-                        </div>
-                        <div  id="replies" class="progress-bar">
-                            <div class="u-pull-left" data-value="20">Replies</div>
-                            <div class="u-pull-right label" style="text-align: right">-</div>
-                            <progress style="width: 100%" max="100" value="0" class="html5"/>
-                        </div>
+						<h6>Tweets in the last 24 hours</h6>
+                        <svg xmlns="http://www.w3.org/2000/svg" id="lastDayTweets" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 300 300">
+							<text id="totalCount" class="metric" x="50%" y="50%" style="text-anchor:middle"></text>
+                        </svg>
                     </div>
                 </div>
                 <div class="row">
@@ -55,7 +43,7 @@
 
             </div>
             <div class="one-half column">
-				<h6>geolocation</h6>
+				<h6>Geolocation</h6>
                 <svg xmlns="http://www.w3.org/2000/svg" id="map" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 960 700">
 					<% include ../partials/belgianMapPath %>
 				</svg>

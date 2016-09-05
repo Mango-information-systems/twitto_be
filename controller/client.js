@@ -2,7 +2,7 @@ var d3 = require('d3')
 	, io = require('socket.io-client')
 	, Map = require('../views/map')
 	, LineChart = require('../views/lineChart')
-	, Counter = require('../views/counter')
+	, DonutChart = require('../views/donutChart')
 	, app = {
 		model: {
 			tweets: []
@@ -17,15 +17,14 @@ var d3 = require('d3')
 app.view.map = new Map(d3.select('#map'))
 app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
-app.view.tweetsCounter = new Counter(d3.select('#counter'))
+app.view.donutChart = new DonutChart(d3.select('#lastDayTweets'))
 
 //~ var suffix = window.location.hostname === 'localhost'? ':3030' : ''
 var suffix = ':3030'
-	//~ , statsCalculator = new StatsCalculator(tweetsCache)
-	//~ , stats = statsCalculator.calculate()
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
+// Listener: set of historical tweets sent by the server
 app.socket.on('tweets', function (tweets) {
 	
 	app.model.tweets = app.model.tweets.concat(tweets)
@@ -36,9 +35,10 @@ app.socket.on('tweets', function (tweets) {
 	
 	app.view.tweetsPerMinute.init(tweets)
 	app.view.tweetsPerSecond.init(tweets)
-	app.view.tweetsCounter.addTweets(tweets)
+	app.view.donutChart.addTweets(tweets)
 })
 
+// Listener: new tweet sent by the server
 app.socket.on('tweet', function (tweet) {
 	
 	app.model.tweets.push(tweet)
@@ -46,15 +46,12 @@ app.socket.on('tweet', function (tweet) {
 	app.view.map.addPoints(app.model.tweets.filter(function(tweet) {
 		return typeof tweet.twitto.coordinates !== 'undefined'
 	}), 1)
+	
 	app.view.tweetsPerMinute.addTweet()
 	app.view.tweetsPerSecond.addTweet()
-	app.view.tweetsCounter.addTweets([tweet])
-	//~ stats = statsCalculator.increment(stats, msg)
-	//~ statsCalculator.render(stats, msg)
+	app.view.donutChart.addTweets([tweet])
 
 })
-
-//~ statsCalculator.render(stats, {})
 
 
 
