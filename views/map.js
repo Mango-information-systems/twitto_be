@@ -59,12 +59,15 @@ function Map (svg) {
 				.style('stroke-opacity', 0)
 				.style('fill-opacity', 0)
 				.transition()
-				.style('stroke-opacity', 1)
+				.delay(function(d, i) { return 100 + i / self.data.length * 1500 })
+				.duration(1500)
+				  .style('stroke-opacity', 1)
+				  .style('stroke-width', 5)
 				.transition()
-				.attr('r', '2')
-				.style('fill', '#008000')
-				.style('stroke', 'none')
-				.style('fill-opacity', .3)
+				  .attr('r', '4')
+				  .style('fill', '#008000')
+				  .style('stroke', 'none')
+				  .style('fill-opacity', .3)
 
 	}
 	
