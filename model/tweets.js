@@ -22,7 +22,7 @@ function Tweets(storage) {
 
 	/**
 	* 
-	* Remove all cached tweets older than 4 hours - unless all tweets are that old
+	* Remove all cached tweets older than 24 hours
 	*
 	* @private
 	* 
@@ -32,20 +32,24 @@ function Tweets(storage) {
 		storage.getItem('tweets')
 		.then(function(tweets) {
 		
-			var earlier = new Date(Date.now().getTime() - 4 * 60 * 60 * 1000)
+			console.log('before cache clean', tweets.length)
+			var yesterday = new Date().getDate() - 1
 		
 			var res = tweets.filter(function(tweet, ix){
-				return Date.parse(tweet.created_at) - earlier > 0
+				
+				return Date.parse(tweet.created_at) > yesterday
 					
 			})
 		
-			if (res.length > 0)
-				storage.setItem('tweets', res)
+			console.log('after cache clean', res.length)
+		
+			storage.setItem('tweets', res)
 		})
 		
 	}
 	
-	//~ setInterval(cleanCache, 120000)
+	// clean the cache every hour
+	setInterval(cleanCache, 60 * 60 * 1000)
 
 	/********************************************************
 	* 
