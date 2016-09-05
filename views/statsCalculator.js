@@ -33,7 +33,6 @@ function StatsCalculator(tweetsCache) {
 
 		}, {
 			original: 0
-			, retweet: 0
 			, reply: 0
 			, total: 0
 		})
@@ -48,9 +47,6 @@ function StatsCalculator(tweetsCache) {
 		switch (true) {
 			case msg.in_reply_to_user_id !== null:
 				counts.reply++
-				break
-			case msg.retweeted === true:
-				counts.retweet++
 				break
 			default:
 				counts.original++
@@ -73,8 +69,6 @@ function StatsCalculator(tweetsCache) {
 			, $statsTotalTweetsProgress = d3.select('#stats .total-tweets progress')
 			, $statsOriginalTweetsLabel = d3.select('#stats .original-tweets .label')
 			, $statsOriginalTweetsProgress = d3.select('#stats .original-tweets progress')
-			, $statsRetweetsLabel = d3.select('#stats .retweets .label')
-			, $statsRetweetsProgress = d3.select('#stats .retweets progress')
 			, $statsRepliesLabel = d3.select('#stats .replies .label')
 			, $statsRepliesProgress = d3.select('#stats .replies progress')
 
@@ -86,15 +80,11 @@ function StatsCalculator(tweetsCache) {
 		if(Object.keys(msg).length == 0) {
 
 			this.renderProgressBars($statsOriginalTweetsLabel, $statsOriginalTweetsProgress, stats.original, stats.total)
-			this.renderProgressBars($statsRetweetsLabel, $statsRetweetsProgress, stats.retweet, stats.total)
 			this.renderProgressBars($statsRepliesLabel, $statsRepliesProgress, stats.reply, stats.total)
 		} else {
 			switch (true) {
 				case msg.in_reply_to_user_id !== null:
 					this.renderProgressBars($statsRepliesLabel, $statsRepliesProgress, stats.reply, stats.total)
-					break
-				case msg.retweeted === true:
-					this.renderProgressBars($statsRetweetsLabel, $statsRetweetsProgress, stats.retweet, stats.total)
 					break
 				default:
 					this.renderProgressBars($statsOriginalTweetsLabel, $statsOriginalTweetsProgress, stats.original, stats.total)
