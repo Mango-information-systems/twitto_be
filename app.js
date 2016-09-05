@@ -32,7 +32,6 @@ twitto.controller.tweetStream.start()
 
 // index page route
 app.get('/', function (req, res) {
-	//~ console.log('serving svgmap', cache.svgMap)
 	res.render('pages/index')
 })
 
@@ -42,6 +41,7 @@ twitto.controller.io.on('connection', function(socket) {
 	debug('client connection', socket.id)
 
 	var t = twitto.model.tweets.getAll(function (tweets) {
+
 		socket.emit('tweets', tweets)
 		
 	})

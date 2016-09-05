@@ -12,10 +12,7 @@ function Map (svg) {
 
 	var self = this
 	
-	this.data = []
-	
-	var pointsLayer = svg.selectAll('circle')
-		, projection = d3.geoMercator()
+	this.projection = d3.geoMercator()
 		  .center([5, 48.9])
 		  .scale(960 * 13)
 // TODO: dynamically set width and height according to page dimensions
@@ -32,45 +29,38 @@ function Map (svg) {
 	* addPoints displays geo-located tweets in the map
 	* 
 	* @param {object} newTweets array of tweets to be displayed in the map
+	* @param {number} count the number of points to be added 
 	* 
 	****************************************/
-	this.addPoints = function(newTweets) {
-		debug('addPoints', newTweets)
+	this.addPoints = function(newTweets, count) {
+		debug('addPoints', newTweets.length)
 
-		newTweets = newTweets.filter(function(tweet) {
-			return typeof tweet.twitto.coordinates !== 'undefined'
-		})
+		var transitionDuration = Math.min(Math.max(newTweets.length, 400), 2500)
+			, count = count || newTweets.length
 		
-		var transitionDuration = Math.min(Math.max(newTweets.length, 400), 3500)
-		
-		
-		this.data = this.data.concat(newTweets)
-		
-//~ console.log('tweets', this.data.length)
-		
-		svg.selectAll('circle').data(this.data, function(d) {return d.id_str})
+		svg.selectAll('circle').data(newTweets, function(d) {return d.id_str})
 			.enter().append('circle')
-				.attr('cx', function(d) {
-					return projection(d.twitto.coordinates)[0]
-				})
-				.attr('cy', function(d) {
-					return projection(d.twitto.coordinates)[1]
-				})
-				.style('fill', 'none')
-				.style('stroke', '#008000')
-				.attr('r', '10')
-				.style('stroke-opacity', 0)
-				.style('fill-opacity', 0)
-				.transition()
-				.delay(function(d, i) { return 100 + i / self.data.length * transitionDuration })
-				.duration(transitionDuration)
-				  .style('stroke-opacity', 1)
-				  .style('stroke-width', 5)
-				.transition()
-				  .attr('r', '4')
-				  .style('fill', '#008000')
-				  .style('stroke', 'none')
-				  .style('fill-opacity', .3)
+			  .attr('cx', function(d) {
+			  	return self.projection(d.twitto.coordinates)[0]
+			  })
+			  .attr('cy', function(d) {
+			  	return self.projection(d.twitto.coordinates)[1]
+			  })
+			  .style('fill', 'none')
+			  .style('stroke', '#008000')
+			  .attr('r', '10')
+			  .style('stroke-opacity', 0)
+			  .style('fill-opacity', 0)
+			  .transition()
+			  .delay(function(d, i) { return 100 + i / count * transitionDuration })
+			  .duration(transitionDuration)
+			    .style('stroke-opacity', 1)
+			    .style('stroke-width', 5)
+			  .transition()
+			    .attr('r', '4')
+			    .style('fill', '#008000')
+			    .style('stroke', 'none')
+			    .style('fill-opacity', .3)
 
 	}
 	
