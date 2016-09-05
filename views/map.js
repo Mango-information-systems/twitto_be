@@ -28,17 +28,17 @@ function Map (svg) {
 	* 
 	* addPoints displays geo-located tweets in the map
 	* 
-	* @param {object} newTweets array of tweets to be displayed in the map
+	* @param {object} tweets array of tweets to be displayed in the map
 	* @param {number} count the number of points to be added 
 	* 
 	****************************************/
-	this.addPoints = function(newTweets, count) {
-		debug('addPoints', newTweets.length)
+	this.addPoints = function(tweets, count) {
+		debug('addPoints', tweets.length)
 
-		var transitionDuration = Math.min(Math.max(newTweets.length, 400), 2500)
-			, count = count || newTweets.length
+		var transitionDuration = Math.min(Math.max(tweets.length, 400), 2500)
+			, count = count || tweets.length
 		
-		svg.selectAll('circle').data(newTweets, function(d) {return d.id_str})
+		svg.selectAll('circle').data(tweets, function(d) {return d.id_str})
 			.enter().append('circle')
 			  .attr('cx', function(d) {
 			  	return self.projection(d.twitto.coordinates)[0]

@@ -106,7 +106,6 @@ function LineChart (svg, granularity) {
 	 * @param {object} tweets array of tweets
 	 * 
 	 ************/
-
 	this.init = function (tweets) {
 
 		var ts = Date.now()
@@ -156,7 +155,7 @@ function LineChart (svg, granularity) {
 		
 		this.bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
 			.enter()
-			.append('rect')
+			  .append('rect')
 				.attr('x', function(d, i) { return self.x(i - barCount)})
 				.attr('y', function(d) { return self.y(d.count)})
 				.attr('width', width / barCount)
@@ -170,9 +169,10 @@ function LineChart (svg, granularity) {
 	}
 	
 	/***********
-	* Add new tweet to latest bar
-	*
-	************/
+	 * 
+	 * Add new tweet to latest bar
+	 *
+	 ************/
 	this.addTweet = function() {
 
 		this.countByTimeInterval[self.countByTimeInterval.length-1].count++
@@ -185,8 +185,8 @@ function LineChart (svg, granularity) {
 		
 		this.bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
 			.transition()
-				.attr('y', function(d) { return self.y(d.count) })
-				.attr('height', function(d) { return height - self.y(d.count)})
+			  .attr('y', function(d) { return self.y(d.count) })
+			  .attr('height', function(d) { return height - self.y(d.count)})
 	}
 
 
