@@ -5,7 +5,7 @@
   "main": "app.js",
   "private": true,
   "scripts": {
-    "start": "npm run watch:client & npm run watch:server & npm run watch:skeleton",
+    "start": "npm run watch:client & npm run watch:server & npm run watch:skeleton & npm run browsersync",
     "build:client": "browserify -t uglifyify controller/client.js | uglifyjs -c > public/js/app.js",
     "build:skeleton": "cd git_submodules/skeleton-framework && npm run build",
     "postinstall": "mkdir public/js & mkdir public/css; git submodule update --init --recursive; cd git_submodules/skeleton-framework; npm install;",
@@ -13,7 +13,8 @@
     "watch:server": "nodemon --ignore public/ app.js",
     "watch:skeleton": "cd git_submodules/skeleton-framework && npm run watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cp": "cp git_submodules/skeleton-framework/dist/skeleton.min.css public/css/"
+    "cp": "cp git_submodules/skeleton-framework/dist/skeleton.min.css public/css/",
+	"browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public'  --reload-delay 2000"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "tuiter": "^0.2.12"
   },
   "devDependencies": {
+    "browser-sync": "^2.14.3",
     "browserify": "^13.1.0",
     "nodemon": "^1.10.2",
     "uglify-js": "^2.7.3",
