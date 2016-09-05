@@ -8,59 +8,44 @@ var d3 = require('d3')
 * @constructor
 * 
 */
-function Map (svg, tweets) {
+function Map (svg) {
 
-//~ console.log('pointsData', tweets)
-
-	var pointsData = tweets? tweets.filter(function(tweet) {
-			return typeof tweet.twitto.coordinates !== 'undefined'
-		}) : []
-		, pointsLayer = svg.selectAll('circle')
+	var self = this
+	
+	this.data = []
+	
+	var pointsLayer = svg.selectAll('circle')
 		, projection = d3.geoMercator()
 		  .center([5, 48.9])
 		  .scale(960 * 13)
 // TODO: dynamically set width and height according to page dimensions
 		  .translate([1200 / 2, 890])
-		  
-	// bind existing circles (DOM nodes) to the corresponding tweets
-	svg.selectAll('circle').data(pointsData)
+	
 	/****************************************
 	* 
 	* Public methods
 	* 
 	****************************************/
-
-	/**
-	* Render map of Belgium
-	* 
-	* @return {object} map SVG
-	*
-	*/
-	this.init = function() {
-		  
-		var countryLayer = d3.geoPath()
-			.projection(projection)
-			
-		var countryPath = svg.append('path')
-			.attr('fill', '#eeeeee')
-			.attr('stroke', '#aaaaaa')
-				
-		countryPath.datum(mapData)
-		
-		// draw the country
-		countryPath.attr('d', countryLayer)
-		
-	}
 	
-	this.updatePoints = function(newTweet) {
-		//~ console.log('updatePoints', newTweet)
+	/****************************************
+	* 
+	* addPoints displays geo-located tweets in the map
+	* 
+	* @param {object} newTweets array of tweets to be displayed in the map
+	* 
+	****************************************/
+	this.addPoints = function(newTweets) {
+		debug('addPoints', newTweets)
+
+		newTweets = newTweets.filter(function(tweet) {
+			return typeof tweet.twitto.coordinates !== 'undefined'
+		})
 		
-		if (newTweet && typeof newTweet.twitto.coordinates !== 'undefined')
-			pointsData.push(newTweet)
+		this.data = this.data.concat(newTweets)
 		
-//~ console.log('pointsData', pointsData)
+//~ console.log('tweets', this.data.length)
 		
-		svg.selectAll('circle').data(pointsData, function(d) {return d.id_str})
+		svg.selectAll('circle').data(this.data, function(d) {return d.id_str})
 			.enter().append('circle')
 				.attr('cx', function(d) {
 					return projection(d.twitto.coordinates)[0]
@@ -80,22 +65,6 @@ function Map (svg, tweets) {
 				.style('fill', '#008000')
 				.style('stroke', 'none')
 				.style('fill-opacity', .3)
-
-	}
-	this.initPoints = function() {
-		
-		svg.selectAll('circle').data(pointsData, function(d) {return d.id_str})
-			.enter().append('circle')
-				.attr('cx', function(d) {
-					return projection(d.twitto.coordinates)[0]
-				})
-				.attr('cy', function(d) {
-					return projection(d.twitto.coordinates)[1]
-				})
-				.attr('class', 'tweet')
-				.attr('r', '2')
-				.attr('fill', '#008000')
-				.attr('opacity', .3)
 
 	}
 	

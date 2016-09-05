@@ -1,6 +1,4 @@
 var debug = require('debug')('tweetsModel')
-	, storage = require('node-persist')
-
 
 /********************************************************
 * Tweets datastore
@@ -10,6 +8,7 @@ var debug = require('debug')('tweetsModel')
 *********************************************************/
 function Tweets(storage) {
 
+	// initialize tweets storage to an empty array in case no tweets are already stored
 	if (storage.keys().indexOf('tweets') === -1) {
 		storage.setItemSync('tweets', [])
 	}
@@ -25,6 +24,8 @@ function Tweets(storage) {
 	* 
 	* Remove all cached tweets older than 4 hours - unless all tweets are that old
 	*
+	* @private
+	* 
 	*/
 	function cleanCache() {
 		
