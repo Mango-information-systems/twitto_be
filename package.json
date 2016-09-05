@@ -14,7 +14,7 @@
     "watch:skeleton": "cd git_submodules/skeleton-framework && npm run watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "cp": "cp git_submodules/skeleton-framework/dist/skeleton.min.css public/css/",
-	"browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public'  --reload-delay 2000"
+	"browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public,views/pages,views/partials'  --reload-delay 2000"
   },
   "repository": {
     "type": "git",
