@@ -15,7 +15,8 @@ function DonutChart(svg) {
 		, tau = 2 * Math.PI
 	
 	this.stats = {
-		reply: 0
+		previousTotal: 0
+		, reply: 0
 		, total: 0
 	}
 	
@@ -79,6 +80,30 @@ function DonutChart(svg) {
 	}
 	
 	/**
+	 * Returns a tween for a transition’s "text" attribute, transitioning any selected
+	 * text from their current value to the specified new value.
+	 * 
+	 * @param {number} oldValue
+	 * @param {number} newValue
+	 * 
+	 * @return {function} tween function
+	 * 
+	 * @private
+	 * 
+	 */
+	function textTween(oldValue, newValue) {
+
+		return function(d) {
+
+			var interpolate = d3.interpolate(oldValue, newValue)
+
+			return function(t) {
+				self.totalCount.text(Math.floor(interpolate(t)))
+			}
+		}
+	}
+	
+	/**
 	 * Update counters with one extra tweet
 	 *
 	 * @param {object} msg new tweet
@@ -88,8 +113,11 @@ function DonutChart(svg) {
 	 */
 	function updateStats (msg) {
 
+
 		if (msg.in_reply_to_user_id !== null)
 			self.stats.reply++
+		
+		self.stats.previousTotal = self.stats.total
 		
 		self.stats.total++
 
@@ -102,9 +130,10 @@ function DonutChart(svg) {
 	 * 
 	 */
 	function updateTotalCount() {
-		self.totalCount.text(self.stats.total)
+		//~ self.totalCount.text(self.stats.total)
+		self.totalCount.datum(self.stats.total).transition()
+		    .tween('text', textTween(self.stats.previousTotal, self.stats.total))
 	}
-	
 	
 	/**
 	 * Update mentions counts arc
