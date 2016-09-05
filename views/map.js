@@ -41,6 +41,9 @@ function Map (svg) {
 			return typeof tweet.twitto.coordinates !== 'undefined'
 		})
 		
+		var transitionDuration = Math.min(Math.max(newTweets.length, 400), 3500)
+		
+		
 		this.data = this.data.concat(newTweets)
 		
 //~ console.log('tweets', this.data.length)
@@ -59,8 +62,8 @@ function Map (svg) {
 				.style('stroke-opacity', 0)
 				.style('fill-opacity', 0)
 				.transition()
-				.delay(function(d, i) { return 100 + i / self.data.length * 1500 })
-				.duration(1500)
+				.delay(function(d, i) { return 100 + i / self.data.length * transitionDuration })
+				.duration(transitionDuration)
 				  .style('stroke-opacity', 1)
 				  .style('stroke-width', 5)
 				.transition()
