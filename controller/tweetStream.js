@@ -76,9 +76,9 @@ function TweetStream (app) {
 		function generateRandomPointwithinBbox(bbox) {
 			
 			deltaSignLat = Math.sign(Math.round(Math.random()) - .5)
-				, deltaLat = Math.random() / 60 * deltaSignLat
+				, deltaLat = Math.random() / 80 * deltaSignLat
 				, deltaSignLon = Math.sign(Math.round(Math.random()) - .5)
-				, deltaLon = Math.random() / 80 * deltaSignLon
+				, deltaLon = Math.random() / 120 * deltaSignLon
 			
 			return [
 				((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + deltaLat

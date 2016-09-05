@@ -3,7 +3,6 @@ var Io = require('socket.io')
 	, utils = require('./controller/utils')
 	, TweetStream = require('./controller/tweetStream')
 	, Datastore = require('./model/index')
-	, ServerMap = require('./views/serverMap')
 	, params = require('./params')
 	, debug = require('debug')('server')
 	, app = express()
@@ -13,8 +12,6 @@ var Io = require('socket.io')
 	}
 
 twitto.controller.io = Io({ path: '/ws/'})
-
-twitto.controller.serverMap = new ServerMap()
 
 twitto.model = new Datastore(twitto)
 
@@ -26,44 +23,30 @@ app.set('view engine', 'ejs')
 
 app.use(express.static('public'))
 
+// launch express server
+app.listen(8080)
+console.log('knock on the magic 8080 port')
 
-// warm-up data cache, then launch http server
-twitto.model.updateCache (function() {
-	// launch express server once cache is refreshed
-	app.listen(8080)
-	console.log('knock on the magic 8080 port')
-	
-	
-	twitto.controller.tweetStream.start()
-
-})
-
+// start to listen to tweets from twitter API
+twitto.controller.tweetStream.start()
 
 // index page route
 app.get('/', function (req, res) {
 	//~ console.log('serving svgmap', cache.svgMap)
-	res.render('pages/index', {
-		svg: twitto.model.cache.svgMap
-		, tweets: twitto.model.cache.tweets
-	})
+	res.render('pages/index')
 })
 
-//~ 
-//~ twitto.controller.io.on('connection', function(socket) {
-	//~ 
-	//~ debug('connection event', socket.id)
 
-	//~ /**
-	//~ * listener: msg request
-	//~ *
-	//~ * @private
-	//~ */
-	//~ socket.on('msg', function(msg) {
-		//~ 
-		//~ debug('msg received', socket.id, msg)
-		//~ 
-	//~ })
+twitto.controller.io.on('connection', function(socket) {
+	
+	debug('client connection', socket.id)
 
-//~ })
+	var t = twitto.model.tweets.getAll(function (tweets) {
+		socket.emit('tweets', tweets)
+		
+	})
+
+	
+})
 
 twitto.controller.io.listen(3030)

@@ -28,7 +28,6 @@
   "homepage": "https://github.com/Mango-information-systems/twitto_be#readme",
   "dependencies": {
     "d3": "^4.2.2",
-    "d3-node": "^0.2.0",
     "debug": "^2.2.0",
     "ejs": "^2.5.1",
     "express": "^4.14.0",
