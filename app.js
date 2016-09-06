@@ -1,4 +1,5 @@
 var Io = require('socket.io')
+	, path = require('path')
 	, express = require('express')
 	, utils = require('./controller/utils')
 	, TweetStream = require('./controller/tweetStream')
@@ -20,11 +21,15 @@ twitto.controller.tweetStream = new TweetStream(twitto)
 
 // set the view engine to ejs
 app.set('view engine', 'ejs')
+app.set('views', path.resolve(__dirname + '/view'))
 
-app.use(express.static('public'))
+console.log('static', __dirname + '/public')
+
+app.use(express.static( __dirname + '/public'))
 
 // launch express server
 app.listen(8080)
+
 console.log('knock on the magic 8080 port')
 
 // start to listen to tweets from twitter API
@@ -49,4 +54,4 @@ twitto.controller.io.on('connection', function(socket) {
 	
 })
 
-twitto.controller.io.listen(3030)
+twitto.controller.io.listen(3031)

@@ -1,8 +1,8 @@
 var d3 = require('d3')
 	, io = require('socket.io-client')
-	, Map = require('../views/map')
-	, LineChart = require('../views/lineChart')
-	, DonutChart = require('../views/donutChart')
+	, Map = require('../view/map')
+	, LineChart = require('../view/lineChart')
+	, DonutChart = require('../view/donutChart')
 	, app = {
 		model: {
 			tweets: []
@@ -19,8 +19,8 @@ app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
 app.view.donutChart = new DonutChart(d3.select('#lastDayTweets'))
 
-//~ var suffix = window.location.hostname === 'localhost'? ':3030' : ''
-var suffix = ':3030'
+var suffix = window.location.hostname === 'localhost'? ':3031' : ''
+//var suffix = ':3031'
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
