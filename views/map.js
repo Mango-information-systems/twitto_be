@@ -36,7 +36,6 @@ function Map (svg) {
 		debug('addPoints', tweets.length)
 
 		var transitionDuration = Math.min(Math.max(tweets.length, 400), 2500)
-			, count = count || tweets.length
 		
 		svg.selectAll('circle').data(tweets, function(d) {return d.id_str})
 			.enter().append('circle')
@@ -52,7 +51,8 @@ function Map (svg) {
 			  .style('stroke-opacity', 0)
 			  .style('fill-opacity', 0)
 			  .transition()
-			  .delay(function(d, i) { return 100 + i / count * transitionDuration })
+			  .delay(function(d, i) { 
+				   return count === 1? 400 : 100 + i / tweets.length * transitionDuration })
 			  .duration(transitionDuration)
 			    .style('stroke-opacity', 1)
 			    .style('stroke-width', 5)
