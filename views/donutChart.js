@@ -28,7 +28,7 @@ function DonutChart(svg) {
 	var arc = d3.arc()
 		.innerRadius(120)
 		.outerRadius(150)
-		.startAngle(0)
+		.startAngle(- tau / 4)
 	
 	var background = this.g.append('path')
 		.datum({endAngle: tau})
@@ -36,7 +36,7 @@ function DonutChart(svg) {
 		.attr('d', arc)
 	
 	this.replySlice = this.g.append('path')
-		.datum({endAngle: 0.001 * tau})
+		.datum({endAngle: 0.001 * tau - tau / 4})
 		.style('fill', '#008000')
 		.attr('d', arc)
 		
@@ -140,7 +140,7 @@ function DonutChart(svg) {
 		
 		self.replySlice.transition()
 		  .duration(750)
-		  .attrTween('d', arcTween(self.stats.reply / self.stats.total * tau))
+		  .attrTween('d', arcTween(self.stats.reply / self.stats.total * tau - tau / 4))
 	}
 	
 	
