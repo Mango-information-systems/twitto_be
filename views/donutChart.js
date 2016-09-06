@@ -23,6 +23,7 @@ function DonutChart(svg) {
 	this.g = svg.append('g').attr('transform', 'translate(150, 150)')
 	
 	this.totalCount = svg.select('#totalCount')
+	this.replyCount = svg.select('#replyCount')
 	
 	var arc = d3.arc()
 		.innerRadius(120)
@@ -123,7 +124,7 @@ function DonutChart(svg) {
 	 * 
 	 */
 	function updateTotalCount() {
-		//~ self.totalCount.text(self.stats.total)
+		self.replyCount.text(self.stats.reply)
 		self.totalCount.datum(self.stats.total).transition()
 		    .tween('text', textTween(self.stats.previousTotal, self.stats.total))
 	}
