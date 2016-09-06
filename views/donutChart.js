@@ -39,13 +39,6 @@ function DonutChart(svg) {
 		.style('fill', '#008000')
 		.attr('d', arc)
 		
-	this.g.append('line')
-		.attr('x1', 50)
-		.attr('x2', 150)
-		.attr('y1', -140)
-		.attr('y2', -140)
-		.style('stroke', '#999999')
-	
 	/****************************************
 	 *
 	 * Private methods
