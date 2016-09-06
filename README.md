@@ -1,10 +1,34 @@
 # Twitto_be
 
-twitto_be (pronounce *tweet-to-be*) is a real-time dashboard of geolocated tweets.
+twitto_be is a real-time dashboard of geolocated tweets.
 
 ## Installation
 
-This branch is experimental, to be documented in the future
+Twitto.be is a node.js application.
+
+Used ports:
+* 8080: express
+* 3031: socket.io
+
+After cloning the repository, follow these steps
+
+1. run `npm install`
+2. Enter your twitter app credentials inside a new file `params.json` in the root directory. Use `params-sample.json` to see the expected syntax
+
+### Development
+
+run `npm start`
+
+### Production
+
+A deployment script is included, you may need to adapt it to your own setup. Edit the `deploy` script in `package.json` to modify the configuration:
+* debian jessie linux machine (may work in other unix environments)
+* The application (`app.js`) is launched and maintained up by a systemd process called `node-twitto`
+* The application is deployed in the following directory: `/home/srv-node-mango/twitto`
+* The owner of `/home/srv-node-mango/twitto`, is user `srv-node-mango`
+
+1. Run `npm run build`
+2. If no error was met in previous step, run `npm run deploy`
 
 ## Contributing
 
