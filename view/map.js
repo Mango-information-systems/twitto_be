@@ -37,29 +37,24 @@ function Map (svg) {
 		var transitionDuration = Math.min(Math.max(tweets.length, 400), 2500)
 		
 		svg.selectAll('circle').data(tweets, function(d) {return d.id_str})
-			.enter().append('circle')
-			  .attr('cx', function(d) {
-			  	return self.projection(d.twitto.coordinates)[0]
-			  })
-			  .attr('cy', function(d) {
-			  	return self.projection(d.twitto.coordinates)[1]
-			  })
-			  .style('fill', 'none')
-			  .style('stroke', '#008000')
-			  .attr('r', '10')
-			  .style('stroke-opacity', 0)
-			  .style('fill-opacity', 0)
+			.enter()
+			  .append('circle')
+			  .attr('r', '8')
+			  .attr('cx', '-4')
+			  .attr('cy', '-4')
+			  .style('fill', '#008000')
+			  .style('fill-opacity', .3)
 			  .transition()
 			  .delay(function(d, i) { 
-				   return count === 1? 400 : 100 + i / tweets.length * transitionDuration })
-			  .duration(transitionDuration)
-			    .style('stroke-opacity', 1)
-			    .style('stroke-width', 5)
-			  .transition()
-			    .attr('r', '4')
-			    .style('fill', '#008000')
-			    .style('stroke', 'none')
-			    .style('fill-opacity', .3)
+			    return count === 1? 400 : 100 + i / tweets.length * transitionDuration
+			  })
+			    .attr('cx', function(d) {
+			    	return self.projection(d.twitto.coordinates)[0]
+			    })
+			    .attr('cy', function(d) {
+			    	return self.projection(d.twitto.coordinates)[1]
+			    })
+				.attr('r', '4')
 
 	}
 	
