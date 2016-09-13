@@ -1,5 +1,4 @@
 var d3 = require('d3')
-	, mapData = require('../data/belgian-provinces')
 	, debug = require('debug')('map')
 
 /**
