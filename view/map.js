@@ -45,8 +45,9 @@ function Map (svg) {
 			  .style('fill', '#008000')
 			  .style('fill-opacity', .3)
 			  .transition()
+			  .duration(400)
 			  .delay(function(d, i) { 
-			    return count === 1? 400 : 100 + i / tweets.length * transitionDuration
+			    return count === 1? 0 : 100 + i / tweets.length * transitionDuration
 			  })
 			    .attr('cx', function(d) {
 			    	return self.projection(d.twitto.coordinates)[0]
