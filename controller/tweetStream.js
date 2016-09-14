@@ -1,6 +1,9 @@
 var params = require('../params')
 	, debug = require('debug')('tweetStream')
 
+var tweetStream = new TweetStream()
+
+
 
 /**
 * Set of functions to extract tweets in real time
@@ -8,7 +11,7 @@ var params = require('../params')
 * @constructor
 * 
 */
-function TweetStream (app) {
+function TweetStream () {
 
 	var tu = require('tuiter')(params.twitter)
 		, errCount = 0
@@ -54,8 +57,8 @@ function TweetStream (app) {
 						tweet.twitto.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
 					}
 					
-					app.model.tweets.add(tweet)
-					app.controller.io.sockets.emit('tweet', tweet)
+					// send tweet to the parent process
+					process.send(tweet)
 				}
 			})
 			stream.on('error', function(err){
@@ -89,11 +92,7 @@ function TweetStream (app) {
 
 	}
 
-	this.start = function() {
-		debug('starting streamTweets')
-		streamTweets()
-	}
+	debug('starting streamTweets')
+	streamTweets()
 
 }
-
-module.exports = TweetStream

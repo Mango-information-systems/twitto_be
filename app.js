@@ -2,7 +2,6 @@ var Io = require('socket.io')
 	, path = require('path')
 	, express = require('express')
 	, utils = require('./controller/utils')
-	, TweetStream = require('./controller/tweetStream')
 	, Datastore = require('./model/index')
 	, params = require('./params')
 	, debug = require('debug')('server')
@@ -16,7 +15,13 @@ twitto.controller.io = Io({ path: '/ws/'})
 
 twitto.model = new Datastore(twitto)
 
-twitto.controller.tweetStream = new TweetStream(twitto) 
+twitto.controller.tweetStream = require('child_process').fork('./controller/tweetStream')
+
+twitto.controller.tweetStream.on('message', function(tweet) {
+
+	twitto.model.tweets.add(tweet)
+	twitto.controller.io.sockets.emit('tweet', tweet)
+})
 
 
 // set the view engine to ejs
@@ -31,9 +36,6 @@ app.use(express.static( __dirname + '/public'))
 app.listen(8080)
 
 console.log('knock on the magic 8080 port')
-
-// start to listen to tweets from twitter API
-twitto.controller.tweetStream.start()
 
 // index page route
 app.get('/', function (req, res) {
