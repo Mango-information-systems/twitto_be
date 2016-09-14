@@ -39,10 +39,10 @@ console.log('knock on the magic 8080 port')
 
 // index page route
 app.get('/', function (req, res) {
-	res.render('pages/index')
+	res.render('pages/index', {title: 'Twitto.be - realtime tweets dashboard'})
 })
 app.get('/502', function (req, res) {
-	res.render('pages/502')
+	res.render('pages/502', {title: 'Twitto.be - down for maintenance'})
 })
 
 
