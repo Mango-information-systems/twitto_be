@@ -1,5 +1,6 @@
 var Io = require('socket.io')
 	, path = require('path')
+	, fs = require('fs')
 	, express = require('express')
 	, utils = require('./controller/utils')
 	, Datastore = require('./model/index')
@@ -36,6 +37,15 @@ app.use(express.static( __dirname + '/public'))
 app.listen(8080)
 
 console.log('knock on the magic 8080 port')
+
+app.render('pages/502', {title: 'Twitto.be - down for maintenance'}, function(err, res) {
+	if (err)
+		console.log('Error rendering 502.html', err)
+	else {
+		fs.writeFile(__dirname + '/public/502.html', res)
+	}
+})
+
 
 // index page route
 app.get('/', function (req, res) {
