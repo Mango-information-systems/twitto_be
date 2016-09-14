@@ -55,7 +55,28 @@ app.get('/502', function (req, res) {
 	res.render('pages/502', {title: 'Twitto.be - down for maintenance'})
 })
 
+// Redirect all requests to home page instead of 404
+app.use(function(req, res, next){
 
+	// respond with html page
+	if (req.accepts('html')) {
+		res.redirect(301, '/')
+		return
+	}
+	
+	res.status(404)
+
+	// respond with json
+	if (req.accepts('json')) {
+		res.send({ error: 'Not found' })
+		return
+	}
+
+	// default to plain-text. send()
+	res.type('txt').send('Not found')
+})
+
+// visitor connection, send all tweets
 twitto.controller.io.on('connection', function(socket) {
 	
 	debug('client connection', socket.id)
