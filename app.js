@@ -41,6 +41,9 @@ console.log('knock on the magic 8080 port')
 app.get('/', function (req, res) {
 	res.render('pages/index')
 })
+app.get('/502', function (req, res) {
+	res.render('pages/502')
+})
 
 
 twitto.controller.io.on('connection', function(socket) {
