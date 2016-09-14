@@ -36,6 +36,7 @@ app.socket.on('tweets', function (tweets) {
 	app.view.tweetsPerMinute.init(tweets)
 	app.view.tweetsPerSecond.init(tweets)
 	app.view.donutChart.addTweets(tweets)
+	d3.selectAll('.loading').classed('loading', false)
 })
 
 // Listener: new tweet sent by the server
