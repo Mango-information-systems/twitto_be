@@ -16,7 +16,7 @@ twitto.controller.io = Io({ path: '/ws/'})
 
 twitto.model = new Datastore(twitto)
 
-twitto.controller.tweetStream = require('child_process').fork('./controller/tweetStream')
+twitto.controller.tweetStream = require('child_process').fork(__dirname + '/controller/tweetStream')
 
 twitto.controller.tweetStream.on('message', function(tweet) {
 
