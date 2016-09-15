@@ -37,27 +37,32 @@ function Tweets(storage) {
 	*/
 	function cleanCache() {
 		
-		storage.getItem('tweets')
-		.then(function(tweets) {
+		// schedule next execution in an hour
+		setTimeout(cleanCache, delay)
 		
-			console.log('before cache clean', tweets.length)
-			var yesterday = new Date().getDate() - 1
+		console.log('before cache clean', self.tweets.length)
 		
-			var res = tweets.filter(function(tweet, ix){
+		var yesterday = new Date().getDate() - 1
+	
+		self.tweets = self.tweets.filter(function(tweet, ix){
+			
+			return new Date(Date.parse(tweet.created_at)) > yesterday
 				
-				return Date.parse(tweet.created_at) > yesterday
-					
-			})
-		
-			console.log('after cache clean', res.length)
-		
-			storage.setItem('tweets', res)
 		})
+	
+		console.log('after cache clean', self.tweets.length)
+	
+		storage.setItem('tweets', self.tweets)
+	
 		
 	}
 	
-	// clean the cache every hour
-	//~ setInterval(cleanCache, 60 * 60 * 1000)
+	// initiate a cache cleanup at the next round hour
+	// based on http://stackoverflow.com/a/19847644/1006854
+	var now = new Date()
+		, delay = 60 * 60 * 1000
+
+	setTimeout(cleanCache, delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
 	/********************************************************
 	* 
