@@ -153,18 +153,20 @@ function LineChart (svg, granularity) {
 	 ************/
 	this.addTweet = function() {
 
-		this.timeline[self.timeline.length-1].count++
-		
-		this.maxCount = d3.max(self.timeline, function(d) {return d.count})
-		
-		this.y.domain([0, self.maxCount])
-		
-		this.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
-		
-		this.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
-			.transition()
-			  .attr('y', function(d) { return self.y(d.count) })
-			  .attr('height', function(d) { return height - self.y(d.count)})
+		if (typeof this.timeline !== 'undefined')
+			this.timeline[self.timeline.length-1].count++
+			
+			this.maxCount = d3.max(self.timeline, function(d) {return d.count})
+			
+			this.y.domain([0, self.maxCount])
+			
+			this.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
+			
+			this.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
+				.transition()
+				  .attr('y', function(d) { return self.y(d.count) })
+				  .attr('height', function(d) { return height - self.y(d.count)})
+		}
 	}
 
 
