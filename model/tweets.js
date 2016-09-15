@@ -119,18 +119,19 @@ function Tweets(storage) {
 				, count: 0
 			}
 		})
-		
-		// update count per minute/second until we reach tweets older than 60 seconds / 30 minutes ago
-		while(!allValidTweetsProcessed && position) {
-			
-			var barIndex = Math.floor((ts - Date.parse(self.tweets[position].created_at)) / timeRes)
-			
-			if (barIndex > barCount-1)
-			// the tweet is older than the monitored time interval, consider stats calculation done
-				allValidTweetsProcessed = true
-			else {
-				tweetsTimeline[barCount-1 - barIndex].count += 1				
-				position--
+		if (position !== -1) {
+			// update count per minute/second until we reach tweets older than 60 seconds / 30 minutes ago
+			while(!allValidTweetsProcessed && position) {
+				
+				var barIndex = Math.floor((ts - Date.parse(self.tweets[position].created_at)) / timeRes)
+				
+				if (barIndex > barCount-1)
+				// the tweet is older than the monitored time interval, consider stats calculation done
+					allValidTweetsProcessed = true
+				else {
+					tweetsTimeline[barCount-1 - barIndex].count += 1				
+					position--
+				}
 			}
 		}
 		
