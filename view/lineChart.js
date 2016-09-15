@@ -153,7 +153,7 @@ function LineChart (svg, granularity) {
 	 ************/
 	this.addTweet = function() {
 
-		if (typeof this.timeline !== 'undefined')
+		if (typeof this.timeline !== 'undefined') {
 			this.timeline[self.timeline.length-1].count++
 			
 			this.maxCount = d3.max(self.timeline, function(d) {return d.count})
