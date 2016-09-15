@@ -24,6 +24,9 @@ var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
+// ask for the historical tweets
+app.socket.emit('tweets')
+
 // Listener: set of historical tweets sent by the server
 app.socket.on('tweets', function (tweets) {
 	
