@@ -32,15 +32,11 @@ app.socket.on('tweets', function (tweets) {
 	
 	app.model.tweets = app.model.tweets.concat(tweets)
 
-	d3.selectAll('#timelineWrap, #mapWrap').classed('loading', false)
-	
+	d3.selectAll('#mapWrap').classed('loading', false)
 	
 	app.view.map.addPoints(app.model.tweets.filter(function(tweet) {
 		return typeof tweet.coordinates !== 'undefined'
 	}))
-	
-	app.view.tweetsPerMinute.init(tweets)
-	app.view.tweetsPerSecond.init(tweets)
 
 })
 
@@ -48,8 +44,18 @@ app.socket.on('tweets', function (tweets) {
 app.socket.on('tweetStats', function (stats) {
 	
 	d3.selectAll('#tweetStatsWrap').classed('loading', false)
-	//~ console.log('received stats', stats)
+
 	app.view.donutChart.init(stats)
+	
+})
+
+// listener: timelines sent by the server
+app.socket.on('timelines', function (stats) {
+	
+	d3.selectAll('#timelineWrap').classed('loading', false)
+	
+	app.view.tweetsPerMinute.init(stats.perMinute)
+	app.view.tweetsPerSecond.init(stats.perSecond)
 	
 })
 

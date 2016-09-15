@@ -75,8 +75,10 @@ twitto.controller.io.on('connection', function(socket) {
 	debug('client connection', socket.id)
 
 	socket.on('tweets', function() {
+//~ console.log(twitto.model.tweets.getTimelines())
 
 		socket.emit('tweetStats', twitto.model.tweets.getStats())
+		socket.emit('timelines', twitto.model.tweets.getTimelines())
 
 		socket.emit('tweets', twitto.model.tweets.getAll())
 	})

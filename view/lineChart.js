@@ -47,14 +47,14 @@ function LineChart (svg, granularity) {
 	****************************************/
 	function nextTimeInterval() {
 
-		self.countByTimeInterval.shift()
+		self.timeline.shift()
 		
-		self.countByTimeInterval.push({
+		self.timeline.push({
 			id: idFunc(new Date())
 			, count: 0
 		})
 
-		var rect = self.bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
+		var rect = self.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
 
 		rect.enter()
 			.append('rect')
@@ -103,36 +103,14 @@ function LineChart (svg, granularity) {
 	 * 
 	 * Render line chart
 	 *
-	 * @param {object} tweets array of tweets
+	 * @param {object} timeline time series data
 	 * 
 	 ************/
-	this.init = function (tweets) {
-
-		var ts = Date.now()
-			, recentTweets = tweets.filter(function(tweet) {
-				return ts - new Date(tweet.created_at) < barCount * timeRes
-			})
-			
-		var countStruct = d3.range(barCount).map(function(d, i) {
-			//~ if (granularity === 'm') 
-				//~ console.log('id', idFunc(new Date(ts - (barCount-1-i) * timeRes)))
-			
-			return {
-				id: idFunc(new Date(ts - (barCount-1-i) * timeRes))
-				, count: 0
-			}
-		})
+	this.init = function (timeline) {
 		
-		this.countByTimeInterval = recentTweets.reduce(function(memo, tweet){
-			var howLongAgo = Math.floor((ts - new Date(tweet.created_at)) / timeRes)
-			
-			memo[barCount-1 - howLongAgo].count += 1
+		this.timeline = timeline
 
-			return memo
-			
-		}, countStruct)
-
-		this.maxCount = d3.max(self.countByTimeInterval, function(d) {return d.count})
+		this.maxCount = d3.max(self.timeline, function(d) {return d.count})
 
 		this.x = d3.scaleLinear()
 			.domain([-(barCount-1), 0])
@@ -153,7 +131,7 @@ function LineChart (svg, granularity) {
 			.attr("class", "axis axis--y")
 			.call(d3.axisLeft(self.y).ticks(6))
 		
-		this.bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
+		this.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
 			.enter()
 			  .append('rect')
 				.attr('x', function(d, i) { return self.x(i - barCount)})
@@ -175,15 +153,15 @@ function LineChart (svg, granularity) {
 	 ************/
 	this.addTweet = function() {
 
-		this.countByTimeInterval[self.countByTimeInterval.length-1].count++
+		this.timeline[self.timeline.length-1].count++
 		
-		this.maxCount = d3.max(self.countByTimeInterval, function(d) {return d.count})
+		this.maxCount = d3.max(self.timeline, function(d) {return d.count})
 		
 		this.y.domain([0, self.maxCount])
 		
 		this.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
 		
-		this.bars.selectAll('rect').data(self.countByTimeInterval, function(d) {return d.id})
+		this.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
 			.transition()
 			  .attr('y', function(d) { return self.y(d.count) })
 			  .attr('height', function(d) { return height - self.y(d.count)})

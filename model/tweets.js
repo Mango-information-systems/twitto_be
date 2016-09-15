@@ -1,4 +1,5 @@
 var debug = require('debug')('tweetsModel')
+	, d3 = require('d3')
 
 /********************************************************
 * Tweets datastore
@@ -9,11 +10,6 @@ var debug = require('debug')('tweetsModel')
 function Tweets(storage) {
 
 	var self = this
-	
-	self.tweetStats = {
-		replyCount: 0
-		, totalCount: 0
-	}
 
 	if (storage.keys().indexOf('tweets') === -1) {
 		// no tweets are already stored
@@ -25,7 +21,23 @@ function Tweets(storage) {
 		// cache persisted tweets
 		self.tweets = storage.getItemSync('tweets')
 	}
+	
+	self.tweetStats = {
+		replyCount: 0
+		, totalCount: 0
+	}
+	
+	// compute tweet statistics
+	calculateTweetStats()
 
+	// compute tweets time series
+	self.tweetsPerMinute = computeTimeline('m')
+
+	// update tweets per minute statistics every minute
+	setInterval(function() {
+		computeTimeline('m')
+	}, 60000)
+	
 	// initiate a cache cleanup at the next round hour
 	// based on http://stackoverflow.com/a/19847644/1006854
 	var now = new Date()
@@ -33,8 +45,6 @@ function Tweets(storage) {
 
 	setTimeout(cleanCache, delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
-	// compute tweet statistics
-	calculateTweetStats()
 
 	/********************************************************
 	* 
@@ -68,7 +78,63 @@ function Tweets(storage) {
 	
 		storage.setItem('tweets', self.tweets)
 		
-		updateTweetStats()
+		calculateTweetStats()
+		
+	}
+
+	/**
+	* 
+	* Calculate tweet time series data
+	* 
+	* @param {string} granularity desired ('m', 's')
+	* 
+	* @return {object} tweets count time series
+	*
+	* @private
+	* 
+	*/	
+	function computeTimeline (granularity){
+	
+		if (granularity === 'm') {
+			var timeRes = 60000
+				, barCount = 30
+				, svgWidth = 600
+				, idFunc = minutes
+		}
+		else {
+			var timeRes = 1000
+				, barCount = 60
+				, svgWidth = 300
+				, idFunc = seconds
+		}
+		
+		var ts = Date.now()
+			, position = self.tweets.length-1
+			, allValidTweetsProcessed = false
+			
+		// initialize data structure
+		var tweetsTimeline = d3.range(barCount).map(function(d, i) {
+			return {
+				id: idFunc(new Date(ts - (barCount-1-i) * timeRes)) // id to be used as data key by d3 in the client
+				, count: 0
+			}
+		})
+		
+		// update count per minute/second until we reach tweets older than 60 seconds / 30 minutes ago
+		while(!allValidTweetsProcessed && position) {
+			
+			var barIndex = Math.floor((ts - Date.parse(self.tweets[position].created_at)) / timeRes)
+			
+			if (barIndex > barCount-1)
+			// the tweet is older than the monitored time interval, consider stats calculation done
+				allValidTweetsProcessed = true
+			else {
+				tweetsTimeline[barCount-1 - barIndex].count += 1				
+				position--
+			}
+		}
+		
+		return tweetsTimeline
 		
 	}
 
@@ -92,8 +158,51 @@ function Tweets(storage) {
 
 	/**
 	* 
-	* Recompute tweet statistics
+	* return the number of minutes of a date
+	* 
+	* @param {date} d
+	* 
+	* @return {number} minutes of the date
 	*
+	* @private
+	* 
+	*/	
+	function minutes(d) {
+		return d.getMinutes()
+	}
+
+	/**
+	* 
+	* return the number of minutes of a date
+	* 
+	* @param {date} d
+	* 
+	* @return {number} minutes + seconds of the date
+	*
+	* @private
+	* 
+	*/	
+	function seconds(d) {
+		return + ('' + d.getMinutes() + d.getSeconds())
+	}
+		
+	/**
+	* 
+	* count new tweet in the tweets per minute time series data
+	*
+	* @private
+	* 
+	*/	
+	function updateTimeline(){
+		self.tweetsPerMinute[self.tweetsPerMinute.length-1].count++
+	}
+
+	/**
+	* 
+	* update tweet statistics
+	*
+	* @param {object} tweet new tweet
+	* 
 	* @private
 	* 
 	*/	
@@ -121,6 +230,8 @@ function Tweets(storage) {
 		
 		updateTweetStats(tweet)
 		
+		updateTimeline()
+		
 	}
 
 	// retrieve all tweets
@@ -131,6 +242,16 @@ function Tweets(storage) {
 	// retrieve tweet statistics
 	this.getStats = function() {
 		return self.tweetStats
+	}
+	
+	// retrieve tweet statistics
+	this.getTimelines = function() {
+				
+		return {
+			perSecond: computeTimeline('s') // per second stats are computed on the fly
+			, perMinute: self.tweetsPerMinute
+		}
+		
 	}
 	
 	

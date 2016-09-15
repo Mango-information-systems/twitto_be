@@ -145,9 +145,9 @@ function DonutChart(svg) {
 	 ****************************************/
 
 	/**
-	 * Updated counters
+	 * Display chart with the statistics received from the server
 	 *
-	 * @param {object} newTweets new tweet(s)
+	 * @param {object} stats tweet statistics
 	 * 
 	 */
 	this.init = function (stats) {
