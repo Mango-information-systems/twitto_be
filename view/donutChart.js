@@ -170,12 +170,14 @@ function DonutChart(svg) {
 	 */
 	this.addTweets = function (newTweets) {
 
-		newTweets.forEach(updateStats)
+		if (typeof this.stats !== 'undefined') {
+			newTweets.forEach(updateStats)
 
-		updateTotalCount()
-		
-		updateArcs()
+			updateTotalCount()
+			
+			updateArcs()
 
+		}
 	}
 
 }
