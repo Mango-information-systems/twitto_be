@@ -50,10 +50,10 @@ function Map (svg) {
 			    return count === 1? 0 : 100 + i / tweets.length * transitionDuration
 			  })
 			    .attr('cx', function(d) {
-			    	return self.projection(d.twitto.coordinates)[0]
+			    	return self.projection(d.coordinates)[0]
 			    })
 			    .attr('cy', function(d) {
-			    	return self.projection(d.twitto.coordinates)[1]
+			    	return self.projection(d.coordinates)[1]
 			    })
 				.attr('r', '4')
 

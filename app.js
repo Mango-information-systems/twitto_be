@@ -3,6 +3,7 @@ var Io = require('socket.io')
 	, fs = require('fs')
 	, express = require('express')
 	, utils = require('./controller/utils')
+	, Tweets = require('./controller/tweets')
 	, Datastore = require('./model/index')
 	, params = require('./params')
 	, debug = require('debug')('server')
@@ -15,15 +16,7 @@ var Io = require('socket.io')
 twitto.controller.io = Io({ path: '/ws/'})
 
 twitto.model = new Datastore(twitto)
-
-twitto.controller.tweetStream = require('child_process').fork(__dirname + '/controller/tweetStream')
-
-twitto.controller.tweetStream.on('message', function(tweet) {
-
-	twitto.model.tweets.add(tweet)
-	twitto.controller.io.sockets.emit('tweet', tweet)
-})
-
+twitto.controller.tweets = new Tweets(twitto)
 
 // set the view engine to ejs
 app.set('view engine', 'ejs')

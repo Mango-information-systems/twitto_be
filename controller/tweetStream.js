@@ -3,8 +3,6 @@ var params = require('../params')
 
 var tweetStream = new TweetStream()
 
-
-
 /**
 * Set of functions to extract tweets in real time
 *
@@ -46,17 +44,6 @@ function TweetStream () {
 
 				if (tweet.place.country_code === 'BE') {
 					
-					tweet.twitto = {}
-
-					if (tweet.geo) {
-						//~ // console.log('tweet with .geo', msg.geo)
-						tweet.twitto.coordinates = [tweet.geo.coordinates[1], tweet.geo.coordinates[0]]
-					}
-					else if (tweet.place.place_type !== 'country'){
-						 //~ console.log('place', JSON.stringify(msg.place.bounding_box.coordinates))
-						tweet.twitto.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
-					}
-					
 					// send tweet to the parent process
 					process.send(tweet)
 				}
@@ -75,21 +62,6 @@ function TweetStream () {
 			})
 		})
 		
-		// when tweets point to a city instead of an exact point, point to a random location around the center of city's bounding box
-		function generateRandomPointwithinBbox(bbox) {
-			
-			deltaSignLat = Math.sign(Math.round(Math.random()) - .5)
-				, deltaLat = Math.random() / 80 * deltaSignLat
-				, deltaSignLon = Math.sign(Math.round(Math.random()) - .5)
-				, deltaLon = Math.random() / 120 * deltaSignLon
-			
-			return [
-				((bbox[3][0] - bbox[1][0])  / 2) + bbox[1][0] + deltaLat
-				, ((bbox[3][1] - bbox[1][1])  / 2) + bbox[1][1] + deltaLon
-			]
-
-		}
-
 	}
 
 	debug('starting streamTweets')

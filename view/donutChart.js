@@ -108,7 +108,7 @@ function DonutChart(svg) {
 	function updateStats (msg) {
 
 
-		if (msg.in_reply_to_user_id !== null)
+		if (msg.is_reply)
 			self.stats.reply++
 		
 		self.stats.previousTotal = self.stats.total
