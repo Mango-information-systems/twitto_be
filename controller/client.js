@@ -17,7 +17,7 @@ var d3 = require('d3')
 app.view.map = new Map(d3.select('#map'))
 app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
-app.view.donutChart = new DonutChart(d3.select('#lastDayTweets'))
+app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
 
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 //var suffix = ':3031'
@@ -27,12 +27,13 @@ app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 // ask for the historical tweets
 app.socket.emit('tweets')
 
-// Listener: set of historical tweets sent by the server
+// listener: set of historical tweets sent by the server
 app.socket.on('tweets', function (tweets) {
 	
 	app.model.tweets = app.model.tweets.concat(tweets)
+
+	d3.selectAll('#timelineWrap, #mapWrap').classed('loading', false)
 	
-	d3.selectAll('.loading').classed('loading', false)
 	
 	app.view.map.addPoints(app.model.tweets.filter(function(tweet) {
 		return typeof tweet.coordinates !== 'undefined'
@@ -43,9 +44,10 @@ app.socket.on('tweets', function (tweets) {
 
 })
 
-// Listener: tweet stats sent by the server
+// listener: tweet stats sent by the server
 app.socket.on('tweetStats', function (stats) {
 	
+	d3.selectAll('#tweetStatsWrap').classed('loading', false)
 	//~ console.log('received stats', stats)
 	app.view.donutChart.init(stats)
 	
