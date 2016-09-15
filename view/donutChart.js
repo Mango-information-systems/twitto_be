@@ -14,12 +14,6 @@ function DonutChart(svg) {
 	var self = this
 		, tau = 2 * Math.PI
 	
-	this.stats = {
-		previousTotal: 0
-		, reply: 0
-		, total: 0
-	}
-	
 	this.g = svg.append('g').attr('transform', 'translate(150, 150)')
 	
 	this.totalCount = svg.select('#totalCount')
@@ -98,7 +92,7 @@ function DonutChart(svg) {
 	}
 	
 	/**
-	 * Update counters with one extra tweet
+	 * Update statistics with data from one extra tweet
 	 *
 	 * @param {object} msg new tweet
 	 * 
@@ -107,13 +101,12 @@ function DonutChart(svg) {
 	 */
 	function updateStats (msg) {
 
-
 		if (msg.is_reply)
-			self.stats.reply++
+			self.stats.replyCount++
 		
-		self.stats.previousTotal = self.stats.total
+		self.stats.previousTotal = self.stats.totalCount
 		
-		self.stats.total++
+		self.stats.totalCount++
 
 	}
 
@@ -124,9 +117,10 @@ function DonutChart(svg) {
 	 * 
 	 */
 	function updateTotalCount() {
-		self.replyCount.text(self.stats.reply)
-		self.totalCount.datum(self.stats.total).transition()
-		    .tween('text', textTween(self.stats.previousTotal, self.stats.total))
+		
+		self.replyCount.text(self.stats.replyCount)
+		self.totalCount.datum(self.stats.totalCount).transition()
+		    .tween('text', textTween(self.stats.previousTotal, self.stats.totalCount))
 	}
 	
 	/**
@@ -137,10 +131,9 @@ function DonutChart(svg) {
 	 */
 	function updateArcs() {
 		
-		
 		self.replySlice.transition()
 		  .duration(750)
-		  .attrTween('d', arcTween(self.stats.reply / self.stats.total * tau - tau / 4))
+		  .attrTween('d', arcTween(self.stats.replyCount / self.stats.totalCount * tau - tau / 4))
 	}
 	
 	
@@ -150,6 +143,24 @@ function DonutChart(svg) {
 	 * Public methods
 	 *
 	 ****************************************/
+
+	/**
+	 * Updated counters
+	 *
+	 * @param {object} newTweets new tweet(s)
+	 * 
+	 */
+	this.init = function (stats) {
+
+		self.stats = stats
+		
+		self.stats.previousTotal = 0
+
+		updateTotalCount()
+		
+		updateArcs()
+
+	}
 
 	/**
 	 * Updated counters

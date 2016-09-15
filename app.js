@@ -76,6 +76,8 @@ twitto.controller.io.on('connection', function(socket) {
 
 	socket.on('tweets', function() {
 
+		socket.emit('tweetStats', twitto.model.tweets.getStats())
+
 		socket.emit('tweets', twitto.model.tweets.getAll())
 	})
 

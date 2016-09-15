@@ -40,11 +40,17 @@ app.socket.on('tweets', function (tweets) {
 	
 	app.view.tweetsPerMinute.init(tweets)
 	app.view.tweetsPerSecond.init(tweets)
-	app.view.donutChart.addTweets(tweets)
 
 })
 
-// Listener: new tweet sent by the server
+// Listener: tweet stats sent by the server
+app.socket.on('tweetStats', function (stats) {
+	
+	//~ console.log('received stats', stats)
+	app.view.donutChart.init(stats)
+	
+})
+
 app.socket.on('tweet', function (tweet) {
 	
 	app.model.tweets.push(tweet)
