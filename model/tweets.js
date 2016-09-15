@@ -8,9 +8,17 @@ var debug = require('debug')('tweetsModel')
 *********************************************************/
 function Tweets(storage) {
 
-	// initialize tweets storage to an empty array in case no tweets are already stored
+	var self = this
+
 	if (storage.keys().indexOf('tweets') === -1) {
+		// no tweets are already stored
+		self.tweets = []
+		// initialize tweets storage to an empty array in case 
 		storage.setItemSync('tweets', [])
+	}
+	else {
+		// cache persisted tweets
+		self.tweets = storage.getItemSync('tweets')
 	}
 
 	/********************************************************
@@ -49,7 +57,7 @@ function Tweets(storage) {
 	}
 	
 	// clean the cache every hour
-	setInterval(cleanCache, 60 * 60 * 1000)
+	//~ setInterval(cleanCache, 60 * 60 * 1000)
 
 	/********************************************************
 	* 
@@ -59,17 +67,14 @@ function Tweets(storage) {
 
 	this.add = function(tweet) {
 		//~ console.log('adding tweet', tweet)
-		storage.getItem('tweets')
-		  .then(function(tweets) {
-			storage.setItem('tweets', tweets.concat(tweet))
-		  })
+		self.tweets.push(tweet)
+		
+		storage.setItem('tweets', self.tweets)
+		
 	}
 
-	this.getAll = function(callback) {
-		storage.getItem('tweets')
-		  .then(function(tweets) {
-			callback(tweets)
-		  })
+	this.getAll = function() {
+		return self.tweets
 	}
 
 }
