@@ -17,17 +17,17 @@ function LineChart (svg, granularity) {
 	if (granularity === 'm') {
 		var timeRes = 60000
 			, barCount = 30
-			, svgWidth = 600
+			, svgWidth = 450
 			, idFunc = function(d) { return d.getMinutes() }
 	}
 	else {
 		var timeRes = 1000
 			, barCount = 60
-			, svgWidth = 300
+			, svgWidth = 450
 			, idFunc = function(d) { return + ('' + d.getMinutes() + d.getSeconds()) }
 	}
 	
-	var margin = {top: 20, right: 20, bottom: 80, left: 40},
+	var margin = {top: 20, right: 20, bottom: 80, left: 80},
 		width = svgWidth - margin.left - margin.right,
 		height = 300 - margin.top - margin.bottom
 		

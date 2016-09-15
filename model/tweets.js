@@ -98,13 +98,11 @@ function Tweets(storage) {
 		if (granularity === 'm') {
 			var timeRes = 60000
 				, barCount = 30
-				, svgWidth = 600
 				, idFunc = minutes
 		}
 		else {
 			var timeRes = 1000
 				, barCount = 60
-				, svgWidth = 300
 				, idFunc = seconds
 		}
 		
@@ -119,6 +117,7 @@ function Tweets(storage) {
 				, count: 0
 			}
 		})
+		
 		if (position !== -1) {
 			// update count per minute/second until we reach tweets older than 60 seconds / 30 minutes ago
 			while(!allValidTweetsProcessed && position) {
@@ -169,7 +168,7 @@ function Tweets(storage) {
 	* 
 	*/	
 	function minutes(d) {
-		return d.getMinutes()
+		return  ('' + d.getHours() + d.getMinutes())
 	}
 
 	/**
