@@ -13,11 +13,41 @@ function Map (container) {
 	
 	this.container = container
 	
+	var containerSize = this.container.node().getBoundingClientRect()
+	
+	// TODO: update width and height on resize
+	this.width = containerSize.width
+	this.height = containerSize.width / 1.348
+
 	this.projection = d3.geoMercator()
-		  .center([5, 48.9])
-		  .scale(960 * 13)
-// TODO: dynamically set width and height according to page dimensions
-		  .translate([1200 / 2, 890])
+		.center([5, 48.9])
+		.scale(this.width * 13)
+		.translate([this.width * 1.25 / 2, this.height * 1.25])
+	
+	// render the map background
+	var canvas
+		, context
+		, path
+
+	canvas = this.container.append('canvas').attr('height', this.height).attr('width', this.width)
+
+	context = canvas.node().getContext('2d')
+	
+	path = d3.geoPath().projection(this.projection).context(context)
+
+	d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
+		
+		context.beginPath()
+		path(belgianProvinces)
+		
+		context.fillStyle = '#eeeeee'
+		context.fill()
+
+		context.lineWidth = '1'
+		context.strokeStyle = '#bbbbbb'
+		context.stroke()
+		
+	})
 	
 	/****************************************
 	* 
@@ -61,39 +91,6 @@ function Map (container) {
 
 	}
 
-	this.renderMap = function(){
-
-		var containerSize = this.container.node().getBoundingClientRect()
-
-		var canvas
-			, context
-			, path
-			, projection
-			// TODO: update width and height on resize
-			, width = containerSize.width
-			, height = containerSize.width / 1.348
-
-		projection = d3.geoMercator()
-			.center([5, 48.9])
-			.scale(width * 13)
-			.translate([width * 1.25 / 2, height * 1.25])
-
-		canvas = this.container.append('canvas').attr('height', height).attr('width', width)
-
-		context = canvas.node().getContext('2d')
-		path = d3.geoPath().projection(projection).context(context)
-
-		d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
-			context.beginPath()
-			path(belgianProvinces)
-			context.fillStyle = '#eeeeee'
-			context.fill()
-			context.lineWidth = '1'
-			context.strokeStyle = '#bbbbbb'
-			return context.stroke()
-		})
-	}
-	
 	return this	
 }
 
