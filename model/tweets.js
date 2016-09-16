@@ -66,7 +66,8 @@ function Tweets(storage) {
 		
 		console.log('before cache clean', self.tweets.length)
 		
-		var yesterday = new Date().getDate() - 1
+		var yesterday = new Date()
+		yesterday.setDate(yesterday.getDate() - 1)
 	
 		self.tweets = self.tweets.filter(function(tweet, ix){
 			
