@@ -1,5 +1,4 @@
 var d3 = require('d3')
-	, topojson = require('topojson')
 	, debug = require('debug')('map')
 
 /**
@@ -77,10 +76,9 @@ function Map (svg) {
 		ctx = canvas.node().getContext('2d')
 		path = d3.geoPath().projection(projection).context(ctx)
 
-		d3.json('/data/belgian-provinces.topo.json', function (error, orlando) {
+		d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
 			ctx.beginPath()
-
-			path(topojson.feature(orlando, orlando.objects.collection))
+			path(belgianProvinces)
 			ctx.fillStyle = '#dcd8d2'
 			ctx.fill()
 			ctx.lineWidth = '2'
