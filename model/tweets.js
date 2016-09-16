@@ -124,6 +124,15 @@ function Tweets(storage) {
 				
 				var barIndex = Math.floor((ts - Date.parse(self.tweets[position].created_at)) / timeRes)
 				
+				//~ if (granularity == 'm') {
+					//~ console.log('ts', ts)
+					//~ console.log('created_at', self.tweets[position].created_at)
+					//~ console.log('Date.parse(self.tweets[position].created_at)', Date.parse(self.tweets[position].created_at))
+					//~ console.log('(ts - Date.parse(self.tweets[position].created_at)', (ts - Date.parse(self.tweets[position].created_at)))
+					//~ console.log('barIndex', barIndex)
+					//~ 
+				//~ }
+				
 				if (barIndex > barCount-1)
 				// the tweet is older than the monitored time interval, consider stats calculation done
 					allValidTweetsProcessed = true
@@ -133,6 +142,11 @@ function Tweets(storage) {
 				}
 			}
 		}
+		
+		//~ if (granularity == 'm') {
+			//~ console.log(JSON.stringify(tweetsTimeline))
+		//~ }
+		
 		
 		return tweetsTimeline
 		
@@ -230,8 +244,6 @@ function Tweets(storage) {
 		
 		updateTweetStats(tweet)
 		
-		updateTimeline()
-		
 	}
 
 	// retrieve all tweets
@@ -246,9 +258,12 @@ function Tweets(storage) {
 	
 	// retrieve tweet statistics
 	this.getTimelines = function() {
+		
+		// compute per second stats on the fly
+		var perSecond = computeTimeline('s')
 				
 		return {
-			perSecond: computeTimeline('s') // per second stats are computed on the fly
+			perSecond: perSecond
 			, perMinute: self.tweetsPerMinute
 		}
 		
