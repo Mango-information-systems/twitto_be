@@ -6,4 +6,5 @@
 		, "access_token_key" : "--fill-me--"
 		, "access_token_secret" : "--fill-me--"
 	}
+	, "googleAnalytics": ""
 }

@@ -42,10 +42,16 @@ app.render('pages/502', {title: 'Twitto.be - down for maintenance'}, function(er
 
 // index page route
 app.get('/', function (req, res) {
-	res.render('pages/index', {title: 'Twitto.be - realtime tweets dashboard'})
+	res.render('pages/index', {
+		title: 'Twitto.be - realtime tweets dashboard'
+		, ga: params.googleAnalytics
+	})
 })
 app.get('/502', function (req, res) {
-	res.render('pages/502', {title: 'Twitto.be - down for maintenance'})
+	res.render('pages/502', {
+		title: 'Twitto.be - down for maintenance'
+		, ga: params.googleAnalytics
+	})
 })
 
 // Redirect all requests to home page instead of 404
