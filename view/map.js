@@ -1,4 +1,5 @@
 var d3 = require('d3')
+	, topojson = require('topojson')
 	, debug = require('debug')('map')
 
 /**
@@ -56,6 +57,26 @@ function Map (svg) {
 			    	return self.projection(d.coordinates)[1]
 			    })
 				.attr('r', '4')
+
+	}
+
+	this.renderMap = function(){
+
+		var canvas, ctx, path
+		canvas = svg
+		ctx = canvas.node().getContext('2d')
+		path = d3.geoPath().projection(self.projection).context(ctx)
+
+
+		d3.json('/data/belgian-provinces.json', function (error, bp) {
+			ctx.beginPath()
+			path(topojson.feature(bp, bp.features))
+			ctx.fillStyle = '#dcd8d2'
+			ctx.fill()
+			ctx.lineWidth = '2'
+			ctx.strokeStyle = '#c9c4bc'
+			return ctx.stroke()
+		})
 
 	}
 	
