@@ -62,22 +62,31 @@ function Map (svg) {
 
 	this.renderMap = function(){
 
-		var canvas, ctx, path
-		canvas = svg
+		var canvas, ctx, height, path, projection, width;
+		height = window.innerHeight;
+		width = window.innerWidth;
+
+		projection = d3.geoMercator()
+			.center([5, 48.9])
+			.scale(960 * 13)
+			// TODO: dynamically set width and height according to page dimensions
+			.translate([1200 / 2, 890])
+
+		canvas = d3.select('#mapWrap').append('canvas').attr('height', height).attr('width', width)
+
 		ctx = canvas.node().getContext('2d')
-		path = d3.geoPath().projection(self.projection).context(ctx)
+		path = d3.geoPath().projection(projection).context(ctx)
 
-
-		d3.json('/data/belgian-provinces.json', function (error, bp) {
+		d3.json('/data/belgian-provinces.topo.json', function (error, orlando) {
 			ctx.beginPath()
-			path(topojson.feature(bp, bp.features))
+
+			path(topojson.feature(orlando, orlando.objects.collection))
 			ctx.fillStyle = '#dcd8d2'
 			ctx.fill()
 			ctx.lineWidth = '2'
 			ctx.strokeStyle = '#c9c4bc'
 			return ctx.stroke()
 		})
-
 	}
 	
 	return this	
