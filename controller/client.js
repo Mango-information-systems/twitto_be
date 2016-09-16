@@ -1,5 +1,6 @@
 var d3 = require('d3')
 	, io = require('socket.io-client')
+	, polyfills = require('../controller/polyfills')
 	, Map = require('../view/map')
 	, LineChart = require('../view/lineChart')
 	, DonutChart = require('../view/donutChart')
