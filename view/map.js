@@ -7,9 +7,11 @@ var d3 = require('d3')
 * @constructor
 * 
 */
-function Map (svg) {
+function Map (container) {
 
 	var self = this
+	
+	this.container = container
 	
 	this.projection = d3.geoMercator()
 		  .center([5, 48.9])
@@ -61,29 +63,34 @@ function Map (svg) {
 
 	this.renderMap = function(){
 
-		var canvas, ctx, height, path, projection, width;
-		height = window.innerHeight;
-		width = window.innerWidth;
+		var containerSize = this.container.node().getBoundingClientRect()
+
+		var canvas
+			, context
+			, path
+			, projection
+			// TODO: update width and height on resize
+			, width = containerSize.width
+			, height = containerSize.width / 1.348
 
 		projection = d3.geoMercator()
 			.center([5, 48.9])
-			.scale(960 * 13)
-			// TODO: dynamically set width and height according to page dimensions
-			.translate([1200 / 2, 890])
+			.scale(width * 13)
+			.translate([width * 1.25 / 2, height * 1.25])
 
-		canvas = d3.select('#mapWrap').append('canvas').attr('height', height).attr('width', width)
+		canvas = this.container.append('canvas').attr('height', height).attr('width', width)
 
-		ctx = canvas.node().getContext('2d')
-		path = d3.geoPath().projection(projection).context(ctx)
+		context = canvas.node().getContext('2d')
+		path = d3.geoPath().projection(projection).context(context)
 
 		d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
-			ctx.beginPath()
+			context.beginPath()
 			path(belgianProvinces)
-			ctx.fillStyle = '#dcd8d2'
-			ctx.fill()
-			ctx.lineWidth = '2'
-			ctx.strokeStyle = '#c9c4bc'
-			return ctx.stroke()
+			context.fillStyle = '#eeeeee'
+			context.fill()
+			context.lineWidth = '1'
+			context.strokeStyle = '#bbbbbb'
+			return context.stroke()
 		})
 	}
 	
