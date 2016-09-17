@@ -41,6 +41,10 @@ function Tweets (app) {
 				id_str: tweet.id_str
 				, created_at: tweet.created_at
 				, is_reply: tweet.in_reply_to_user_id !== null
+				, has_hashtag: tweet.entities.hashtags.length !== 0
+				, has_link: tweet.entities.urls.length !== 0
+				, has_mention: tweet.entities.user_mentions.length !== 0
+				, has_media: tweet.entities.media && tweet.entities.media.length !== 0
 			}
 				
 			if (tweet.geo) {
