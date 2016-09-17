@@ -197,23 +197,32 @@ function DonutChart(svg) {
 	function updateArcs() {
 		
 		self.replySlice.transition()
-		  .duration(750)
+		  .duration(600)
+		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.replyCount / self.stats.totalCount * tau - tau / 4, replyArc))
 		  
 		self.hashtagSlice.transition()
-		  .duration(750)
+		  .duration(600)
+		  .delay(500)
+		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.hashtagCount / self.stats.totalCount * tau - tau / 4, hashtagArc))
 		  
 		self.linkSlice.transition()
-		  .duration(750)
+		  .duration(600)
+		  .delay(900)
+		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.linkCount / self.stats.totalCount * tau - tau / 4, linkArc))
 		  
 		self.mentionSlice.transition()
-		  .duration(750)
+		  .duration(600)
+		  .delay(1400)
+		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.mentionCount / self.stats.totalCount * tau - tau / 4, mentionArc))
 		  
 		self.mediaSlice.transition()
-		  .duration(750)
+		  .duration(600)
+		  .delay(1800)
+		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.mediaCount / self.stats.totalCount * tau - tau / 4, mediaArc))
 	}
 	
