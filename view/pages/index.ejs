@@ -19,16 +19,41 @@
 							<h2>Tweets in the last 24 hours</h2>
 							<div class="loading" id="tweetStatsWrap">
 								<svg id="tweetStats" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 500 300">
-									<text x="150" y="50%" style="text-anchor:middle">
-										<tspan id="totalCount" class="metric" x="150"></tspan>
-										<tspan x="150" dy="2em">tweets</tspan>
+									<text x="75" y="75%" style="text-anchor:middle">
+										<tspan id="totalCount" class="metric" x="75"></tspan>
+										<tspan x="75" dy="2em">tweets</tspan>
 									</text>
-									<rect x="340" y="20" width="24" height="24" style="fill:#008000;"></rect>
-									<text x="380" y="20" dy=".9em">
+									
+									<rect x="315" y="20" width="24" height="24" style="fill:#008000;"></rect>
+									<text x="350" y="20" dy=".9em">
 										<tspan id="replyCount"></tspan>
 										<tspan>replies</tspan>
-
 									</text>
+									
+									<rect x="315" y="76" width="24" height="24" style="fill:black;"></rect>
+									<text x="350" y="76" dy=".9em">
+										<tspan id="hashtagCount"></tspan>
+										<tspan>hashtags</tspan>
+									</text>
+									
+									<rect x="315" y="132" width="24" height="24" style="fill:#FFE936;"></rect>
+									<text x="350" y="132" dy=".9em">
+										<tspan id="linkCount"></tspan>
+										<tspan>links</tspan>
+									</text>
+									
+									<rect x="315" y="188" width="24" height="24" style="fill:#FF0F21;"></rect>
+									<text x="350" y="188" dy=".9em">
+										<tspan id="mentionCount"></tspan>
+										<tspan>@mentions</tspan>
+									</text>
+									
+									<rect x="315" y="244" width="24" height="24" style="fill:#00aced;"></rect>
+									<text x="350" y="244" dy=".9em">
+										<tspan id="mediaCount"></tspan>
+										<tspan>pics/videos</tspan>
+									</text>
+									
 								</svg>
 							</div>
 						</div>

@@ -18,21 +18,45 @@ function DonutChart(svg) {
 	
 	this.totalCount = svg.select('#totalCount')
 	this.replyCount = svg.select('#replyCount')
+	this.hashtagCount = svg.select('#hashtagCount')
+	this.linkCount = svg.select('#linkCount')
+	this.mentionCount = svg.select('#mentionCount')
+	this.mediaCount = svg.select('#mediaCount')
+	
+	var bgArc = d3.arc()
+		.innerRadius(40)
+		.outerRadius(145)
+		.startAngle(- tau / 4)
 	
 	var replyArc = d3.arc()
-		.innerRadius(120)
+		.innerRadius(125)
 		.outerRadius(140)
 		.startAngle(- tau / 4)
 	
 	var hashtagArc = d3.arc()
-		.innerRadius(108)
-		.outerRadius(118)
+		.innerRadius(105)
+		.outerRadius(120)
 		.startAngle(- tau / 4)
 	
-	//~ var background = this.g.append('path')
-		//~ .datum({endAngle: tau})
-		//~ .style('fill', '#ddd')
-		//~ .attr('d', arc)
+	var linkArc = d3.arc()
+		.innerRadius(85)
+		.outerRadius(100)
+		.startAngle(- tau / 4)
+	
+	var mentionArc = d3.arc()
+		.innerRadius(65)
+		.outerRadius(80)
+		.startAngle(- tau / 4)
+	
+	var mediaArc = d3.arc()
+		.innerRadius(45)
+		.outerRadius(60)
+		.startAngle(- tau / 4)
+	
+	var background = this.g.append('path')
+		.datum({endAngle: 3/4 * tau - tau / 4})
+		.style('fill', '#eeeeee')
+		.attr('d', bgArc)
 	
 	this.replySlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
@@ -41,8 +65,23 @@ function DonutChart(svg) {
 	
 	this.hashtagSlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
-		.style('fill', '#008000')
+		.style('fill', 'black')
 		.attr('d', hashtagArc)
+	
+	this.linkSlice = this.g.append('path')
+		.datum({endAngle: 0.001 * tau - tau / 4})
+		.style('fill', '#FFE936')
+		.attr('d', linkArc)
+	
+	this.mentionSlice = this.g.append('path')
+		.datum({endAngle: 0.001 * tau - tau / 4})
+		.style('fill', '#FF0F21')
+		.attr('d', mentionArc)
+	
+	this.mediaSlice = this.g.append('path')
+		.datum({endAngle: 0.001 * tau - tau / 4})
+		.style('fill', '#00aced')
+		.attr('d', mediaArc)
 		
 	/****************************************
 	 *
@@ -112,6 +151,18 @@ function DonutChart(svg) {
 
 		if (msg.is_reply)
 			self.stats.replyCount++
+			
+		if(msg.has_hashtag)
+			self.stats.hashtagCount++
+		
+		if(msg.has_link)
+			self.stats.linkCount++
+		
+		if(msg.has_mention)
+			self.stats.mentionCount++
+		
+		if(msg.has_media)
+			self.stats.mediaCount++
 		
 		self.stats.previousTotal = self.stats.totalCount
 		
@@ -128,6 +179,11 @@ function DonutChart(svg) {
 	function updateTotalCount() {
 		
 		self.replyCount.text(self.stats.replyCount)
+		self.hashtagCount.text(self.stats.hashtagCount)
+		self.linkCount.text(self.stats.linkCount)
+		self.mentionCount.text(self.stats.mentionCount)
+		self.mediaCount.text(self.stats.mediaCount)
+		
 		self.totalCount.datum(self.stats.totalCount).transition()
 		    .tween('text', textTween(self.stats.previousTotal, self.stats.totalCount))
 	}
@@ -142,11 +198,23 @@ function DonutChart(svg) {
 		
 		self.replySlice.transition()
 		  .duration(750)
-		  .attrTween('d', arcTween(self.stats.replyCount / self.stats.totalCount * tau - tau / 4, replyArc))
+		  .attrTween('d', arcTween( 3 / 4 * self.stats.replyCount / self.stats.totalCount * tau - tau / 4, replyArc))
 		  
 		self.hashtagSlice.transition()
 		  .duration(750)
-		  .attrTween('d', arcTween(self.stats.hashtagCount / self.stats.totalCount * tau - tau / 4, hashtagArc))
+		  .attrTween('d', arcTween( 3 / 4 * self.stats.hashtagCount / self.stats.totalCount * tau - tau / 4, hashtagArc))
+		  
+		self.linkSlice.transition()
+		  .duration(750)
+		  .attrTween('d', arcTween( 3 / 4 * self.stats.linkCount / self.stats.totalCount * tau - tau / 4, linkArc))
+		  
+		self.mentionSlice.transition()
+		  .duration(750)
+		  .attrTween('d', arcTween( 3 / 4 * self.stats.mentionCount / self.stats.totalCount * tau - tau / 4, mentionArc))
+		  
+		self.mediaSlice.transition()
+		  .duration(750)
+		  .attrTween('d', arcTween( 3 / 4 * self.stats.mediaCount / self.stats.totalCount * tau - tau / 4, mediaArc))
 	}
 	
 	
