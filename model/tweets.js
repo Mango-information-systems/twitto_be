@@ -163,7 +163,7 @@ function Tweets(storage) {
 	function calculateTweetStats(){
 		
 		self.tweetStats.replyCount = 0
-		self.tweetStats.hashtagsCount = 0
+		self.tweetStats.hashtagCount = 0
 		self.tweetStats.linkCount = 0
 		self.tweetStats.mentionCount = 0
 		self.tweetStats.mediaCount = 0
@@ -188,7 +188,6 @@ function Tweets(storage) {
 		})
 		
 		self.tweetStats.totalCount = self.tweets.length
-		
 		
 	}
 
