@@ -19,27 +19,36 @@ function DonutChart(svg) {
 	this.totalCount = svg.select('#totalCount')
 	this.replyCount = svg.select('#replyCount')
 	
-	var arc = d3.arc()
+	var replyArc = d3.arc()
 		.innerRadius(120)
-		.outerRadius(150)
+		.outerRadius(140)
 		.startAngle(- tau / 4)
 	
-	var background = this.g.append('path')
-		.datum({endAngle: tau})
-		.style('fill', '#ddd')
-		.attr('d', arc)
+	var hashtagArc = d3.arc()
+		.innerRadius(108)
+		.outerRadius(118)
+		.startAngle(- tau / 4)
+	
+	//~ var background = this.g.append('path')
+		//~ .datum({endAngle: tau})
+		//~ .style('fill', '#ddd')
+		//~ .attr('d', arc)
 	
 	this.replySlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
 		.style('fill', '#008000')
-		.attr('d', arc)
+		.attr('d', replyArc)
+	
+	this.hashtagSlice = this.g.append('path')
+		.datum({endAngle: 0.001 * tau - tau / 4})
+		.style('fill', '#008000')
+		.attr('d', hashtagArc)
 		
 	/****************************************
 	 *
 	 * Private methods
 	 *
 	 ****************************************/
-	 
 	
 	/**
 	 * Returns a tween for a transition’s "d" attribute, transitioning any selected
@@ -54,7 +63,7 @@ function DonutChart(svg) {
 	 * @private
 	 * 
 	 */
-	function arcTween(newAngle) {
+	function arcTween(newAngle, arc) {
 
 		return function(d) {
 
@@ -133,7 +142,11 @@ function DonutChart(svg) {
 		
 		self.replySlice.transition()
 		  .duration(750)
-		  .attrTween('d', arcTween(self.stats.replyCount / self.stats.totalCount * tau - tau / 4))
+		  .attrTween('d', arcTween(self.stats.replyCount / self.stats.totalCount * tau - tau / 4, replyArc))
+		  
+		self.hashtagSlice.transition()
+		  .duration(750)
+		  .attrTween('d', arcTween(self.stats.replyCount / self.stats.totalCount * tau - tau / 4, hashtagArc))
 	}
 	
 	

@@ -162,9 +162,30 @@ function Tweets(storage) {
 	*/	
 	function calculateTweetStats(){
 		
-		self.tweetStats.replyCount = self.tweets.reduce(function(memo, t) {
-			return t.is_reply? memo + 1 : memo
-		}, 0)
+		self.tweetStats.replyCount = 0
+		self.tweetStats.hashtagsCount = 0
+		self.tweetStats.linkCount = 0
+		self.tweetStats.mentionCount = 0
+		self.tweetStats.mediaCount = 0
+		
+		self.tweets.forEach(function(t) {
+			
+			if(t.is_reply)
+				self.tweetStats.replyCount++
+			
+			if(t.has_hashtag)
+				self.tweetStats.hashtagCount++
+			
+			if(t.has_link)
+				self.tweetStats.linkCount++
+			
+			if(t.has_mention)
+				self.tweetStats.mentionCount++
+			
+			if(t.has_media)
+				self.tweetStats.mediaCount++
+				
+		})
 		
 		self.tweetStats.totalCount = self.tweets.length
 		
