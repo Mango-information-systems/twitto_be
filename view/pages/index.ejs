@@ -45,7 +45,7 @@
 									<rect x="475" y="188" width="24" height="24" style="fill:#FF0F21;"></rect>
 									<text x="465" y="188" dy=".9em" style="text-anchor:end">
 										<tspan id="mentionCount"></tspan>
-										<tspan>@mentions</tspan>
+										<tspan>mentions</tspan>
 									</text>
 									
 									<rect x="475" y="244" width="24" height="24" style="fill:#00aced;"></rect>
@@ -77,18 +77,22 @@
 				<div class="card">
 					<div class="row">
 						<h2>Tweets in the last 30 minutes</h2>
-						<div class="loading" id="timelineWrap">
-							<div class="lg-six md-twelve column">
-								<p>
-									per minute
-									<svg id="tweetsPerMinute" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 450 300" />
-								</p>
-							</div>
-							<div class="lg-six md-twelve column">
-								<p>
-									per second
-									<svg id="tweetsPerSecond" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 450 300" />
-								</p>
+						<div class="row">
+							<div id="timelineWrap" class="twelve columns loading">
+								<div class="row">
+									<div class="lg-six md-twelve column">
+										<p>
+											per minute
+											<svg id="tweetsPerMinute" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 450 300" />
+										</p>
+									</div>
+									<div class="lg-six md-twelve column">
+										<p>
+											per second
+											<svg id="tweetsPerSecond" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMinYMin" viewBox="0 0 450 300" />
+										</p>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
