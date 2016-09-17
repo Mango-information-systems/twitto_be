@@ -14,7 +14,7 @@ function DonutChart(svg) {
 	var self = this
 		, tau = 2 * Math.PI
 	
-	this.g = svg.append('g').attr('transform', 'translate(150, 150)')
+	this.g = svg.append('g').attr('transform', 'translate(350, 150)')
 	
 	this.totalCount = svg.select('#totalCount')
 	this.replyCount = svg.select('#replyCount')
@@ -225,8 +225,6 @@ function DonutChart(svg) {
 		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.mediaCount / self.stats.totalCount * tau - tau / 4, mediaArc))
 	}
-	
-	
 
 	/****************************************
 	 *
