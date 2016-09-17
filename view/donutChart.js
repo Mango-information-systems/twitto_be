@@ -146,7 +146,7 @@ function DonutChart(svg) {
 		  
 		self.hashtagSlice.transition()
 		  .duration(750)
-		  .attrTween('d', arcTween(self.stats.replyCount / self.stats.totalCount * tau - tau / 4, hashtagArc))
+		  .attrTween('d', arcTween(self.stats.hashtagCount / self.stats.totalCount * tau - tau / 4, hashtagArc))
 	}
 	
 	
