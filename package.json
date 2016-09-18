@@ -14,7 +14,7 @@
     "watch:server": "nodemon --ignore public/ app.js",
     "watch:skeleton": "cd git_submodules/skeleton-framework && npm run watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public/**/*,view/**/*'  --reload-delay 2000",
+    "browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public/**/*,view/**/*' --reload-delay 2000",
     "deploy": "sudo cp -rp ./* /home/srv-node-mango/twitto && sudo chown -R srv-node-mango:srv-node-mango /home/srv-node-mango/twitto && sudo systemctl restart node-twitto && sudo rm -r /var/ngx_pagespeed_cache/v3/twitto.be/*"
   },
   "repository": {
