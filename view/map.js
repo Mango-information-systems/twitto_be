@@ -41,15 +41,7 @@ function Map (container) {
 
 	d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
 		
-		self.context.beginPath()
-		self.path(belgianProvinces)
-		
-		self.context.fillStyle = '#eeeeee'
-		self.context.fill()
-
-		self.context.lineWidth = '1'
-		self.context.strokeStyle = '#bbbbbb'
-		self.context.stroke()
+		self.belgianProvinces = belgianProvinces
 		
 	})
 	
@@ -83,12 +75,10 @@ function Map (container) {
 		dataBinding.enter()
 		  .append('custom')
 		  .classed('dot', true)
-		  .classed('new', true)
 		  .attr('r', '8')
 		  .attr('cx', '-4')
 		  .attr('cy', '-4')
-		  .attr('fillStyle', '#008000')
-		  //~.style('fill-opacity', .3)
+		  .attr('fillStyle', 'rgba(0, 128, 0, .3')
 		  .transition()
 		  .duration(3000)
 		  .delay(function(d, i) { 
@@ -101,6 +91,12 @@ function Map (container) {
 			return self.projection(d.coordinates)[1]
 		  })
 		  .attr('r', '4')
+		  .on('end', function(d, i) {
+			  if (i === tweets.length-1) {
+				  // animation of the last dot is finished, stop the canvas drawing loop
+				  self.animationTimer.stop()
+			  }
+		  })
 
 		//~updateCanvas()
 
@@ -108,17 +104,33 @@ function Map (container) {
 	
 	function updateCanvas() {
 
+		// clear canvas
+		self.context.fillStyle = "#fff"
+		self.context.rect(0, 0, self.width, self.height)
+		self.context.fill()
 
-console.log('updating canvas')
+		// draw map of Belgium as background
+		self.context.beginPath()
+		self.path(self.belgianProvinces)
+		
+		self.context.fillStyle = '#eeeeee'
+		self.context.fill()
 
-		var elements = self.dataContainer.selectAll('custom.dot.new')
+		self.context.lineWidth = '1'
+		self.context.strokeStyle = '#bbbbbb'
+		self.context.stroke()
+
+		// draw the tweet dots
+		var elements = self.dataContainer.selectAll('custom.dot')
 		
 		elements.each(function(d) {
 			var node = d3.select(this)
 
 			self.context.beginPath()
 			self.context.fillStyle = node.attr('fillStyle')
-			self.context.rect(node.attr('cx'), node.attr('cy'), node.attr('r'), node.attr('r'))
+			//~self.context.rect(node.attr('cx'), node.attr('cy'), node.attr('r'), node.attr('r'))
+			self.context.arc(node.attr('cx'), node.attr('cy'), node.attr('r'), 0, 2 * Math.PI, false);
+
 			self.context.fill()
 			self.context.closePath()
 
@@ -145,30 +157,7 @@ console.log('updating canvas')
 		
 		bindData(tweets)
 		
-		//~d3.timer(updateCanvas)
-//~
-		//~var transitionDuration = Math.min(Math.max(tweets.length, 400), 2500)
-		//~
-		//~svg.selectAll('circle').data(tweets, function(d) {return d.id_str})
-			//~.enter()
-			  //~.append('circle')
-			  //~.attr('r', '8')
-			  //~.attr('cx', '-4')
-			  //~.attr('cy', '-4')
-			  //~.style('fill', '#008000')
-			  //~.style('fill-opacity', .3)
-			  //~.transition()
-			  //~.duration(400)
-			  //~.delay(function(d, i) { 
-			    //~return count === 1? 0 : 100 + i / tweets.length * transitionDuration
-			  //~})
-			    //~.attr('cx', function(d) {
-			    	//~return self.projection(d.coordinates)[0]
-			    //~})
-			    //~.attr('cy', function(d) {
-			    	//~return self.projection(d.coordinates)[1]
-			    //~})
-				//~.attr('r', '4')
+		self.animationTimer = d3.timer(updateCanvas)
 
 	}
 
