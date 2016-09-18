@@ -63,7 +63,7 @@ function Map (container) {
 	****************************************/
 	function bindData(tweets) {
 
-		var transitionDuration = Math.min(Math.max(tweets.length, 400), 2500)
+		var transitionDuration = Math.min(Math.max(tweets.length, 400), 2000)
 		
 		var dataBinding = self.dataContainer.selectAll('custom.dot')
 		  .data(tweets, function(d) { return d.id_str })
@@ -82,7 +82,8 @@ function Map (container) {
 		  .attr('cy', '-8')
 		  .attr('fillStyle', 'rgba(0, 128, 0, .3')
 		  .transition()
-		  .duration(3000)
+		  .duration(400)
+		  .ease(d3.easeBounceOut)
 		  .delay(function(d, i) { 
 			return tweets.length === 1? 0 : 100 + i / tweets.length * transitionDuration
 		  })
