@@ -203,25 +203,25 @@ function DonutChart(svg) {
 		  
 		self.hashtagSlice.transition()
 		  .duration(600)
-		  .delay(500)
+		  .delay(250)
 		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.hashtagCount / self.stats.totalCount * tau - tau / 4, hashtagArc))
 		  
 		self.linkSlice.transition()
 		  .duration(600)
-		  .delay(900)
+		  .delay(500)
 		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.linkCount / self.stats.totalCount * tau - tau / 4, linkArc))
 		  
 		self.mentionSlice.transition()
 		  .duration(600)
-		  .delay(1400)
+		  .delay(750)
 		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.mentionCount / self.stats.totalCount * tau - tau / 4, mentionArc))
 		  
 		self.mediaSlice.transition()
 		  .duration(600)
-		  .delay(1800)
+		  .delay(1000)
 		  .ease(d3.easeExpInOut)
 		  .attrTween('d', arcTween( 3 / 4 * self.stats.mediaCount / self.stats.totalCount * tau - tau / 4, mediaArc))
 	}
