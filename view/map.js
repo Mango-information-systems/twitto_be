@@ -75,22 +75,21 @@ function Map (container) {
 		dataBinding.enter()
 		  .append('custom')
 		  .classed('dot', true)
-		  .attr('r', '8')
-		  .attr('cx', '-4')
-		  .attr('cy', '-4')
+		  .attr('r', '6')
+		  .attr('cx', function(d) {
+			return self.projection(d.coordinates)[0]
+		  })
+		  .attr('cy', '-8')
 		  .attr('fillStyle', 'rgba(0, 128, 0, .3')
 		  .transition()
 		  .duration(3000)
 		  .delay(function(d, i) { 
 			return tweets.length === 1? 0 : 100 + i / tweets.length * transitionDuration
 		  })
-		  .attr('cx', function(d) {
-			return self.projection(d.coordinates)[0]
-		  })
 		  .attr('cy', function(d) {
 			return self.projection(d.coordinates)[1]
 		  })
-		  .attr('r', '4')
+		  .attr('r', '3')
 		  .on('end', function(d, i) {
 			  if (i === tweets.length-1) {
 				  // animation of the last dot is finished, stop the canvas drawing loop
