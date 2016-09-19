@@ -6,7 +6,7 @@ var d3 = require('d3')
 	, DonutChart = require('../view/donutChart')
 	, app = {
 		model: {
-			tweets: []
+			tweets: [] // cache of tweets  - only contains tweets with geo-coordinates
 		}
 		, controller: {
 			stats: {}
@@ -31,13 +31,13 @@ app.socket.emit('tweets')
 // listener: set of historical tweets sent by the server
 app.socket.on('tweets', function (tweets) {
 	
-	app.model.tweets = app.model.tweets.concat(tweets)
+	app.model.tweets = app.model.tweets.concat(tweets.filter(function(tweet) {
+		return typeof tweet.coordinates !== 'undefined'
+	}))
 
 	d3.selectAll('#mapWrap').classed('loading', false)
 	
-	app.view.map.addPoints(app.model.tweets.filter(function(tweet) {
-		return typeof tweet.coordinates !== 'undefined'
-	}))
+	app.view.map.addPoints(app.model.tweets)
 
 })
 
@@ -60,13 +60,14 @@ app.socket.on('timelines', function (stats) {
 	
 })
 
+// listener: new tweet
 app.socket.on('tweet', function (tweet) {
 	
-	app.model.tweets.push(tweet)
+	if (typeof tweet.coordinates !== 'undefined') {
+		app.model.tweets.push(tweet)
 
-	app.view.map.addPoints(app.model.tweets.filter(function(tweet) {
-		return typeof tweet.coordinates !== 'undefined'
-	}), 1)
+		app.view.map.addPoints(app.model.tweets)
+	}
 	
 	app.view.tweetsPerMinute.addTweet()
 	app.view.tweetsPerSecond.addTweet()

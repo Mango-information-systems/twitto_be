@@ -58,7 +58,6 @@ function Map (container) {
 	* 
 	* 
 	* @param {object} tweets array of tweets to be displayed in the map
-	* @param {number} count the number of points to be added 
 	* 
 	****************************************/
 	function bindData(tweets) {
@@ -75,29 +74,14 @@ function Map (container) {
 		dataBinding.enter()
 		  .append('custom')
 		  .classed('dot', true)
-		  .attr('r', '6')
+		  .attr('r', '3')
 		  .attr('cx', function(d) {
 			return self.projection(d.coordinates)[0]
 		  })
-		  .attr('cy', '-8')
-		  .attr('fillStyle', 'rgba(0, 128, 0, .3')
-		  //~.transition()
-		  //~.duration(400)
-		  //~.ease(d3.easeBounceOut)
-		  //~.delay(function(d, i) { 
-			//~return tweets.length === 1? 0 : 100 + i / tweets.length * transitionDuration
-		  //~})
 		  .attr('cy', function(d) {
 			return self.projection(d.coordinates)[1]
 		  })
-		  .attr('r', '3')
-		  //~.on('end', function(d, i) {
-			  //~if (i === tweets.length-1) {
-				  //~// animation of the last dot is finished, stop the canvas drawing loop
-				  //~self.animationTimer.stop()
-//~console.log('end canvas update')
-			  //~}
-		  //~})
+		  .attr('fillStyle', 'rgba(0, 128, 0, .3')
 
 		updateCanvas()
 
@@ -105,8 +89,6 @@ function Map (container) {
 	
 	function updateCanvas() {
 
-
-console.log('updating canvas')
 		// clear canvas
 		self.context.fillStyle = "#fff"
 		self.context.rect(0, 0, self.width, self.height)
@@ -150,16 +132,13 @@ console.log('updating canvas')
 	* addPoints displays geo-located tweets in the map
 	* 
 	* @param {object} tweets array of tweets to be displayed in the map
-	* @param {number} count the number of points to be added 
 	* 
 	****************************************/
-	this.addPoints = function(tweets, count) {
+	this.addPoints = function(tweets) {
 		
 		debug('addPoints', tweets.length)
 		
 		bindData(tweets)
-		
-		//~self.animationTimer = d3.timer(updateCanvas)
 
 	}
 
