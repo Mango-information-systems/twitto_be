@@ -63,7 +63,7 @@ function Map (container) {
 	****************************************/
 	function bindData(tweets) {
 
-		var transitionDuration = Math.min(Math.max(tweets.length, 400), 2000)
+		//~var transitionDuration = Math.min(Math.max(tweets.length, 400), 2000)
 		
 		var dataBinding = self.dataContainer.selectAll('custom.dot')
 		  .data(tweets, function(d) { return d.id_str })
@@ -81,29 +81,32 @@ function Map (container) {
 		  })
 		  .attr('cy', '-8')
 		  .attr('fillStyle', 'rgba(0, 128, 0, .3')
-		  .transition()
-		  .duration(400)
-		  .ease(d3.easeBounceOut)
-		  .delay(function(d, i) { 
-			return tweets.length === 1? 0 : 100 + i / tweets.length * transitionDuration
-		  })
+		  //~.transition()
+		  //~.duration(400)
+		  //~.ease(d3.easeBounceOut)
+		  //~.delay(function(d, i) { 
+			//~return tweets.length === 1? 0 : 100 + i / tweets.length * transitionDuration
+		  //~})
 		  .attr('cy', function(d) {
 			return self.projection(d.coordinates)[1]
 		  })
 		  .attr('r', '3')
-		  .on('end', function(d, i) {
-			  if (i === tweets.length-1) {
-				  // animation of the last dot is finished, stop the canvas drawing loop
-				  self.animationTimer.stop()
-			  }
-		  })
+		  //~.on('end', function(d, i) {
+			  //~if (i === tweets.length-1) {
+				  //~// animation of the last dot is finished, stop the canvas drawing loop
+				  //~self.animationTimer.stop()
+//~console.log('end canvas update')
+			  //~}
+		  //~})
 
-		//~updateCanvas()
+		updateCanvas()
 
 	}
 	
 	function updateCanvas() {
 
+
+console.log('updating canvas')
 		// clear canvas
 		self.context.fillStyle = "#fff"
 		self.context.rect(0, 0, self.width, self.height)
@@ -128,7 +131,6 @@ function Map (container) {
 
 			self.context.beginPath()
 			self.context.fillStyle = node.attr('fillStyle')
-			//~self.context.rect(node.attr('cx'), node.attr('cy'), node.attr('r'), node.attr('r'))
 			self.context.arc(node.attr('cx'), node.attr('cy'), node.attr('r'), 0, 2 * Math.PI, false);
 
 			self.context.fill()
@@ -157,7 +159,7 @@ function Map (container) {
 		
 		bindData(tweets)
 		
-		self.animationTimer = d3.timer(updateCanvas)
+		//~self.animationTimer = d3.timer(updateCanvas)
 
 	}
 
