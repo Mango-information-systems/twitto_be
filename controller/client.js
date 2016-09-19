@@ -35,11 +35,9 @@ app.socket.on('tweets', function (tweets) {
 
 	d3.selectAll('#mapWrap').classed('loading', false)
 	
-	/* Temporarily disabled
 	app.view.map.addPoints(app.model.tweets.filter(function(tweet) {
 		return typeof tweet.coordinates !== 'undefined'
 	}))
-	 */
 
 })
 
@@ -66,11 +64,9 @@ app.socket.on('tweet', function (tweet) {
 	
 	app.model.tweets.push(tweet)
 
-/* Temporarily disabled
 	app.view.map.addPoints(app.model.tweets.filter(function(tweet) {
 		return typeof tweet.coordinates !== 'undefined'
 	}), 1)
-	*/
 	
 	app.view.tweetsPerMinute.addTweet()
 	app.view.tweetsPerSecond.addTweet()
