@@ -3,6 +3,7 @@ var d3 = require('d3')
 	, polyfills = require('../controller/polyfills')
 	, Map = require('../view/map')
 	, LineChart = require('../view/lineChart')
+	, BarChart = require('../view/barChart')
 	, DonutChart = require('../view/donutChart')
 	, app = {
 		model: {
@@ -19,6 +20,9 @@ app.view.map = new Map(d3.select('#mapWrap'))
 app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
 app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
+app.view.topHashTags = new BarChart(d3.select('#topHashTags'))
+app.view.topMentions = new BarChart(d3.select('#topMentions'))
+
 
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 //var suffix = ':3031'

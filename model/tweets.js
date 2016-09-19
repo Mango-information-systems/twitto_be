@@ -26,9 +26,16 @@ function Tweets(storage) {
 		replyCount: 0
 		, totalCount: 0
 	}
+
+	self.topStats = {
+		hashtags: []
+		, mentions: []
+	}
 	
 	// compute tweet statistics
 	calculateTweetStats()
+	calculateTopStats()
+
 
 	// compute tweets time series
 	self.tweetsPerMinute = computeTimeline('m')
@@ -83,6 +90,72 @@ function Tweets(storage) {
 		
 	}
 
+	/**
+	 *
+	 * Calculate top stats (hashtags or mentions)
+	 *
+	 * @param {string} what ('hashtags', 'mentions')
+	 *
+	 * @return {object} top stats
+	 *
+	 * @private
+	 *
+	 */
+	function calculateTopStats() {
+		var mentionsArray = []
+			, hashtagsArray = []
+
+		self.tweets.forEach(function (t) {
+			if(t.has_mention){
+				t.mentions.forEach(function (m){
+					mentionsArray.push(m.toLowerCase())
+				})
+			}
+			if(t.has_hashtag) {
+				t.hashtags.forEach(function (h) {
+					hashtagsArray.push(h.toLowerCase())
+				})
+			}
+
+
+		})
+
+		hashtagsArray = hashtagsArray.reduce(function (acc, curr) {
+			acc[curr] ? acc[curr]++ : acc[curr] = 1
+			return acc
+		}, {})
+
+		hashtagsArray = sortProperties(hashtagsArray)
+
+		mentionsArray = mentionsArray.reduce(function (acc, curr) {
+			acc[curr] ? acc[curr]++ : acc[curr] = 1
+			return acc
+		}, {})
+
+		mentionsArray = sortProperties(mentionsArray)
+
+		self.topStats = {'hashtags': hashtagsArray, 'mentions': mentionsArray}
+
+	}
+
+
+	// As seen https://gist.github.com/umidjons/9614157
+	function sortProperties(obj) {
+		// convert object into array
+		var sortable = [];
+		for (var key in obj)
+			if(obj.hasOwnProperty(key))
+				sortable.push([key, obj[key]]); // each item is an array in format [key, value]
+
+		// sort items by value
+
+		sortable.sort(function (a, b) {
+			var x = a[1],
+				y = b[1];
+			return x < y ? 1 : x > y ? -1 : 0;
+		});
+		return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+	}
 	/**
 	* 
 	* Calculate tweet time series data
@@ -263,8 +336,8 @@ function Tweets(storage) {
 		
 		storage.setItem('tweets', self.tweets)
 		
-		updateTweetStats(tweet)
-		
+		//updateTweetStats(tweet)
+		//console.log('update')
 	}
 
 	// retrieve all tweets
@@ -275,6 +348,25 @@ function Tweets(storage) {
 	// retrieve tweet statistics
 	this.getStats = function() {
 		return self.tweetStats
+	}
+
+	// retrieve tweet statistics
+	this.getTopStats = function () {
+		calculateTopStats()
+
+		console.log(self.topStats.hashtags[0])
+		console.log(self.topStats.hashtags[1])
+		console.log(self.topStats.hashtags[2])
+		console.log(self.topStats.hashtags[3])
+		console.log(self.topStats.hashtags[4])
+		console.log(self.topStats.hashtags[5])
+		console.log(self.topStats.hashtags[6])
+		console.log(self.topStats.hashtags[7])
+		console.log(self.topStats.hashtags[8])
+		console.log(self.topStats.hashtags[9])
+		console.log(self.topStats.hashtags[10])
+		console.log('---------------------')
+		return self.topStats
 	}
 	
 	// retrieve tweet statistics
