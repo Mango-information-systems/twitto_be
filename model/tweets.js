@@ -27,14 +27,14 @@ function Tweets(storage) {
 		, totalCount: 0
 	}
 
-	self.topStats = {
+	self.entitiesStats = {
 		hashtags: []
 		, mentions: []
 	}
 	
 	// compute tweet statistics
 	calculateTweetStats()
-	calculateTopStats()
+	calculateEntitiesStats()
 
 
 	// compute tweets time series
@@ -101,9 +101,11 @@ function Tweets(storage) {
 	 * @private
 	 *
 	 */
-	function calculateTopStats() {
+	function calculateEntitiesStats() {
 		var mentionsArray = []
 			, hashtagsArray = []
+			, mentions = {}
+			, hashtags = {}
 
 		self.tweets.forEach(function (t) {
 			if(t.has_mention){
@@ -120,41 +122,79 @@ function Tweets(storage) {
 
 		})
 
-		hashtagsArray = hashtagsArray.reduce(function (acc, curr) {
+		//hashtagsArray = ['a', 'a', 'b', 'c']
+		hashtags = hashtagsArray.reduce(function (acc, curr) {
 			acc[curr] ? acc[curr]++ : acc[curr] = 1
 			return acc
 		}, {})
 
-		hashtagsArray = sortProperties(hashtagsArray)
 
-		mentionsArray = mentionsArray.reduce(function (acc, curr) {
+
+		//topHashtags = orderSliceObject(topHashtags, 10)
+		//
+		//return 0
+		hashtags = orderSliceObject(hashtags, 10)
+
+
+		mentions = mentionsArray.reduce(function (acc, curr) {
 			acc[curr] ? acc[curr]++ : acc[curr] = 1
 			return acc
 		}, {})
 
-		mentionsArray = sortProperties(mentionsArray)
+		mentions = orderSliceObject(mentions, 10)
 
-		self.topStats = {'hashtags': hashtagsArray, 'mentions': mentionsArray}
+		self.entitiesStats = {
+			'hashtags': hashtags.all
+			, 'topHashtags': hashtags.top
+			, 'lowestHashtagsCount': hashtags.lowestCount
+			, 'mentions': mentions.all
+			, 'topMentions': mentions.top
+			, 'lowestMentionsCount': mentions.lowestCount
+		}
+
 
 	}
 
+	/**
+	 *
+	 * Order object and slice it
+	 *
+	 * @param {object} whole object
+	 * @param {number} number of results to return
+	 * *
+	 * @return {object} ordered objects by count and lowestcount
+	 *
+	 * @private
+	 *
+	 */
 
-	// As seen https://gist.github.com/umidjons/9614157
-	function sortProperties(obj) {
-		// convert object into array
-		var sortable = [];
-		for (var key in obj)
-			if(obj.hasOwnProperty(key))
-				sortable.push([key, obj[key]]); // each item is an array in format [key, value]
+	function orderSliceObject(obj, slice) {
+		var arr = []
+			, prop
+			, newObj = {}
 
-		// sort items by value
+		for (prop in obj) {
+			if(obj.hasOwnProperty(prop)) {
+				arr.push({
+					'key': prop
+					, 'value': obj[prop]
+				})
+			}
+		}
+		arr.sort(function (a, b) {
+			return b.value - a.value
+		})
 
-		sortable.sort(function (a, b) {
-			var x = a[1],
-				y = b[1];
-			return x < y ? 1 : x > y ? -1 : 0;
-		});
-		return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+		//console.log(arr)
+
+		arr = arr.slice(0, slice)
+
+		//newObj = arr.reduce(function (o, v, i) {
+		//	o[v.key] = v.value
+		//	return o
+		//}, {})
+
+		return {'top': arr, 'all': obj, 'lowestCount': arr[slice-1].value}
 	}
 	/**
 	* 
@@ -336,7 +376,7 @@ function Tweets(storage) {
 		
 		storage.setItem('tweets', self.tweets)
 		
-		//updateTweetStats(tweet)
+		updateTweetStats(tweet)
 		//console.log('update')
 	}
 
@@ -351,22 +391,8 @@ function Tweets(storage) {
 	}
 
 	// retrieve tweet statistics
-	this.getTopStats = function () {
-		calculateTopStats()
-
-		console.log(self.topStats.hashtags[0])
-		console.log(self.topStats.hashtags[1])
-		console.log(self.topStats.hashtags[2])
-		console.log(self.topStats.hashtags[3])
-		console.log(self.topStats.hashtags[4])
-		console.log(self.topStats.hashtags[5])
-		console.log(self.topStats.hashtags[6])
-		console.log(self.topStats.hashtags[7])
-		console.log(self.topStats.hashtags[8])
-		console.log(self.topStats.hashtags[9])
-		console.log(self.topStats.hashtags[10])
-		console.log('---------------------')
-		return self.topStats
+	this.getEntitiesStats = function () {
+		return self.entitiesStats
 	}
 	
 	// retrieve tweet statistics

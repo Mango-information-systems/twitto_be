@@ -64,6 +64,16 @@ app.socket.on('timelines', function (stats) {
 	
 })
 
+// listener: top stats sent by the server
+app.socket.on('eventEntitiesStats', function (stats) {
+
+	d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
+
+	app.view.topHashTags.init(stats.hashtags, stats.topHashtags, stats.lowestHashtagsCount)
+	app.view.topMentions.init(stats.mentions, stats.topMentions, stats.lowestMentionsCount)
+
+})
+
 // listener: new tweet
 app.socket.on('tweet', function (tweet) {
 	

@@ -13,6 +13,7 @@ function BarChart (svg) {
 
 	var self = this
 		, svgWidth = 450
+
 	
 	var margin = {top: 20, right: 20, bottom: 80, left: 80}
 		, width = svgWidth - margin.left - margin.right
@@ -21,8 +22,8 @@ function BarChart (svg) {
 		, defaultBarWidth = 2000
 
 	var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-	this.bars = g.append('g')
-	
+
+
 	/****************************************
 	* 
 	* Private methods
@@ -42,8 +43,10 @@ function BarChart (svg) {
 	 * @param {object} timeline time series data
 	 *
 	 ************/
-	this.init = function () {
-		console.log(svg)
+	this.init = function (allEntitiesStats, topEntitiesStats, lowestcount) {
+		this.topEntitiesStats = topEntitiesStats
+
+		console.log(allEntitiesStats, topEntitiesStats, lowestcount)
 	}
 
 	return this	
