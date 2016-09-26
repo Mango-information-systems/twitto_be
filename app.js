@@ -86,7 +86,7 @@ twitto.controller.io.on('connection', function(socket) {
 		socket.emit('tweetStats', twitto.model.tweets.getStats())
 		socket.emit('timelines', twitto.model.tweets.getTimelines())
 
-		socket.emit('eventEntitiesStats', twitto.model.tweets.getEntitiesStats())
+		socket.emit('entitiesStats', twitto.model.tweets.getEntitiesStats())
 
 		socket.emit('tweets', twitto.model.tweets.getAll())
 	})

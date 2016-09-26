@@ -65,7 +65,7 @@ app.socket.on('timelines', function (stats) {
 })
 
 // listener: top stats sent by the server
-app.socket.on('eventEntitiesStats', function (stats) {
+app.socket.on('entitiesStats', function (stats) {
 
 	d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
 
