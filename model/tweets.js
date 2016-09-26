@@ -110,92 +110,63 @@ function Tweets(storage) {
 		self.tweets.forEach(function (t) {
 			if(t.has_mention){
 				t.mentions.forEach(function (m){
-					mentionsArray.push(m.toLowerCase())
+
+					if(mentions.hasOwnProperty(m)) {
+						mentions[m]++
+					} else {
+						mentions[m] = 1
+					}
+
+					// Why does the following not work?
+					// mentions[m] = (mentions.hasOwnProperty(m)? mentions[m]++ : 1 )
 				})
 			}
 			if(t.has_hashtag) {
 				t.hashtags.forEach(function (h) {
-					hashtagsArray.push(h.toLowerCase())
+
+					if(hashtags.hasOwnProperty(h)){
+						hashtags[h]++
+					}else{
+						hashtags[h] = 1
+					}
+
+					// Why does the following not work?
+					// hashtags[h] = (hashtags.hasOwnProperty(h) ? hashtags[h]++ : 1 )
 				})
 			}
 
 
 		})
 
-		//hashtagsArray = ['a', 'a', 'b', 'c']
-		hashtags = hashtagsArray.reduce(function (acc, curr) {
-			acc[curr] ? acc[curr]++ : acc[curr] = 1
-			return acc
-		}, {})
+		hashtags = Object.keys(hashtags).map(function (key) {
+			return {key: key, value: this[key]}
+		}, hashtags)
+		hashtags.sort(function (p1, p2) {
+			return p2.value - p1.value
+		})
+		topHashtags = hashtags.slice(0, 10)
 
+		mentions = Object.keys(mentions).map(function (key) {
+			return {key: key, value: this[key]}
+		}, mentions)
+		mentions.sort(function (p1, p2) {
+			return p2.value - p1.value
+		})
+		topMentions = mentions.slice(0, 10)
 
-
-		//topHashtags = orderSliceObject(topHashtags, 10)
-		//
-		//return 0
-		hashtags = orderSliceObject(hashtags, 10)
-
-
-		mentions = mentionsArray.reduce(function (acc, curr) {
-			acc[curr] ? acc[curr]++ : acc[curr] = 1
-			return acc
-		}, {})
-
-		mentions = orderSliceObject(mentions, 10)
 
 		self.entitiesStats = {
 			'hashtags': hashtags.all
-			, 'topHashtags': hashtags.top
-			, 'lowestHashtagsCount': hashtags.lowestCount
+			, 'topHashtags': topHashtags
+			, 'lowestHashtagsCount': 10 //TODO
 			, 'mentions': mentions.all
-			, 'topMentions': mentions.top
-			, 'lowestMentionsCount': mentions.lowestCount
+			, 'topMentions': topMentions
+			, 'lowestMentionsCount': 10 //TODO
 		}
 
 
 	}
 
-	/**
-	 *
-	 * Order object and slice it
-	 *
-	 * @param {object} whole object
-	 * @param {number} number of results to return
-	 * *
-	 * @return {object} ordered objects by count and lowestcount
-	 *
-	 * @private
-	 *
-	 */
-
-	function orderSliceObject(obj, slice) {
-		var arr = []
-			, prop
-			, newObj = {}
-
-		for (prop in obj) {
-			if(obj.hasOwnProperty(prop)) {
-				arr.push({
-					'key': prop
-					, 'value': obj[prop]
-				})
-			}
-		}
-		arr.sort(function (a, b) {
-			return b.value - a.value
-		})
-
-		//console.log(arr)
-
-		arr = arr.slice(0, slice)
-
-		//newObj = arr.reduce(function (o, v, i) {
-		//	o[v.key] = v.value
-		//	return o
-		//}, {})
-
-		return {'top': arr, 'all': obj, 'lowestCount': arr[slice-1].value}
-	}
 	/**
 	* 
 	* Calculate tweet time series data
