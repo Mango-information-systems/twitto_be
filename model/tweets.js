@@ -102,10 +102,10 @@ function Tweets(storage) {
 	 *
 	 */
 	function calculateEntitiesStats() {
-		var mentionsArray = []
-			, hashtagsArray = []
+		var hashtags = {}
 			, mentions = {}
-			, hashtags = {}
+			, lowestHashtagCount = {}
+			, lowestMentionCount = 0
 
 		self.tweets.forEach(function (t) {
 			if(t.has_mention){
@@ -145,6 +145,7 @@ function Tweets(storage) {
 			return p2.value - p1.value
 		})
 		topHashtags = hashtags.slice(0, 10)
+		lowestHashtagCount = topHashtags.length ? topHashtags.slice(topHashtags.length - 1, topHashtags.length)[0].value : 0
 
 		mentions = Object.keys(mentions).map(function (key) {
 			return {key: key, value: this[key]}
@@ -153,15 +154,13 @@ function Tweets(storage) {
 			return p2.value - p1.value
 		})
 		topMentions = mentions.slice(0, 10)
-
+		lowestMentionCount = topHashtags.length ? topMentions.slice(topMentions.length - 1, topMentions.length)[0].value : 0
 
 		self.entitiesStats = {
-			'hashtags': hashtags.all
-			, 'topHashtags': topHashtags
-			, 'lowestHashtagsCount': 10 //TODO
-			, 'mentions': mentions.all
+			'topHashtags': topHashtags
+			, 'lowestHashtagsCount': lowestHashtagCount
 			, 'topMentions': topMentions
-			, 'lowestMentionsCount': 10 //TODO
+			, 'lowestMentionsCount': lowestMentionCount
 		}
 
 

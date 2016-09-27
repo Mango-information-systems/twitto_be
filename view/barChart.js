@@ -52,12 +52,11 @@ function BarChart (svg) {
 	 * @param {object} timeline time series data
 	 *
 	 ************/
-	this.init = function (allEntitiesStats, topEntitiesStats, lowestCount) {
-		self.allEntitiesStats = allEntitiesStats
+	this.init = function (topEntitiesStats, lowestCount) {
 		self.topEntitiesStats = topEntitiesStats
 		self.lowestCount = lowestCount
 
-		console.log(allEntitiesStats, topEntitiesStats, lowestCount)
+		console.log(topEntitiesStats, lowestCount)
 
 		setInterval(function () {
 			self.redrawChart()
