@@ -69,8 +69,8 @@ app.socket.on('entitiesStats', function (stats) {
 
 	d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
 
-	app.view.topHashTags.init(stats.topHashtags, stats.lowestHashtagsCount)
-	app.view.topMentions.init(stats.topMentions, stats.lowestMentionsCount)
+	app.view.topHashTags.init('hashtags', stats.allHashtags, stats.topHashtags, stats.lowestHashtagsCount)
+	app.view.topMentions.init('mentions', stats.allMentions, stats.topMentions, stats.lowestMentionsCount)
 
 })
 
@@ -86,6 +86,8 @@ app.socket.on('tweet', function (tweet) {
 	app.view.tweetsPerMinute.addTweet()
 	app.view.tweetsPerSecond.addTweet()
 	app.view.donutChart.addTweets([tweet])
+	app.view.topHashTags.addTweet(tweet)
+	app.view.topMentions.addTweet(tweet)
 
 })
 

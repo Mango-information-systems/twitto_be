@@ -39,6 +39,68 @@ function BarChart (svg) {
 	* 
 	****************************************/
 
+	/**
+	 * Update statistics with data from one extra tweet
+	 *
+	 * @param {object} msg new tweet
+	 *
+	 * @private
+	 *
+	 */
+	function updateStats(tweet) {
+		var stats = []
+			,result = {}
+			, reorder = false
+
+
+		//if(self.allEntitiesStats.length == 0){
+		//	self.redrawChart()
+		//}
+
+		// Check if hashtags or mentions
+		if(tweet.has_hashtag || tweet.has_mention){
+			if(self.what == 'hashtags') {
+				stats = tweet.hashtags
+			} else {
+				stats = tweet.mentions
+			}
+
+
+			stats.forEach(function (s) {
+
+				// Increase counter or add stat in allstats
+				if(self.allEntitiesStats.hasOwnProperty(s)) {
+					self.allEntitiesStats[s]++
+				} else {
+					self.allEntitiesStats[s] = 1
+				}
+
+				// If the current stats counter is >= than the lowestcount
+				// add it in the topEntitiesStats
+				console.log('self.allEntitiesStats[s]', self.allEntitiesStats[s])
+
+				if(self.allEntitiesStats[s] >= self.lowestCount){
+					self.lowestCount = self.allEntitiesStats[s]
+					reorder = true
+					self.topEntitiesStats.push({'key': s, 'value': self.allEntitiesStats[s]})
+				}
+
+			})
+
+			// Reorder
+			if(reorder){
+
+				self.topEntitiesStats.sort(function (p1, p2) {
+					return p2.value - p1.value
+				})
+				self.topEntitiesStats = self.topEntitiesStats.slice(0, 10)
+				//self.lowestCount = self.topEntitiesStats.length ? self.topEntitiesStats.slice(self.topEntitiesStats.length - 1, self.topEntitiesStats.length)[0].value : 0
+
+				self.redrawChart()
+			}
+		}
+	}
+
 	/****************************************
 	 *
 	 * Public methods
@@ -52,15 +114,22 @@ function BarChart (svg) {
 	 * @param {object} timeline time series data
 	 *
 	 ************/
-	this.init = function (topEntitiesStats, lowestCount) {
+	this.init = function (what, allEntitiesStats, topEntitiesStats, lowestCount) {
+		self.allEntitiesStats = allEntitiesStats
 		self.topEntitiesStats = topEntitiesStats
 		self.lowestCount = lowestCount
+		self.what = what
 
-		console.log(topEntitiesStats, lowestCount)
+		// TODO Why oh why do I have to do this twice???
+		self.redrawChart()
+		self.redrawChart()
 
-		setInterval(function () {
-			self.redrawChart()
-		}, 3000);
+	}
+
+	this.addTweet = function (tweet) {
+		if(typeof this.topEntitiesStats !== 'undefined') {
+			updateStats(tweet)
+		}
 	}
 
 	this.redrawChart = function(){
@@ -103,7 +172,7 @@ function BarChart (svg) {
 			.attr("class", "bar")
 			.attr("x", 0)
 			.attr("opacity", 0)
-			.attr("height", y.bandwidth() * 2)
+			.attr("height", 40)
 			.attr("width", function (d) {
 				return x(d.value)
 			})
@@ -111,10 +180,10 @@ function BarChart (svg) {
 		//Add value labels
 		newRow.append("text")
 			.attr("class", "label")
-			.attr("y", y.bandwidth() / 2)
+			.attr("y", y.bandwidth() / 10)
 			.attr("x", 0)
 			.attr("opacity", 0)
-			.attr("dy", ".35em")
+			.attr("dy", "25px")
 			.attr("dx", "0.5em")
 			.text(function (d) {
 				return d.value
@@ -124,10 +193,10 @@ function BarChart (svg) {
 		newRow.append("text")
 			.attr("class", "category")
 			.attr("text-overflow", "ellipsis")
-			.attr("y", y.bandwidth() / 2)
+			.attr("y", y.bandwidth() / 10)
 			.attr("x", categoryIndent)
 			.attr("opacity", 0)
-			.attr("dy", ".35em")
+			.attr("dy", "25px")
 			.attr("dx", "0.5em")
 			.text(function (d) {
 				return d.key
@@ -149,11 +218,15 @@ function BarChart (svg) {
 		chartRow.select(".label").transition()
 			.duration(300)
 			.attr("opacity", 1)
-			.tween("text", function (d) {
-				var i = d3.interpolate(+this.textContent.replace(/\,/g, ''), +d.value)
-				return function (t) {
-					this.textContent = Math.round(i(t))
-				}
+			.text(function (d) {
+				return d.value
+			})
+		
+		chartRow.select(".category").transition()
+			.duration(300)
+			.attr("opacity", 1)
+			.text(function (d) {
+				return d.key
 			})
 
 		//Fade in categories
@@ -177,18 +250,11 @@ function BarChart (svg) {
 		//REORDER ROWS//
 		////////////////
 
-		var delay = function (d, i) {
-			return 200 + i * 30
-		}
-
 		chartRow.transition()
-			.delay(delay)
-			.duration(900)
+			.duration(1000)
 			.attr("transform", function (d) {
 				return "translate(0," + y(d.key) * 2 + ")"
 			})
-
-
 	}
 
 	return this	

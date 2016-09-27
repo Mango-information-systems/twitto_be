@@ -94,8 +94,6 @@ function Tweets(storage) {
 	 *
 	 * Calculate top stats (hashtags or mentions)
 	 *
-	 * @param {string} what ('hashtags', 'mentions')
-	 *
 	 * @return {object} top stats
 	 *
 	 * @private
@@ -104,17 +102,21 @@ function Tweets(storage) {
 	function calculateEntitiesStats() {
 		var hashtags = {}
 			, mentions = {}
-			, lowestHashtagCount = {}
+			, allHashtags = {}
+			, allMentions = {}
+			, topHashtags = {}
+			, topMentions = {}
+			, lowestHashtagCount = 0
 			, lowestMentionCount = 0
 
 		self.tweets.forEach(function (t) {
 			if(t.has_mention){
 				t.mentions.forEach(function (m){
 
-					if(mentions.hasOwnProperty(m)) {
-						mentions[m]++
+					if(allHashtags.hasOwnProperty(m)) {
+						allHashtags[m]++
 					} else {
-						mentions[m] = 1
+						allHashtags[m] = 1
 					}
 
 					// Why does the following not work?
@@ -124,10 +126,10 @@ function Tweets(storage) {
 			if(t.has_hashtag) {
 				t.hashtags.forEach(function (h) {
 
-					if(hashtags.hasOwnProperty(h)){
-						hashtags[h]++
+					if(allMentions.hasOwnProperty(h)){
+						allMentions[h]++
 					}else{
-						hashtags[h] = 1
+						allMentions[h] = 1
 					}
 
 					// Why does the following not work?
@@ -138,18 +140,18 @@ function Tweets(storage) {
 
 		})
 
-		hashtags = Object.keys(hashtags).map(function (key) {
+		hashtags = Object.keys(allHashtags).map(function (key) {
 			return {key: key, value: this[key]}
-		}, hashtags)
+		}, allHashtags)
 		hashtags.sort(function (p1, p2) {
 			return p2.value - p1.value
 		})
 		topHashtags = hashtags.slice(0, 10)
 		lowestHashtagCount = topHashtags.length ? topHashtags.slice(topHashtags.length - 1, topHashtags.length)[0].value : 0
 
-		mentions = Object.keys(mentions).map(function (key) {
+		mentions = Object.keys(allMentions).map(function (key) {
 			return {key: key, value: this[key]}
-		}, mentions)
+		}, allMentions)
 		mentions.sort(function (p1, p2) {
 			return p2.value - p1.value
 		})
@@ -158,8 +160,10 @@ function Tweets(storage) {
 
 		self.entitiesStats = {
 			'topHashtags': topHashtags
+			, 'allHashtags': allHashtags
 			, 'lowestHashtagsCount': lowestHashtagCount
 			, 'topMentions': topMentions
+			, 'allMentions': allMentions
 			, 'lowestMentionsCount': lowestMentionCount
 		}
 
