@@ -51,6 +51,7 @@ function BarChart (svg) {
 		var stats = []
 			,result = {}
 			, reorder = false
+			, tempLowestCount = 0
 
 
 		//if(self.allEntitiesStats.length == 0){
@@ -66,7 +67,10 @@ function BarChart (svg) {
 			}
 
 
+			console.log(stats)
+			console.log(tweet)
 			stats.forEach(function (s) {
+				reorder = false
 
 				// Increase counter or add stat in allstats
 				if(self.allEntitiesStats.hasOwnProperty(s)) {
@@ -77,16 +81,23 @@ function BarChart (svg) {
 
 				// If the current stats counter is >= than the lowestcount
 				// add it in the topEntitiesStats
-				console.log('self.allEntitiesStats[s]', self.allEntitiesStats[s])
 
-				if(self.allEntitiesStats[s] >= self.lowestCount){
-					self.lowestCount = self.allEntitiesStats[s]
-					reorder = true
+				console.log(s, self.topEntitiesStats.length, '||',  self.allEntitiesStats[s] , self.lowestCount)
+
+				if(self.topEntitiesStats.length < 10 || self.allEntitiesStats[s] > self.lowestCount){
+console.log('if', self.topEntitiesStats.length < 10 || self.allEntitiesStats[s] > self.lowestCount)
 					self.topEntitiesStats.push({'key': s, 'value': self.allEntitiesStats[s]})
+					tempLowestCount = self.topEntitiesStats.length ? self.topEntitiesStats.slice(self.topEntitiesStats.length - 1, self.topEntitiesStats.length)[0].value : 0
+					console.log('tempLowestCount', tempLowestCount ,'self.lowestCount', self.lowestCount)
+					if(tempLowestCount > self.lowestCount){
+						reorder = true
+					}
 				}
 
 			})
 
+			console.log('reorder', reorder)
+console.log('-------------')
 			// Reorder
 			if(reorder){
 
@@ -94,10 +105,12 @@ function BarChart (svg) {
 					return p2.value - p1.value
 				})
 				self.topEntitiesStats = self.topEntitiesStats.slice(0, 10)
-				//self.lowestCount = self.topEntitiesStats.length ? self.topEntitiesStats.slice(self.topEntitiesStats.length - 1, self.topEntitiesStats.length)[0].value : 0
+				self.lowestCount = tempLowestCount
 
 				self.redrawChart()
+				self.redrawChart()
 			}
+
 		}
 	}
 
@@ -121,23 +134,26 @@ function BarChart (svg) {
 		self.what = what
 
 		// TODO Why oh why do I have to do this twice???
-		self.redrawChart()
-		self.redrawChart()
+		if(topEntitiesStats.length){
+			self.redrawChart()
+			self.redrawChart()
+		}
+
 
 	}
 
 	this.addTweet = function (tweet) {
-		if(typeof this.topEntitiesStats !== 'undefined') {
+		if(typeof self.topEntitiesStats !== 'undefined') {
 			updateStats(tweet)
 		}
 	}
 
 	this.redrawChart = function(){
 
+		console.log('redraw', self.topEntitiesStats )
+
 		//Reset domains
-		y.domain(self.topEntitiesStats.sort(function (a, b) {
-				return b.value - a.value
-			})
+		y.domain(self.topEntitiesStats
 			.map(function (d) {
 				return d.key
 			}))
