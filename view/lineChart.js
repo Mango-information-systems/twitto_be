@@ -46,7 +46,7 @@ function LineChart (svg, granularity) {
 	* 
 	****************************************/
 	function nextTimeInterval() {
-
+console.log('running nextTimeInterval', self.timeline.length)
 		self.timeline.shift()
 		
 		self.timeline.push({
@@ -58,7 +58,7 @@ function LineChart (svg, granularity) {
 
 		rect.enter()
 			.append('rect')
-				.attr('x', function(d, i) { return self.x(-1)})
+				.attr('x', function(d, i) {return self.x(-1)})
 				.attr('y', height)
 				.attr('width', width / barCount)
 				.attr('height', 0)
@@ -81,9 +81,10 @@ function LineChart (svg, granularity) {
 			.duration(650)
 			.attr('y', height)
 			.attr('height', 0)
-			.attr('x', function(d, i) { return self.x(i - barCount)})
+			.attr('x', function(d, i) {  if (granularity === 's') console.log('removing bar', d, i ); return self.x(i - barCount)})
 			.remove()
 	
+console.log('done nextTimeInterval', self.timeline.length)
 	}
 	
 	function tickCountSetter(n){
