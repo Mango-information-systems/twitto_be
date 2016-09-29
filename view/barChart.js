@@ -14,7 +14,6 @@ function BarChart (svg) {
 	var self = this
 		, svgWidth = 450
 
-	
 	var margin = {top: 0, right: 20, bottom: 80, left: 0}
 		, width = svgWidth - margin.left - margin.right
 		, height = 300 - margin.top - margin.bottom
@@ -60,15 +59,14 @@ function BarChart (svg) {
 
 		// Check if hashtags or mentions
 		if(tweet.has_hashtag || tweet.has_mention){
-			if(self.what == 'hashtags') {
+			if(self.entityType === 'hashtags') {
 				stats = tweet.hashtags
 			} else {
 				stats = tweet.mentions
 			}
 
-
-			console.log(stats)
-			console.log(tweet)
+			console.log('stats', stats)
+			//~ console.log(tweet)
 			stats.forEach(function (s) {
 				reorder = false
 
@@ -102,12 +100,11 @@ console.log('-------------')
 			if(reorder){
 
 				self.topEntitiesStats.sort(function (p1, p2) {
-					return p2.value - p1.value
+					return [p2.value - p1.value, p2.key - p1.key]
 				})
 				self.topEntitiesStats = self.topEntitiesStats.slice(0, 10)
 				self.lowestCount = tempLowestCount
 
-				self.redrawChart()
 				self.redrawChart()
 			}
 
@@ -127,15 +124,13 @@ console.log('-------------')
 	 * @param {object} timeline time series data
 	 *
 	 ************/
-	this.init = function (what, allEntitiesStats, topEntitiesStats, lowestCount) {
+	this.init = function (entityType, allEntitiesStats, topEntitiesStats, lowestCount) {
 		self.allEntitiesStats = allEntitiesStats
 		self.topEntitiesStats = topEntitiesStats
 		self.lowestCount = lowestCount
-		self.what = what
+		self.entityType = entityType
 
-		// TODO Why oh why do I have to do this twice???
 		if(topEntitiesStats.length){
-			self.redrawChart()
 			self.redrawChart()
 		}
 
@@ -170,7 +165,7 @@ console.log('-------------')
 		//Bind new data to chart rows
 
 		//Create chart row and move to below the bottom of the chart
-		var chartRow = g.selectAll("g.chartRow")
+		var chartRow = g.selectAll('g.chartRow')
 			.data(self.topEntitiesStats, function (d) {
 				return d.key
 			})
@@ -179,77 +174,53 @@ console.log('-------------')
 
 		var newRow = chartRow
 			.enter()
-			.append("g")
-			.attr("class", "chartRow")
-			.attr("transform", "translate(0," + yposition + ")")
+			.append('g')
+			.attr('class', 'chartRow')
+			.attr('transform', function (d) {
+				return 'translate(0,' + y(d.key) * 2 + ')'
+			})
 
 		//Add rectangles
-		newRow.insert("rect")
-			.attr("class", "bar")
-			.attr("x", 0)
-			.attr("opacity", 0)
-			.attr("height", 40)
-			.attr("width", function (d) {
+		newRow.insert('rect')
+			.attr('class', 'bar')
+			.attr('x', 0)
+			.attr('opacity', 0)
+			.attr('height', 40)
+			.transition()
+			.duration(300)
+			.attr('width', function (d) {
 				return x(d.value)
 			})
+			.attr('opacity', 1)
 
 		//Add value labels
-		newRow.append("text")
-			.attr("class", "label")
-			.attr("y", y.bandwidth() / 10)
-			.attr("x", 0)
-			.attr("opacity", 0)
-			.attr("dy", "25px")
-			.attr("dx", "0.5em")
+		newRow.append('text')
+			.attr('class', 'label')
+			.attr('y', y.bandwidth() / 10)
+			.attr('x', 0)
+			.attr('opacity', 0)
+			.attr('dy', '.9em')
+			.attr('dx', '.5em')
 			.text(function (d) {
 				return d.value
-			})
+			}).transition()
+			.duration(300)
+			.attr('opacity', 1)
 
 		//Add Headlines
-		newRow.append("text")
-			.attr("class", "category")
-			.attr("text-overflow", "ellipsis")
-			.attr("y", y.bandwidth() / 10)
-			.attr("x", categoryIndent)
-			.attr("opacity", 0)
-			.attr("dy", "25px")
-			.attr("dx", "0.5em")
+		newRow.append('text')
+			.attr('class', 'category')
+			.attr('text-overflow', 'ellipsis')
+			.attr('y', y.bandwidth() / 10)
+			.attr('x', categoryIndent)
+			.attr('opacity', 0)
+			.attr('dy', '.9em')
+			.attr('dx', '.5em')
 			.text(function (d) {
 				return d.key
-			})
-
-		//////////
-		//UPDATE//
-		//////////
-
-		//Update bar widths
-		chartRow.select(".bar").transition()
+			}).transition()
 			.duration(300)
-			.attr("width", function (d) {
-				return x(d.value)
-			})
-			.attr("opacity", 1)
-
-		//Update data labels
-		chartRow.select(".label").transition()
-			.duration(300)
-			.attr("opacity", 1)
-			.text(function (d) {
-				return d.value
-			})
-		
-		chartRow.select(".category").transition()
-			.duration(300)
-			.attr("opacity", 1)
-			.text(function (d) {
-				return d.key
-			})
-
-		//Fade in categories
-		chartRow.select(".category").transition()
-			.duration(300)
-			.attr("opacity", 1)
-
+			.attr('opacity', 1)
 
 		////////
 		//EXIT//
@@ -257,8 +228,9 @@ console.log('-------------')
 
 		//Fade out and remove exit elements
 		chartRow.exit().transition()
-			.style("opacity", "0")
-			.attr("transform", "translate(0," + (height + margin.top + margin.bottom) + ")")
+			.attr('y', '400')
+			.style('opacity', '0')
+			.attr('transform', 'translate(0,' + (height + margin.top + margin.bottom) + ')')
 			.remove()
 
 
@@ -268,8 +240,8 @@ console.log('-------------')
 
 		chartRow.transition()
 			.duration(1000)
-			.attr("transform", function (d) {
-				return "translate(0," + y(d.key) * 2 + ")"
+			.attr('transform', function (d) {
+				return 'translate(0,' + y(d.key) * 2 + ')'
 			})
 	}
 
