@@ -17,7 +17,6 @@ function BarChart (svg) {
 	var margin = {top: 0, right: 20, bottom: 80, left: 0}
 		, width = svgWidth - margin.left - margin.right
 		, height = 300 - margin.top - margin.bottom
-		, categoryIndent = 4 * 15 + 5
 		, defaultBarWidth = 3000
 
 	var x = d3.scaleLinear()
@@ -184,11 +183,10 @@ function BarChart (svg) {
 		//Add value labels
 		newRow.append('text')
 			.attr('class', 'label')
+			.attr('x', '2.4em')
 			.attr('y', y.bandwidth() / 10)
-			.attr('x', 0)
 			.attr('opacity', 0)
 			.attr('dy', '.9em')
-			.attr('dx', '2.2em')
 			.text(function (d) {
 				return d.value
 			}).transition()
@@ -199,11 +197,10 @@ function BarChart (svg) {
 		newRow.append('text')
 			.attr('class', 'category')
 			.attr('text-overflow', 'ellipsis')
+			.attr('x', '2.8em')
 			.attr('y', y.bandwidth() / 10)
-			.attr('x', categoryIndent)
 			.attr('opacity', 0)
 			.attr('dy', '.9em')
-			.attr('dx', '.5em')
 			.text(function (d) {
 				return self.prefix + d.key
 			}).transition()
