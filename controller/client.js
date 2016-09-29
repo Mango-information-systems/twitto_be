@@ -86,10 +86,11 @@ app.socket.on('tweet', function (tweet) {
 	app.view.tweetsPerMinute.addTweet()
 	app.view.tweetsPerSecond.addTweet()
 	app.view.donutChart.addTweets([tweet])
-	app.view.topHashTags.addTweet(tweet)
-	app.view.topMentions.addTweet(tweet)
-
+	
+	if(tweet.has_hashtag)
+		app.view.topHashTags.addTweet(tweet.hashtags)
+	
+	if(tweet.has_mention)
+		app.view.topMentions.addTweet(tweet.mentions)
+	
 })
-
-
-

@@ -25,7 +25,7 @@ function BarChart (svg) {
 		.range([0, width])
 
 	var y = d3.scaleBand()
-		.range([0, height])
+		.range([0, height * 2])
 		.padding(0.1)
 		.round(0)
 
@@ -46,69 +46,58 @@ function BarChart (svg) {
 	 * @private
 	 *
 	 */
-	function updateStats(tweet) {
-		var stats = []
-			,result = {}
-			, reorder = false
+	function updateStats(entities) {
+		var result = {}
 			, tempLowestCount = 0
 
+			//~ console.log('entities', entities)
 
-		//if(self.allEntitiesStats.length == 0){
-		//	self.redrawChart()
-		//}
-
-		// Check if hashtags or mentions
-		if(tweet.has_hashtag || tweet.has_mention){
-			if(self.entityType === 'hashtags') {
-				stats = tweet.hashtags
-			} else {
-				stats = tweet.mentions
-			}
-
-			console.log('stats', stats)
-			//~ console.log(tweet)
-			stats.forEach(function (s) {
-				reorder = false
+			// increment statistics, and 
+			entities.forEach(function (entity) {
 
 				// Increase counter or add stat in allstats
-				if(self.allEntitiesStats.hasOwnProperty(s)) {
-					self.allEntitiesStats[s]++
-				} else {
-					self.allEntitiesStats[s] = 1
-				}
+				if(self.allEntitiesStats.hasOwnProperty(entity))
+					self.allEntitiesStats[entity]++
+				else
+					self.allEntitiesStats[entity] = 1
 
-				// If the current stats counter is >= than the lowestcount
-				// add it in the topEntitiesStats
+				// If the current entities counter is >= than the lowestcount
+				// update its value inside topEntitiesStats, or add it inside topEntitiesStats
 
-				console.log(s, self.topEntitiesStats.length, '||',  self.allEntitiesStats[s] , self.lowestCount)
+				if(self.topEntitiesStats.length < 10 || self.allEntitiesStats[entity] > self.lowestCount) {
 
-				if(self.topEntitiesStats.length < 10 || self.allEntitiesStats[s] > self.lowestCount){
-console.log('if', self.topEntitiesStats.length < 10 || self.allEntitiesStats[s] > self.lowestCount)
-					self.topEntitiesStats.push({'key': s, 'value': self.allEntitiesStats[s]})
-					tempLowestCount = self.topEntitiesStats.length ? self.topEntitiesStats.slice(self.topEntitiesStats.length - 1, self.topEntitiesStats.length)[0].value : 0
-					console.log('tempLowestCount', tempLowestCount ,'self.lowestCount', self.lowestCount)
-					if(tempLowestCount > self.lowestCount){
-						reorder = true
-					}
+					var alreadyExists = false
+					
+					// increment value in the top10
+					self.topEntitiesStats.forEach(function(stats, ix) {
+
+						if (stats.key === entity) {
+							self.topEntitiesStats[ix].value = self.allEntitiesStats[entity]
+							alreadyExists = true
+						}
+					})
+					
+					// new entity to add to the top10
+					if (!alreadyExists)
+						self.topEntitiesStats.push({'key': entity, 'value': self.allEntitiesStats[entity]})
+					
+					tempLowestCount = self.topEntitiesStats.length ? self.topEntitiesStats[self.topEntitiesStats.length - 1].value : 0
+					
+					//~ console.log('tempLowestCount', tempLowestCount ,'self.lowestCount', self.lowestCount)
 				}
 
 			})
 
-			console.log('reorder', reorder)
-console.log('-------------')
-			// Reorder
-			if(reorder){
+			// Reorder top stats records based on value, then key for records having equal values
+			self.topEntitiesStats.sort(function (p1, p2) {
+				return p2.value !== p1.value ? p2.value - p1.value : p2.key - p1.key
+			})
+			
+			self.topEntitiesStats = self.topEntitiesStats.slice(0, 10)
+			
+			self.lowestCount = tempLowestCount
 
-				self.topEntitiesStats.sort(function (p1, p2) {
-					return [p2.value - p1.value, p2.key - p1.key]
-				})
-				self.topEntitiesStats = self.topEntitiesStats.slice(0, 10)
-				self.lowestCount = tempLowestCount
-
-				self.redrawChart()
-			}
-
-		}
+			self.redrawChart()
 	}
 
 	/****************************************
@@ -138,21 +127,19 @@ console.log('-------------')
 
 	}
 
-	this.addTweet = function (tweet) {
+	this.addTweet = function (entities) {
 		if(typeof self.topEntitiesStats !== 'undefined') {
-			updateStats(tweet)
+			updateStats(entities)
 		}
 	}
 
 	this.redrawChart = function(){
 
-		console.log('redraw', self.topEntitiesStats )
+		//~ console.log('redraw', self.topEntitiesStats )
 
 		//Reset domains
-		y.domain(self.topEntitiesStats
-			.map(function (d) {
-				return d.key
-			}))
+		y.domain(d3.range(self.topEntitiesStats.length))
+		
 		var barmax = d3.max(self.topEntitiesStats, function (e) {
 			return e.value
 		})
@@ -177,8 +164,8 @@ console.log('-------------')
 			.enter()
 			.append('g')
 			.attr('class', 'chartRow')
-			.attr('transform', function (d) {
-				return 'translate(0,' + y(d.key) * 2 + ')'
+			.attr('transform', function (d, i) {
+				return 'translate(0,' + y(i) + ')'
 			})
 
 		//Add rectangles
@@ -223,6 +210,30 @@ console.log('-------------')
 			.duration(300)
 			.attr('opacity', 1)
 
+		//Update bar widths
+		chartRow.select(".bar").transition()
+			.duration(300)
+			.attr("width", function (d) {
+				return x(d.value)
+			})
+
+		//Update data labels
+		chartRow.select(".label").transition()
+			.duration(300)
+			.text(function (d) {
+				return d.value
+		})
+		////////////////
+		//REORDER ROWS//
+		////////////////
+
+		chartRow.transition()
+			.duration(1000)
+			.attr('transform', function (d, i) {
+				//~ console.log('reordering', d.key, i, y(i))
+				return 'translate(0,' + y(i) + ')'
+			})
+
 		////////
 		//EXIT//
 		////////
@@ -235,15 +246,6 @@ console.log('-------------')
 			.remove()
 
 
-		////////////////
-		//REORDER ROWS//
-		////////////////
-
-		chartRow.transition()
-			.duration(1000)
-			.attr('transform', function (d) {
-				return 'translate(0,' + y(d.key) * 2 + ')'
-			})
 	}
 
 	return this	
