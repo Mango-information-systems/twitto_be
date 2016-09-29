@@ -143,19 +143,25 @@ function Tweets(storage) {
 		hashtags = Object.keys(allHashtags).map(function (key) {
 			return {key: key, value: this[key]}
 		}, allHashtags)
+		
 		hashtags.sort(function (p1, p2) {
-			return p2.value - p1.value
+			return p2.value !== p1.value ? p2.value - p1.value : p2.key.toLowerCase() < p1.key.toLowerCase()
 		})
+		
 		topHashtags = hashtags.slice(0, 10)
+		
 		lowestHashtagCount = topHashtags.length ? topHashtags.slice(topHashtags.length - 1, topHashtags.length)[0].value : 0
 
 		mentions = Object.keys(allMentions).map(function (key) {
 			return {key: key, value: this[key]}
 		}, allMentions)
+		
 		mentions.sort(function (p1, p2) {
-			return p2.value - p1.value
+			return p2.value !== p1.value ? p2.value - p1.value : p2.key.toLowerCase() < p1.key.toLowerCase()
 		})
+		
 		topMentions = mentions.slice(0, 10)
+		
 		lowestMentionCount = topHashtags.length ? topMentions.slice(topMentions.length - 1, topMentions.length)[0].value : 0
 
 		self.entitiesStats = {

@@ -90,7 +90,7 @@ function BarChart (svg) {
 
 			// Reorder top stats records based on value, then key for records having equal values
 			self.topEntitiesStats.sort(function (p1, p2) {
-				return p2.value !== p1.value ? p2.value - p1.value : p2.key - p1.key
+				return p2.value !== p1.value ? p2.value - p1.value : p2.key.toLowerCase() < p1.key.toLowerCase()
 			})
 			
 			self.topEntitiesStats = self.topEntitiesStats.slice(0, 10)
