@@ -109,31 +109,31 @@ function Tweets(storage) {
 			, lowestHashtagCount = 0
 			, lowestMentionCount = 0
 
-		self.tweets.forEach(function (t) {
-			if(t.has_mention){
-				t.mentions.forEach(function (m){
+		self.tweets.forEach(function (tweet) {
+			if(tweet.has_mention){
+				tweet.mentions.forEach(function (mention){
 
-					if(allHashtags.hasOwnProperty(m)) {
-						allHashtags[m]++
-					} else {
-						allHashtags[m] = 1
+					if(allMentions.hasOwnProperty(mention)){
+						allMentions[mention]++
+					}else{
+						allMentions[mention] = 1
 					}
 
 					// Why does the following not work?
-					// mentions[m] = (mentions.hasOwnProperty(m)? mentions[m]++ : 1 )
+					// mentions[mention] = (mentions.hasOwnProperty(mention)? mentions[mention]++ : 1 )
 				})
 			}
-			if(t.has_hashtag) {
-				t.hashtags.forEach(function (h) {
+			if(tweet.has_hashtag) {
+				tweet.hashtags.forEach(function (hashtag) {
 
-					if(allMentions.hasOwnProperty(h)){
-						allMentions[h]++
-					}else{
-						allMentions[h] = 1
+					if(allHashtags.hasOwnProperty(hashtag)) {
+						allHashtags[hashtag]++
+					} else {
+						allHashtags[hashtag] = 1
 					}
 
 					// Why does the following not work?
-					// hashtags[h] = (hashtags.hasOwnProperty(h) ? hashtags[h]++ : 1 )
+					// hashtags[hashtag] = (hashtags.hasOwnProperty(hashtag) ? hashtags[hashtag]++ : 1 )
 				})
 			}
 
@@ -162,7 +162,7 @@ function Tweets(storage) {
 		
 		topMentions = mentions.slice(0, 10)
 		
-		lowestMentionCount = topHashtags.length ? topMentions.slice(topMentions.length - 1, topMentions.length)[0].value : 0
+		lowestMentionCount = topMentions.length ? topMentions.slice(topMentions.length - 1, topMentions.length)[0].value : 0
 
 		self.entitiesStats = {
 			'topHashtags': topHashtags
