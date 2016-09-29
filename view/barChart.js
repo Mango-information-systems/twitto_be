@@ -129,6 +129,7 @@ console.log('-------------')
 		self.topEntitiesStats = topEntitiesStats
 		self.lowestCount = lowestCount
 		self.entityType = entityType
+		self.prefix = entityType === 'hashtags' ? '#' : '@'
 
 		if(topEntitiesStats.length){
 			self.redrawChart()
@@ -217,7 +218,7 @@ console.log('-------------')
 			.attr('dy', '.9em')
 			.attr('dx', '.5em')
 			.text(function (d) {
-				return d.key
+				return self.prefix + d.key
 			}).transition()
 			.duration(300)
 			.attr('opacity', 1)
