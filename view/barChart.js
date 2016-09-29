@@ -201,7 +201,7 @@ console.log('-------------')
 			.attr('x', 0)
 			.attr('opacity', 0)
 			.attr('dy', '.9em')
-			.attr('dx', '.5em')
+			.attr('dx', '2.2em')
 			.text(function (d) {
 				return d.value
 			}).transition()
