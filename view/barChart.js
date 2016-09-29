@@ -117,7 +117,7 @@ function BarChart (svg) {
 		self.allEntitiesStats = allEntitiesStats
 		self.topEntitiesStats = topEntitiesStats
 		self.lowestCount = lowestCount
-		self.entityType = entityType
+
 		self.prefix = entityType === 'hashtags' ? '#' : '@'
 
 		if(topEntitiesStats.length){
