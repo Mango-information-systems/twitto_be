@@ -26,9 +26,16 @@ function Tweets(storage) {
 		replyCount: 0
 		, totalCount: 0
 	}
+
+	self.entitiesStats = {
+		hashtags: []
+		, mentions: []
+	}
 	
 	// compute tweet statistics
 	calculateTweetStats()
+	calculateEntitiesStats()
+
 
 	// compute tweets time series
 	self.tweetsPerMinute = computeTimeline('m')
@@ -81,6 +88,92 @@ function Tweets(storage) {
 		
 		calculateTweetStats()
 		
+	}
+
+	/**
+	 *
+	 * Calculate top stats (hashtags or mentions)
+	 *
+	 * @return {object} top stats
+	 *
+	 * @private
+	 *
+	 */
+	function calculateEntitiesStats() {
+		var hashtags = {}
+			, mentions = {}
+			, allHashtags = {}
+			, allMentions = {}
+			, topHashtags = {}
+			, topMentions = {}
+			, lowestHashtagCount = 0
+			, lowestMentionCount = 0
+
+		self.tweets.forEach(function (tweet) {
+			if(tweet.has_mention){
+				tweet.mentions.forEach(function (mention){
+
+					if(allMentions.hasOwnProperty(mention)){
+						allMentions[mention]++
+					}else{
+						allMentions[mention] = 1
+					}
+
+					// Why does the following not work?
+					// mentions[mention] = (mentions.hasOwnProperty(mention)? mentions[mention]++ : 1 )
+				})
+			}
+			if(tweet.has_hashtag) {
+				tweet.hashtags.forEach(function (hashtag) {
+
+					if(allHashtags.hasOwnProperty(hashtag)) {
+						allHashtags[hashtag]++
+					} else {
+						allHashtags[hashtag] = 1
+					}
+
+					// Why does the following not work?
+					// hashtags[hashtag] = (hashtags.hasOwnProperty(hashtag) ? hashtags[hashtag]++ : 1 )
+				})
+			}
+
+
+		})
+
+		hashtags = Object.keys(allHashtags).map(function (key) {
+			return {key: key, value: this[key]}
+		}, allHashtags)
+		
+		hashtags.sort(function (p1, p2) {
+			return p2.value !== p1.value ? p2.value - p1.value : p2.key.toLowerCase() < p1.key.toLowerCase()
+		})
+		
+		topHashtags = hashtags.slice(0, 10)
+		
+		lowestHashtagCount = topHashtags.length ? topHashtags.slice(topHashtags.length - 1, topHashtags.length)[0].value : 0
+
+		mentions = Object.keys(allMentions).map(function (key) {
+			return {key: key, value: this[key]}
+		}, allMentions)
+		
+		mentions.sort(function (p1, p2) {
+			return p2.value !== p1.value ? p2.value - p1.value : p2.key.toLowerCase() < p1.key.toLowerCase()
+		})
+		
+		topMentions = mentions.slice(0, 10)
+		
+		lowestMentionCount = topMentions.length ? topMentions.slice(topMentions.length - 1, topMentions.length)[0].value : 0
+
+		self.entitiesStats = {
+			'topHashtags': topHashtags
+			, 'allHashtags': allHashtags
+			, 'lowestHashtagsCount': lowestHashtagCount
+			, 'topMentions': topMentions
+			, 'allMentions': allMentions
+			, 'lowestMentionsCount': lowestMentionCount
+		}
+
+
 	}
 
 	/**
@@ -264,7 +357,7 @@ function Tweets(storage) {
 		storage.setItem('tweets', self.tweets)
 		
 		updateTweetStats(tweet)
-		
+		//console.log('update')
 	}
 
 	// retrieve all tweets
@@ -275,6 +368,11 @@ function Tweets(storage) {
 	// retrieve tweet statistics
 	this.getStats = function() {
 		return self.tweetStats
+	}
+
+	// retrieve tweet statistics
+	this.getEntitiesStats = function () {
+		return self.entitiesStats
 	}
 	
 	// retrieve tweet statistics
