@@ -23,6 +23,16 @@ function DonutChart(svg) {
 	this.mentionCount = svg.select('#mentionCount')
 	this.mediaCount = svg.select('#mediaCount')
 	
+	//~this.colors = d3.scaleLinear()
+		//~.domain(d3.range(5))
+		//~.range(["white", "green"])
+		//~.interpolate(d3.interpolateHcl)
+
+	this.colors = d3.scaleSequential(function(t) {
+		console.log(t, d3.hsl(.5, 1, .25 + .749 * t / 4), d3.hsl(.33, 1, .25 + .749 * t / 4) + '')
+		return d3.hsl(135, 1, .25 + .749 * t / 4) + ''
+	})
+
 	var bgArc = d3.arc()
 		.innerRadius(40)
 		.outerRadius(145)
@@ -60,27 +70,27 @@ function DonutChart(svg) {
 	
 	this.replySlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
-		.style('fill', '#008000')
+		.style('fill', self.colors(0))
 		.attr('d', replyArc)
 	
 	this.hashtagSlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
-		.style('fill', 'black')
+		.style('fill', self.colors(2))
 		.attr('d', hashtagArc)
 	
 	this.linkSlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
-		.style('fill', '#FFE936')
+		.style('fill', self.colors(1))
 		.attr('d', linkArc)
 	
 	this.mentionSlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
-		.style('fill', '#FF0F21')
+		.style('fill', self.colors(3))
 		.attr('d', mentionArc)
 	
 	this.mediaSlice = this.g.append('path')
 		.datum({endAngle: 0.001 * tau - tau / 4})
-		.style('fill', '#00aced')
+		.style('fill', self.colors(4))
 		.attr('d', mediaArc)
 		
 	/****************************************
