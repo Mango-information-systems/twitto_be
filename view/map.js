@@ -31,13 +31,17 @@ function Map (container) {
 	
 	this.context = this.canvas.node().getContext('2d')
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
-
+	
+	this.colors = {
+		'en': 'rgba(0, 0, 0, .3)'
+		, 'fr': 'rgba(255, 233, 54, .3)'
+		, 'nl': 'rgba(255, 15, 33, .3)'
+		, 'fallback': 'rgba(0, 172, 237, .3)'
+	}
 
 	var detachedContainer = document.createElement('custom')
 
 	this.dataContainer = d3.select(detachedContainer)
-
-
 
 	d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
 		
@@ -62,8 +66,6 @@ function Map (container) {
 	****************************************/
 	function bindData(tweets) {
 
-		//~var transitionDuration = Math.min(Math.max(tweets.length, 400), 2000)
-		
 		var dataBinding = self.dataContainer.selectAll('custom.dot')
 		  .data(tweets, function(d) { return d.id_str })
 
@@ -81,7 +83,9 @@ function Map (container) {
 		  .attr('cy', function(d) {
 			return self.projection(d.coordinates)[1]
 		  })
-		  .attr('fillStyle', 'rgba(0, 128, 0, .3')
+		  .attr('fillStyle', function(d) {
+			  return self.colors[d.lang] || self.colors.fallback
+		  })
 
 		updateCanvas()
 
