@@ -1,4 +1,5 @@
 var d3 = require('d3')
+	, Utils = require('../view/utils')
 	, debug = require('debug')('lineChart')
 
 /**
@@ -13,7 +14,9 @@ var d3 = require('d3')
 function LineChart (svg, granularity) {
 
 	var self = this
-	
+		, utils = new Utils()
+		, transitionDelayDefault = 650
+
 	if (granularity === 'm') {
 		var timeRes = 60000
 			, barCount = 30
@@ -47,6 +50,9 @@ function LineChart (svg, granularity) {
 	****************************************/
 	function nextTimeInterval() {
 
+		var transitionDelay = utils.isTabActive() ? transitionDelayDefault : 0
+		
+
 		self.timeline.shift()
 		
 		self.timeline.push({
@@ -66,19 +72,19 @@ function LineChart (svg, granularity) {
 				.style('stroke', 'white')
 				.style('stroke-width', '1')
 			.transition()
-				.duration(650)
+				.duration(transitionDelay)
 				.attr('y', function(d) { return self.y(d.count)})
 				.attr('height', function(d) { return height - self.y(d.count)})
 
 		rect.transition()
-			.duration(650)
+			.duration(transitionDelay)
 				.attr('x', function(d, i) { return self.x(i - barCount)})
 				.style('fill', '#66B366')
 		
 		self.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
 		
 		rect.exit().transition()
-			.duration(650)
+			.duration(transitionDelay)
 			.attr('y', height)
 			.attr('height', 0)
 			.attr('x', function(d, i) { return self.x(i - barCount)})
@@ -154,6 +160,7 @@ function LineChart (svg, granularity) {
 	this.addTweet = function() {
 
 		if (typeof this.timeline !== 'undefined') {
+			var transitionDelay = utils.isTabActive() ? transitionDelayDefault : 0
 			this.timeline[self.timeline.length-1].count++
 			
 			this.maxCount = d3.max(self.timeline, function(d) {return d.count})
@@ -164,6 +171,7 @@ function LineChart (svg, granularity) {
 			
 			this.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
 				.transition()
+				.delay(transitionDelay)
 				  .attr('y', function(d) { return self.y(d.count) })
 				  .attr('height', function(d) { return height - self.y(d.count)})
 		}
