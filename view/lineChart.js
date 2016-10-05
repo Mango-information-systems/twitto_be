@@ -15,7 +15,7 @@ function LineChart (svg, granularity) {
 
 	var self = this
 		, utils = new Utils()
-		, transitionDelayDefault = 650
+		, transitionDelay = 650
 
 	if (granularity === 'm') {
 		var timeRes = 60000
@@ -50,7 +50,7 @@ function LineChart (svg, granularity) {
 	****************************************/
 	function nextTimeInterval() {
 
-		var transitionDelay = utils.isTabActive() ? transitionDelayDefault : 0
+		var isTabActive = utils.isTabActive()
 		
 
 		self.timeline.shift()
@@ -71,24 +71,47 @@ function LineChart (svg, granularity) {
 				.style('fill', '#008000')
 				.style('stroke', 'white')
 				.style('stroke-width', '1')
-			.transition()
-				.duration(transitionDelay)
-				.attr('y', function(d) { return self.y(d.count)})
-				.attr('height', function(d) { return height - self.y(d.count)})
 
-		rect.transition()
-			.duration(transitionDelay)
-				.attr('x', function(d, i) { return self.x(i - barCount)})
+		if(isTabActive){
+			rect.transition()
+				.duration(transitionDelay)
+					.attr('y', function(d) { return self.y(d.count)})
+					.attr('height', function(d) { return height - self.y(d.count)})
+		}else{
+			rect.attr('y', function(d) { return self.y(d.count)})
+				.attr('height', function(d) { return height - self.y(d.count)})
+		}
+
+		if(isTabActive) {
+			rect.transition()
+				.duration(transitionDelay)
+					.attr('x', function(d, i) { return self.x(i - barCount)})
+					.style('fill', '#66B366')
+		}else{
+			rect.attr('x', function(d, i) { return self.x(i - barCount)})
 				.style('fill', '#66B366')
+		}
+
+
 		
 		self.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
-		
-		rect.exit().transition()
-			.duration(transitionDelay)
+
+		if(isTabActive){
+			rect.exit().transition()
+				.duration(transitionDelay)
+				.attr('y', height)
+				.attr('height', 0)
+				.attr('x', function(d, i) { return self.x(i - barCount)})
+				.remove()
+		}else{
+		rect.exit()
 			.attr('y', height)
 			.attr('height', 0)
 			.attr('x', function(d, i) { return self.x(i - barCount)})
 			.remove()
+		}
+
+
 	
 	}
 	
@@ -160,7 +183,8 @@ function LineChart (svg, granularity) {
 	this.addTweet = function() {
 
 		if (typeof this.timeline !== 'undefined') {
-			var transitionDelay = utils.isTabActive() ? transitionDelayDefault : 0
+			var isTabActive = utils.isTabActive()
+				, bars
 			this.timeline[self.timeline.length-1].count++
 			
 			this.maxCount = d3.max(self.timeline, function(d) {return d.count})
@@ -168,12 +192,20 @@ function LineChart (svg, granularity) {
 			this.y.domain([0, self.maxCount])
 			
 			this.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
-			
-			this.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
-				.transition()
-				.delay(transitionDelay)
+
+			bars = this.bars.selectAll('rect')
+			if(isTabActive){
+				bars.data(self.timeline, function(d) {return d.id})
+					.transition()
+					.delay(transitionDelay)
+					  .attr('y', function(d) { return self.y(d.count) })
+					  .attr('height', function(d) { return height - self.y(d.count)})
+			}else{
+				bars.data(self.timeline, function(d) {return d.id})
 				  .attr('y', function(d) { return self.y(d.count) })
 				  .attr('height', function(d) { return height - self.y(d.count)})
+			}
+
 		}
 	}
 
