@@ -47,6 +47,7 @@ function Tweets (app) {
 				, has_mention: tweet.entities.user_mentions.length !== 0
 				, mentions: []
 				, has_media: tweet.entities.media && tweet.entities.media.length !== 0
+				, lang: tweet.lang
 			}
 
 			if(tweet.entities.hashtags.length !== 0){
