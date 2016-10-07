@@ -1,5 +1,5 @@
 var d3 = require('d3')
-	, Utils = require('../view/utils')
+	, UtilsClient = require('../view/utilsClient')
 	, debug = require('debug')('lineChart')
 
 /**
@@ -14,7 +14,7 @@ var d3 = require('d3')
 function LineChart (svg, granularity) {
 
 	var self = this
-		, utils = new Utils()
+		, utils = new UtilsClient()
 		, transitionDelay = 650
 
 	if (granularity === 'm') {

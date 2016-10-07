@@ -1,4 +1,4 @@
-function Utils() {
+function UtilsClient() {
 
 	/***********
 	 *
@@ -37,4 +37,4 @@ function Utils() {
 
 }
 
-module.exports = Utils
+module.exports = UtilsClient
