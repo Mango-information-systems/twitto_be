@@ -32,8 +32,9 @@ app.listen(8080)
 console.log('knock on the magic 8080 port')
 
 app.render('pages/502', {
-		title: 'Twitto.be - down for maintenance'
-		, description: 'Twitto is temporarily unavailable - please try again in a few seconds'
+		app_meta: params.app_meta
+		, logo: params.logo
+		, app_text: params.app_text
 		, ga: params.googleAnalytics
 	}, function(err, res) {
 	if (err)
