@@ -25,10 +25,17 @@ function Map (container) {
 		.center([5, 48.9])
 		.scale(this.width * 13)
 		.translate([this.width * 1.25 / 2, this.height * 1.25])
-	
+
+	// Zoom scale
+	this.zoom = d3.zoom()
+		.scaleExtent([0.5, 4])
+	this.zoomTransformK = 0
+
 	// render the map background
 	this.canvas = this.container.append('canvas').attr('height', this.height).attr('width', this.width)
-	
+	this.canvas.call(this.zoom
+		.on('zoom', zoomed))
+
 	this.context = this.canvas.node().getContext('2d')
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
 
@@ -86,7 +93,27 @@ function Map (container) {
 		updateCanvas()
 
 	}
-	
+
+	/****************************************
+	 *
+	 * On mouse scroll zoom
+	 *
+	 ****************************************/
+	function zoomed() {
+
+		self.zoomTransformK = d3.event.transform.k
+
+		self.context.save()
+		self.context.clearRect(0, 0, self.width, self.height)
+		self.context.translate(d3.event.transform.x, d3.event.transform.y)
+		self.context.scale(d3.event.transform.k, d3.event.transform.k)
+
+		updateCanvas()
+		self.context.restore()
+		self.dataContainer.selectAll('custom.dot').attr('r', self.zoomTransformK > 2 ? 1 : 3)
+	}
+
+
 	function updateCanvas() {
 
 		// clear canvas
