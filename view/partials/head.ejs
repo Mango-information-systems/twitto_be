@@ -1,6 +1,6 @@
 <meta charset="utf-8">
-<title><%- title %></title>
-<meta name="description" content="<%- description %>">
+<title><%- app_meta.title %></title>
+<meta name="description" content="<%- app_meta.description %>">
 <meta name="author" content="Mango Information Systems">
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,13 +11,13 @@
 <link rel="stylesheet" href="css/normalize.css">
 <link rel="stylesheet" href="css/skeleton.min.css">
 
-<meta property="og:title" content="<%- title %>" />
+<meta property="og:title" content="<%- app_meta.title %>" />
 <meta property="og:type" content="website" />
-<meta property="og:description" content="<%- description %>" />
-<meta property="og:url" content="https://twitto.be" />
-<meta property="og:image" content="https://twitto.be/img/twitto-be-dashboard-screenshot.png" />
+<meta property="og:description" content="<%- app_meta.description %>" />
+<meta property="og:url" content="<%- app_meta.url %>" />
+<meta property="og:image" content="<%- app_meta.image %>" />
 
-<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="icon" type="image/png" href="<%- app_meta.favicon %>">
 
 <% if(typeof ga !== 'undefined') { %>
 	<script>
