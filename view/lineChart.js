@@ -1,5 +1,5 @@
 var d3 = require('d3')
-	, UtilsClient = require('../view/utilsClient')
+	, UtilsClient = require('../controller/utilsClient')
 	, debug = require('debug')('lineChart')
 
 /**
