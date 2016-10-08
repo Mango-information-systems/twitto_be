@@ -1,37 +1,43 @@
 function UtilsClient() {
 
+	var state
+
+	switch(true) {
+		case typeof document.hidden !== 'undefined':
+			state = 'visibilityState'
+		break
+		case typeof document.mozHidden !== 'undefined':
+			state = 'mozVisibilityState'
+		break
+		case typeof document.msHidden !== 'undefined':
+			state = 'msVisibilityState'
+		break
+		case typeof document.webkitHidden !== 'undefined':
+			state = 'webkitVisibilityState'
+		break
+	}
+
+
 	/***********
 	 *
 	 * Check if tab has focus
+	 * 
+	 * @return {boolean} is tab active
 	 *
 	 ************/
 	this.isTabActive = function () {
 
-
-		var hidden
-			, state
-			, isVisible = true
-
-		if(typeof document.hidden !== 'undefined') {
-			state = 'visibilityState'
-		} else if(typeof document.mozHidden !== 'undefined') {
-			state = 'mozVisibilityState'
-		} else if(typeof document.msHidden !== 'undefined') {
-			state = 'msVisibilityState'
-		} else if(typeof document.webkitHidden !== 'undefined') {
-			state = 'webkitVisibilityState'
-		}
-
+		var isVisible = true
 
 		if(document[state] == 'hidden'){
-			document.title = 'Inactive'
+			document.title = 'Inactive' //temp
 			isVisible = false
-		} else {
-			document.title = 'Active'
+		}
+		else {
+			document.title = 'Active' //temp
 		}
 
 		return isVisible
-
 
 	}
 
