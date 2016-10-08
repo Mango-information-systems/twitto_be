@@ -1,4 +1,5 @@
 var d3 = require('d3')
+	, params = require('../params')
 	, debug = require('debug')('map')
 
 /**
@@ -22,7 +23,7 @@ function Map (container) {
 	this.height = containerSize.width / 1.348
 
 	this.projection = d3.geoMercator()
-		.center([5, 48.9])
+		.center([params.canvas.center_lat, params.canvas.center_long])
 		.scale(this.width * 13)
 		.translate([this.width * 1.25 / 2, this.height * 1.25])
 	
@@ -39,10 +40,10 @@ function Map (container) {
 
 
 
-	d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
-		
-		self.belgianProvinces = belgianProvinces
-		
+	d3.json(params.geojson, function (error, geoJsonMap) {
+
+		self.geoJsonMap = geoJsonMap
+
 	})
 	
 	
@@ -96,7 +97,7 @@ function Map (container) {
 
 		// draw map of Belgium as background
 		self.context.beginPath()
-		self.path(self.belgianProvinces)
+		self.path(self.geoJsonMap)
 		
 		self.context.fillStyle = '#eeeeee'
 		self.context.fill()

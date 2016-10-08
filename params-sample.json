@@ -7,4 +7,38 @@
 		, "access_token_secret" : "--fill-me--"
 	}
 	, "googleAnalytics": ""
+	, "logo" : {
+		"src": "img/twitto_be-0.4.0-square-logo-40x40.png"
+		, "width" : 40
+		, "height" : 40
+	}
+	, "app_text" : {
+		"title" : "twitto.be"
+		, "subtitle" : "real time dashboard of Belgian tweets"
+		, "about" : "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. The data you're seeing is what is happening right now on twitter, it's real real-time."
+	}
+	, "app_meta" : {
+		"title" : "Twitto.be - realtime tweets dashboard"
+		, "description" : "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. Curious about what's being tweeted right now? Come have a look"
+		, "url" : "https://twitto.be"
+		, "image" : "https://twitto.be/img/twitto-be-dashboard-screenshot.png"
+		, "favicon" : "/img/favicon.png"
+	}
+
+	, "geojson" : "data/belgian-provinces.json"
+	, "stream" : {
+		"sw": {
+			"lat": 49.496899
+			, "long": 2.54563
+		}
+		, "ne": {
+			"lat": 51.505081
+			, "long": 6.40791
+		}
+	}
+	, "country_code" : "BE"
+	, "canvas" : {
+		"center_lat" : 5
+		, "center_long" :48.9
+	}
 }

@@ -39,10 +39,10 @@ function TweetStream () {
 	function streamTweets() {
 		debug('running streamTweets')
 		
-		tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
+		tu.filter({locations: [params.stream.sw, params.stream.ne]}, function(stream){
 			stream.on('tweet', function(tweet){
 
-				if (tweet.place.country_code === 'BE') {
+				if (tweet.place.country_code === params.country_code) {
 					
 					// send tweet to the parent process
 					process.send(tweet)

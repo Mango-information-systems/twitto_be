@@ -47,15 +47,17 @@ app.render('pages/502', {
 // index page route
 app.get('/', function (req, res) {
 	res.render('pages/index', {
-		title: 'Twitto.be - realtime tweets dashboard'
-		, description: 'Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. Curious about what\'s being tweeted right now? Come have a look'
+		app_meta : params.app_meta
+		, logo: params.logo
+		, app_text: params.app_text
 		, ga: params.googleAnalytics
 	})
 })
 app.get('/502', function (req, res) {
 	res.render('pages/502', {
-		title: 'Twitto.be - down for maintenance'
-		, description: 'Twitto is temporarily unavailable - please try again in a few seconds'
+		app_meta: params.app_meta
+		, logo: params.logo
+		, app_text: params.app_text
 		, ga: params.googleAnalytics
 	})
 })
