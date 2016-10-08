@@ -21,7 +21,7 @@
 		"title" : "Twitto.be - realtime tweets dashboard"
 		, "description" : "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. Curious about what's being tweeted right now? Come have a look"
 		, "url" : "https://twitto.be"
-		, "image" : "https://twitto.be/img/twitto-be-dashboard-screenshot.png"
+		, "thumbnail" : "/img/twitto-be-dashboard-screenshot.png"
 		, "favicon" : "/img/favicon.png"
 	}
 
