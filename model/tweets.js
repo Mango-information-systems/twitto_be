@@ -22,6 +22,11 @@ function Tweets(storage) {
 		self.tweets = storage.getItemSync('tweets')
 	}
 	
+	self.stats = {
+		tweets: {}
+		, entities: {}
+	}
+	
 	self.tweetStats = {
 		replyCount: 0
 		, totalCount: 0
@@ -33,9 +38,9 @@ function Tweets(storage) {
 	}
 	
 	// compute tweet statistics
-	calculateTweetStats()
+	calculateTweetCounts()
+	
 	calculateEntitiesStats()
-
 
 	// compute tweets time series
 	self.tweetsPerMinute = computeTimeline('m')
@@ -86,7 +91,7 @@ function Tweets(storage) {
 	
 		storage.setItem('tweets', self.tweets)
 		
-		calculateTweetStats()
+		calculateTweetCounts()
 		
 	}
 
@@ -248,39 +253,39 @@ function Tweets(storage) {
 
 	/**
 	* 
-	* Calculate tweet statistics
+	* Calculate tweet statistics: number of retweets, mentions, hashtags etc
 	*
 	* @private
 	* 
 	*/	
-	function calculateTweetStats(){
+	function calculateTweetCounts(){
 		
-		self.tweetStats.replyCount = 0
-		self.tweetStats.hashtagCount = 0
-		self.tweetStats.linkCount = 0
-		self.tweetStats.mentionCount = 0
-		self.tweetStats.mediaCount = 0
+		self.stats.tweets.replyCount = 0
+		self.stats.tweets.hashtagCount = 0
+		self.stats.tweets.linkCount = 0
+		self.stats.tweets.mentionCount = 0
+		self.stats.tweets.mediaCount = 0
 		
 		self.tweets.forEach(function(t) {
 			
 			if(t.is_reply)
-				self.tweetStats.replyCount++
+				self.stats.tweets.replyCount++
 			
 			if(t.has_hashtag)
-				self.tweetStats.hashtagCount++
+				self.stats.tweets.hashtagCount++
 			
 			if(t.has_link)
-				self.tweetStats.linkCount++
+				self.stats.tweets.linkCount++
 			
 			if(t.has_mention)
-				self.tweetStats.mentionCount++
+				self.stats.tweets.mentionCount++
 			
 			if(t.has_media)
-				self.tweetStats.mediaCount++
+				self.stats.tweets.mediaCount++
 				
 		})
 		
-		self.tweetStats.totalCount = self.tweets.length
+		self.stats.tweets.totalCount = self.tweets.length
 		
 	}
 
@@ -301,7 +306,7 @@ function Tweets(storage) {
 
 	/**
 	* 
-	* return the number of minutes of a date
+	* return the number of seconds of a date
 	* 
 	* @param {date} d
 	* 
@@ -312,6 +317,20 @@ function Tweets(storage) {
 	*/	
 	function seconds(d) {
 		return + ('' + d.getMinutes() + d.getSeconds())
+	}
+
+	/**
+	* 
+	* update entities statistics
+	*
+	* @param {object} tweet new tweet
+	* 
+	* @private
+	* 
+	*/	
+	function updateEntityStats(tweet){
+
+		
 	}
 		
 	/**
@@ -333,13 +352,13 @@ function Tweets(storage) {
 	* 
 	* @private
 	* 
-	*/	
-	function updateTweetStats(tweet){
+	*/
+	function updateTweetCounts(tweet){
 
 		if (tweet.is_reply)
-			self.tweetStats.replyCount++
+			self.stats.tweets.replyCount++
 		
-		self.tweetStats.totalCount++
+		self.stats.tweets.totalCount++
 		
 	}
 
@@ -356,29 +375,55 @@ function Tweets(storage) {
 		
 		storage.setItem('tweets', self.tweets)
 		
-		updateTweetStats(tweet)
+		updateTweetCounts(tweet)
 		//console.log('update')
 	}
 
-	// retrieve all tweets
-	this.getAll = function() {
+	/**
+	* 
+	* get all tweets
+	*
+	* @return {object} all tweets
+	* 
+	*/
+	this.getAllTweets = function() {
 		return self.tweets
 	}
-	
-	// retrieve tweet statistics
-	this.getStats = function() {
-		return self.tweetStats
+
+	/**
+	* 
+	* get tweet counts statistics
+	*
+	* @return {object} tweet counts statistics
+	* 
+	*/
+	this.getTweetCounts = function() {
+		return self.stats.tweets
 	}
 
-	// retrieve tweet statistics
+	/**
+	* 
+	* get top entities (trending hashtags / mentions)
+	*
+	* @return {object} trending entities stats
+	* 
+	*/
 	this.getEntitiesStats = function () {
 		return self.entitiesStats
 	}
 	
-	// retrieve tweet statistics
+	/**
+	* 
+	* get tweets timeline
+	* * stats per second are computed on the fly
+	* * stats per minute are retrieved from the cache (updated every minute)
+	* 
+	*
+	* @return {object} tweets per minute and second stats
+	* 
+	*/
 	this.getTimelines = function() {
 		
-		// compute per second stats on the fly
 		var perSecond = computeTimeline('s')
 				
 		return {
