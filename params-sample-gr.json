@@ -21,7 +21,7 @@
 		"title" : "Twitto.gr - realtime tweets dashboard"
 		, "description" : "Twitto.gr is a live dashboard providing analytics about the tweets geolocated in Greece. Curious about what's being tweeted right now? Come have a look"
 		, "url" : "https://twitto.gr"
-		, "image" : "https://twitto.gr/img/twitto-be-dashboard-screenshot.png"
+		, "thumbnail" : "/img/twitto-be-dashboard-screenshot.png"
 		, "favicon" : "/img/favicon.png"
 	}
 
