@@ -42,8 +42,8 @@ function TweetStream () {
 		tu.filter({locations: [{lat: 49.496899, long: 2.54563}, {lat: 51.505081, long: 6.40791}]}, function(stream){
 			stream.on('tweet', function(tweet){
 
-				if (tweet.place.country_code === 'BE') {
-					
+				if (tweet.place.country_code === 'BE' && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
+
 					// send tweet to the parent process
 					process.send(tweet)
 				}
