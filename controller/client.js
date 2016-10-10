@@ -78,9 +78,9 @@ app.socket.on('entitiesStats', function (stats) {
 
 	d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
 
-	app.view.topHashTags.init('hashtags', stats.topHashtags)
+	app.view.topHashTags.render('hashtags', stats.topHashtags)
 	
-	app.view.topMentions.init('mentions', stats.topMentions)
+	app.view.topMentions.render('mentions', stats.topMentions)
 
 })
 

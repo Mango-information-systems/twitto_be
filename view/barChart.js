@@ -50,7 +50,7 @@ function BarChart (svg) {
 	 * @param {object} timeline time series data
 	 *
 	 ************/
-	this.init = function (entityType, topEntitiesStats) {
+	this.render = function (entityType, topEntitiesStats) {
 
 		self.prefix = entityType === 'hashtags' ? '#' : '@'
 

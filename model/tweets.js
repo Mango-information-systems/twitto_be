@@ -149,14 +149,17 @@ function Tweets(storage) {
 					, value: count
 				})
 				
-				// update threshold value
-				self.staging.topHashtagCountThreshold = count
+				// update threshold value: get the lowest value from the array
+				self.staging.topHashtagCountThreshold = self.stats.entities.topHashtags.reduce(function(memo, topHashtag) {
+					return Math.min(memo, topHashtag.value)
+				}, +Infinity)
 			}
 			
 		})
 		
 		// sort the top ranking
 		self.stats.entities.topHashtags.sort(function(a, b) {
+			
 			return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
 		})
 		
@@ -180,6 +183,11 @@ function Tweets(storage) {
 				
 				// update threshold value
 				self.staging.topMentionCountThreshold = count
+				
+				// update threshold value: get the lowest value from the array
+				self.staging.topMentionCountThreshold = self.stats.entities.topMentions.reduce(function(memo, topMention) {
+					return Math.min(memo, topMention.value)
+				}, +Infinity)
 			}
 			
 		})
