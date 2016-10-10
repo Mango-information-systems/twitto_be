@@ -164,7 +164,6 @@ function Tweets(storage) {
 		// timit to top 10 values
 		self.stats.entities.topHashtags = self.stats.entities.topHashtags.slice(0, 10)
 		
-		
 		// extract the top10 mentions
 		Object.keys(self.staging.mentionsCount).forEach( function(mention) {
 			
@@ -369,14 +368,28 @@ function Tweets(storage) {
 					
 					topHashtagsChanged = true
 					
-					// add new value to the top 10
-					self.stats.entities.topHashtags.push({
-						key: hashtag
-						, value: count
+					//check whether this hashtag was already inside the top10 ranking
+					var hashtagIndex = self.stats.entities.topHashtags.findIndex(function(topHashtag) {
+						return topHashtag.key === hashtag
 					})
+
+					if (hashtagIndex !== -1) {
+						// update count value inside the top10 ranking
+						self.stats.entities.topHashtags[hashtagIndex].value = count
+					}
+					else {
+						// this hashtag is new inside the top 10
+						// add new value to the top 10
+						self.stats.entities.topHashtags.push({
+							key: hashtag
+							, value: count
+						})
+					}
 					
 					// update threshold value
-					self.staging.topHashtagCountThreshold = count
+					self.staging.topHashtagCountThreshold = self.stats.entities.topHashtags.reduce(function(memo, topHashtag) {
+						return Math.min(memo, topHashtag.value)
+					}, +Infinity)
 				}
 				
 			})
@@ -407,14 +420,28 @@ function Tweets(storage) {
 					
 					topMentionsChanged = true
 					
-					// add new value to the top 10
-					self.stats.entities.topMentions.push({
-						key: mention
-						, value: count
+					//check whether this mention was already inside the top10 ranking
+					var mentionIndex = self.stats.entities.topMentions.findIndex(function(topMention) {
+						return topMention.key === mention
 					})
+
+					if (mentionIndex !== -1) {
+						// update count value inside the top10 ranking
+						self.stats.entities.topMentions[mentionIndex].value = count
+					}
+					else {
+						// this mention is new inside the top 10
+						// add new value to the top 10
+						self.stats.entities.topMentions.push({
+							key: mention
+							, value: count
+						})
+					}
 					
 					// update threshold value
-					self.staging.topMentionCountThreshold = count
+					self.staging.topMentionCountThreshold = self.stats.entities.topMentions.reduce(function(memo, topMention) {
+						return Math.min(memo, topMention.value)
+					}, +Infinity)
 				}
 				
 			})
