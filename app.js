@@ -89,12 +89,18 @@ twitto.controller.io.on('connection', function(socket) {
 	socket.on('tweets', function() {
 //~ console.log(twitto.model.tweets.getTimelines())
 
+		// send tweet statistics (for donut chart)
 		socket.emit('tweetStats', twitto.model.tweets.getStats())
+
+		// send tweet timelines (for timeline chart)
 		socket.emit('timelines', twitto.model.tweets.getTimelines())
 
+		// send tweets (for map)
+		socket.emit('tweets', twitto.model.tweets.getAll())
+
+		// send top trends (for bar charts)
 		socket.emit('entitiesStats', twitto.model.tweets.getEntitiesStats())
 
-		socket.emit('tweets', twitto.model.tweets.getAll())
 	})
 
 	
