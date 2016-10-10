@@ -33,7 +33,9 @@ function Tweets (app) {
 	function connectTweetStream() {
 		
 		this.tweetStream = require('child_process').fork(__dirname + '/tweetStream')
-	
+		this.tweetBot = require('child_process').fork(__dirname + '/tweetBot')
+
+
 		// create listener to 'message' event
 		this.tweetStream.on('message', function(tweet) {
 
