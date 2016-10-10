@@ -24,7 +24,7 @@ function Map (container) {
 
 	this.projection = d3.geoMercator()
 		.center([params.canvas.center_lat, params.canvas.center_long])
-		.scale(this.width * 13)
+		.scale(this.width * params.canvas.scale)
 		.translate([this.width * 1.25 / 2, this.height * 1.25])
 
 	// Zoom scale
@@ -82,7 +82,7 @@ function Map (container) {
 		dataBinding.enter()
 		  .append('custom')
 		  .classed('dot', true)
-		  .attr('r', '3')
+		  .attr('r', params.canvas.dot_radius)
 		  .attr('cx', function(d) {
 			return self.projection(d.coordinates)[0]
 		  })

@@ -40,5 +40,7 @@
 	, "canvas" : {
 		"center_lat" : 5
 		, "center_long" :48.9
+		, "scale": 13
+		, "dot_radius": 3
 	}
 }

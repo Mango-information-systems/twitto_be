@@ -1,0 +1,46 @@
+{
+	"profile_name" : "local dev version"
+	, "twitter" : {
+		"consumer_key" : "--fill-me--"
+		, "consumer_secret" : "--fill-me--"
+		, "access_token_key" : "--fill-me--"
+		, "access_token_secret" : "--fill-me--"
+	}
+	, "googleAnalytics": ""
+	, "logo" : {
+		"src": "img/twitto_be-0.4.0-square-logo-40x40.png"
+		, "width" : 40
+		, "height" : 40
+	}
+	, "app_text" : {
+		"title" : "twitto.gr"
+		, "subtitle" : "real time dashboard of tweets in Greece"
+		, "about" : "Twitto.gr is a live dashboard providing analytics about the tweets geolocated in Greece. The data you're seeing is what is happening right now on twitter, it's real real-time."
+	}
+	, "app_meta" : {
+		"title" : "Twitto.gr - realtime tweets dashboard"
+		, "description" : "Twitto.gr is a live dashboard providing analytics about the tweets geolocated in Greece. Curious about what's being tweeted right now? Come have a look"
+		, "url" : "https://twitto.gr"
+		, "image" : "https://twitto.gr/img/twitto-be-dashboard-screenshot.png"
+		, "favicon" : "/img/favicon.png"
+	}
+
+	, "geojson" : "data/greece.json"
+	, "stream" : {
+		"sw": {
+			"lat": 34.125448
+			, "long": 19.379883
+		}
+		, "ne": {
+			"lat": 42.163403
+			, "long": 29.003906
+		}
+	}
+	, "country_code" : "GR"
+	, "canvas" : {
+		"center_lat" : 25.743871
+		, "center_long" : 32.65381
+		, "scale": 4.5
+		, "dot_radius": 2
+	}
+}
