@@ -22,25 +22,9 @@ function Tweets(storage) {
 		self.tweets = storage.getItemSync('tweets')
 	}
 	
-	// staging area keeping the number of occurence of each hashtag and mention, and threshold count to enter in the top 10
-	self.staging = {
-		hashtagsCount: {}
-		, topHashtagCountThreshold: 0
-		, mentionsCount: {}
-		, topMentionCountThreshold: 0
-	}
-	
 	self.stats = {
 		tweets: {} // tweets counts (# replies, hashtags, links etc)
-		, entities: {
-			topHashtags: []
-			, topMentions: []
-		} // trending entities (top hashtags / mentions)
-	}
-
-	self.entitiesStats = {
-		hashtags: []
-		, mentions: []
+		, entities: {} // trending entities (top hashtags / mentions)
 	}
 	
 	// compute tweet statistics
@@ -97,7 +81,10 @@ function Tweets(storage) {
 	
 		storage.setItem('tweets', self.tweets)
 		
+		// recompute statistics after a cache cleanup
 		calculateTweetCounts()
+		
+		calculateEntitiesStats()
 		
 	}
 
@@ -109,6 +96,17 @@ function Tweets(storage) {
 	 *
 	 */
 	function calculateEntitiesStats() {
+
+		// staging area keeping the number of occurence of each hashtag and mention, and threshold count to enter in the top 10
+		self.staging = {
+			hashtagsCount: {}
+			, topHashtagCountThreshold: 0
+			, mentionsCount: {}
+			, topMentionCountThreshold: 0
+		}
+		
+		self.stats.entities.topHashtags = []
+		self.stats.entities.topMentions = []
 
 		// count each hashtag and mention inside the staging array
 		self.tweets.forEach(function (tweet) {
