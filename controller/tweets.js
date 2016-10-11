@@ -72,8 +72,18 @@ function Tweets (app) {
 				data.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
 			}
 			
-			app.model.tweets.add(data)
+			// store new tweet, update stats, and check for changed.
+			var hasRankingChanged = app.model.tweets.add(data)
+			
+			// send new tweet to the clients
 			app.controller.io.sockets.emit('tweet', data)
+			
+			if (hasRankingChanged) {
+				// send new top10 ranks to the clients
+				app.controller.io.sockets.emit('entitiesStats', app.model.tweets.getEntitiesStats())
+			}
+			
+			
 		})
 		
 		// create listener to 'disconnect' event

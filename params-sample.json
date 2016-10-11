@@ -1,5 +1,5 @@
 {
-	"profile_name" : "local dev version"
+	"profileName" : "local dev version"
 	, "twitter" : {
 		"consumer_key" : "--fill-me--"
 		, "consumer_secret" : "--fill-me--"
@@ -7,6 +7,7 @@
 		, "access_token_secret" : "--fill-me--"
 	}
 	, "googleAnalytics": ""
+	, "twitterUsersBlacklist" : []
 	, "logo" : {
 		"src": "img/twitto_be-0.4.0-square-logo-40x40.png"
 		, "width" : 40
