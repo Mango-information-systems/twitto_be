@@ -25,7 +25,13 @@
 		, "thumbnail" : "/img/twitto-be-dashboard-screenshot.png"
 		, "favicon" : "/img/favicon.png"
 	}
-
+	, "enable_tweets": false
+	, "auto_tweet_hour": 10
+	, "tweet_text" : {
+		"daily_stats" : "Over the past 24 hours, Belgium sent $1 tweets > https://twitto.be"
+		, "hourly_hashtags" : "Hashtags trending now in Belgium: $1 > https://twitto.be"
+		, "hourly_mentions" : "Top mentions right now in Belgium: $1 > https://twitto.be"
+	}
 	, "geojson" : "data/belgian-provinces.json"
 	, "stream" : {
 		"sw": {

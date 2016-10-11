@@ -11,7 +11,8 @@ var tweetBot = new TweetBot()
  */
 function TweetBot() {
 
-	var self = this
+	var tu = require('tuiter')(params.twitter)
+		, errCount = 0
 
 
 	/****************************************
@@ -27,9 +28,50 @@ function TweetBot() {
 	 *
 	 */
 	function listeners() {
-		process.on('message', function (msg) {
-			console.log(msg)
-		})
+
+		if(params.enable_tweets){
+			process.on('message', function (msg) {
+				var hourlyMentionsText = params.tweet_text.hourly_mentions
+					, hourlyHashtagsText = params.tweet_text.hourly_hashtags
+					, dailyText = params.tweet_text.daily_stats
+					, topHashtags = ''
+					, topMentions = ''
+
+
+				if(msg.type == 'hourly') {
+
+					topMentions = msg.entities.topMentions.slice(0, 3).reduce(
+						function (string, obj) {
+							return string + '@' + obj.key + ' '
+						}, '')
+					topHashtags = msg.entities.topHashtags.slice(0, 3).reduce(
+						function (string, obj) {
+							return string + '#' + obj.key + ' '
+						}, '')
+
+					if(topMentions) {
+						hourlyMentionsText = hourlyMentionsText.replace('$1', topMentions)
+
+						tu.update({status: hourlyMentionsText}, function (err, data) {
+						})
+					}
+					if(topHashtags) {
+						hourlyHashtagsText = hourlyHashtagsText.replace('$1', topHashtags)
+
+						tu.update({status: hourlyHashtagsText}, function (err, data) {
+						})
+					}
+				}
+				else {
+					dailyText = dailyText.replace('$1', msg.tweets.totalCount)
+					tu.update({status: dailyText}, function (err, data) {
+					})
+				}
+
+			})
+		}
+
+
 	}
 
 	debug('starting tweetBot')
