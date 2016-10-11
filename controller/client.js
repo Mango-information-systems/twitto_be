@@ -1,3 +1,5 @@
+window.debug = require('debug')
+
 var d3 = require('d3')
 	, io = require('socket.io-client')
 	, polyfills = require('../controller/polyfills')
@@ -5,6 +7,7 @@ var d3 = require('d3')
 	, LineChart = require('../view/lineChart')
 	, BarChart = require('../view/barChart')
 	, DonutChart = require('../view/donutChart')
+	, debug = window.debug('clientApp')
 	, app = {
 		model: {
 			tweets: [] // cache of tweets  - only contains tweets with geo-coordinates
@@ -48,6 +51,8 @@ app.socket.on('tweets', function (tweets) {
 // listener: tweet stats sent by the server
 app.socket.on('tweetStats', function (stats) {
 	
+	debug('tweetStats event', stats)
+	
 	d3.selectAll('#tweetStatsWrap').classed('loading', false)
 
 	app.view.donutChart.init(stats)
@@ -56,6 +61,8 @@ app.socket.on('tweetStats', function (stats) {
 
 // listener: timelines sent by the server
 app.socket.on('timelines', function (stats) {
+	
+	debug('timelines', stats)
 	
 	d3.selectAll('#timelineWrap').classed('loading', false)
 	
@@ -66,17 +73,21 @@ app.socket.on('timelines', function (stats) {
 
 // listener: top stats sent by the server
 app.socket.on('entitiesStats', function (stats) {
+	
+	debug('entitiesStats', stats)
 
 	d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
 
-	app.view.topHashTags.init('hashtags', stats.allHashtags, stats.topHashtags, stats.lowestHashtagsCount)
+	app.view.topHashTags.render('hashtags', stats.topHashtags)
 	
-	app.view.topMentions.init('mentions', stats.allMentions, stats.topMentions, stats.lowestMentionsCount)
+	app.view.topMentions.render('mentions', stats.topMentions)
 
 })
 
 // listener: new tweet
 app.socket.on('tweet', function (tweet) {
+	
+	debug('tweet event', tweet)
 	
 	if (typeof tweet.coordinates !== 'undefined') {
 		app.model.tweets.push(tweet)
@@ -87,11 +98,5 @@ app.socket.on('tweet', function (tweet) {
 	app.view.tweetsPerMinute.addTweet()
 	app.view.tweetsPerSecond.addTweet()
 	app.view.donutChart.addTweets([tweet])
-	
-	if(tweet.has_hashtag)
-		app.view.topHashTags.addTweet(tweet.hashtags)
-	
-	if(tweet.has_mention)
-		app.view.topMentions.addTweet(tweet.mentions)
 	
 })
