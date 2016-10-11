@@ -157,6 +157,11 @@ function BarChart (svg) {
 			.duration(300)
 			.attr('opacity', 1)
 
+
+		////////////////
+		//UPDATE//
+		////////////////
+
 		//Update bar widths
 		chartRow.select(".bar").transition()
 			.duration(300)
@@ -170,9 +175,43 @@ function BarChart (svg) {
 			.text(function (d) {
 				return d.value
 		})
-		////////////////
-		//REORDER ROWS//
-		////////////////
+		
+		//Update data labels
+		chartRow.select(".category")
+			.attr('x', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '2.8em'
+					break
+					case i === 2:
+						return '2.4em'
+					break
+					case i === 1:
+						return '2.2em'
+					break
+					case i === 0:
+						return '1.8em'
+					break
+				}
+			})
+			.attr('dy', function(d, i) {return i ===0 ? '.75em' : '.9em'})
+			.style('font-weight', function(d, i) {return i < 3 ? '600' : '400'})
+			.style('font-size', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '1.6em'
+					break
+					case i === 2:
+						return '1.8em'
+					break
+					case i === 1:
+						return '2em'
+					break
+					case i === 0:
+						return '2.4em'
+					break
+				}
+			})
 
 		chartRow.transition()
 			.duration(1000)
