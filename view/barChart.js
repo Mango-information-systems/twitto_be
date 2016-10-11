@@ -115,10 +115,42 @@ function BarChart (svg) {
 		newRow.append('text')
 			.attr('class', 'category')
 			.attr('text-overflow', 'ellipsis')
-			.attr('x', '2.8em')
+			.attr('x', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '2.8em'
+					break
+					case i === 2:
+						return '2.4em'
+					break
+					case i === 1:
+						return '2.2em'
+					break
+					case i === 0:
+						return '1.8em'
+					break
+				}
+			})
 			.attr('y', y.bandwidth() / 10)
 			.attr('opacity', 0)
-			.attr('dy', '.9em')
+			.attr('dy', function(d, i) {return i ===0 ? '.75em' : '.9em'})
+			.style('font-weight', function(d, i) {return i < 3 ? '600' : '400'})
+			.style('font-size', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '1.6em'
+					break
+					case i === 2:
+						return '1.8em'
+					break
+					case i === 1:
+						return '2em'
+					break
+					case i === 0:
+						return '2.4em'
+					break
+				}
+			})
 			.text(function (d) {
 				return self.prefix + d.key
 			}).transition()
