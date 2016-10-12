@@ -20,7 +20,9 @@
 	}
 	, "app_meta" : {
 		"title" : "Twitto.be - realtime tweets dashboard"
+		, "title_502" : "Twitto.be - down for maintenance"
 		, "description" : "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. Curious about what's being tweeted right now? Come have a look"
+		, "description_502" : "Twitto.be is temporarily unavailable - please try again in a few seconds"
 		, "url" : "https://twitto.be"
 		, "thumbnail" : "/img/twitto-be-dashboard-screenshot.png"
 		, "favicon" : "/img/favicon.png"
