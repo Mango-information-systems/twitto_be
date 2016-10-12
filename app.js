@@ -36,6 +36,7 @@ app.render('pages/502', {
 		, logo: params.logo
 		, app_text: params.app_text
 		, ga: params.googleAnalytics
+		, maintenance: true
 	}, function(err, res) {
 	if (err)
 		console.log('Error rendering 502.html', err)
@@ -60,6 +61,7 @@ app.get('/502', function (req, res) {
 		, logo: params.logo
 		, app_text: params.app_text
 		, ga: params.googleAnalytics
+		, maintenance: true
 	})
 })
 
