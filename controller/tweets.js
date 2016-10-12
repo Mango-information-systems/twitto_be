@@ -140,7 +140,6 @@ function Tweets (app) {
 			callTweetbot(type)
 		}, delay)
 
-		console.log('tweetBot fires ', type, new Date().getTime())
 		this.tweetBot.send({
 			'type': type
 			, 'tweets': app.model.tweets.getTweetCounts()
