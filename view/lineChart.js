@@ -13,7 +13,8 @@ var d3 = require('d3')
 function LineChart (svg, granularity) {
 
 	var self = this
-	
+		, transitionDelay = 650
+
 	if (granularity === 'm') {
 		var timeRes = 60000
 			, barCount = 30
@@ -65,29 +66,32 @@ function LineChart (svg, granularity) {
 				.style('fill', '#008000')
 				.style('stroke', 'white')
 				.style('stroke-width', '1')
-			.transition()
-				.duration(650)
+
+
+		rect.transition()
+			.duration(transitionDelay)
 				.attr('y', function(d) { return self.y(d.count)})
 				.attr('height', function(d) { return height - self.y(d.count)})
 
 		rect.transition()
-			.duration(650)
+			.duration(transitionDelay)
 				.attr('x', function(d, i) { return self.x(i - barCount)})
 				.style('fill', '#66B366')
+
 		
 		self.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
-		
+
 		rect.exit().transition()
-			.duration(650)
+			.duration(transitionDelay)
 			.attr('y', height)
 			.attr('height', 0)
 			.attr('x', function(d, i) { return self.x(i - barCount)})
 			.remove()
-	
+
 	}
 	
 	function tickCountSetter(n){
-		if (n <=2)
+		if (n <= 10)
 			return n
 		else
 			return 6
@@ -154,6 +158,7 @@ function LineChart (svg, granularity) {
 	this.addTweet = function() {
 
 		if (typeof this.timeline !== 'undefined') {
+
 			this.timeline[self.timeline.length-1].count++
 			
 			this.maxCount = d3.max(self.timeline, function(d) {return d.count})
@@ -161,15 +166,15 @@ function LineChart (svg, granularity) {
 			this.y.domain([0, self.maxCount])
 			
 			this.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
-			
-			this.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
-				.transition()
-				  .attr('y', function(d) { return self.y(d.count) })
-				  .attr('height', function(d) { return height - self.y(d.count)})
+
+			this.bars.selectAll('rect')
+				.data(self.timeline, function(d) {return d.id})
+					.transition()
+					.delay(transitionDelay)
+					  .attr('y', function(d) { return self.y(d.count) })
+					  .attr('height', function(d) { return height - self.y(d.count)})
 		}
 	}
-
-
 
 	return this	
 }

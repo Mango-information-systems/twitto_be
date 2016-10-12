@@ -1,6 +1,6 @@
 <meta charset="utf-8">
-<title><%- title %></title>
-<meta name="description" content="<%- description %>">
+<title><% if(typeof maintenance === 'undefined' ){ %><%- appMeta.title %><% }else{ %><%- appMeta.title502 %><% } %></title>
+<meta name="description" content="<% if(typeof maintenance == 'undefined' ){ %><%- appMeta.description %><% }else{ %><%- appMeta.description502 %><% } %>">
 <meta name="author" content="Mango Information Systems">
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,13 +11,13 @@
 <link rel="stylesheet" href="css/normalize.css">
 <link rel="stylesheet" href="css/skeleton.min.css">
 
-<meta property="og:title" content="<%- title %>" />
+<meta property="og:title" content="<% if(typeof maintenance != 'undefined' ){ %>appMeta.title<% }else{ %>appMeta.title502<% } %>" />
 <meta property="og:type" content="website" />
-<meta property="og:description" content="<%- description %>" />
-<meta property="og:url" content="https://twitto.be" />
-<meta property="og:image" content="https://twitto.be/img/twitto-be-dashboard-screenshot.png" />
+<meta property="og:description" content="<% if(typeof maintenance == 'undefined' ){ %><%- appMeta.description %><% }else{ %><%- appMeta.description502 %><% } %>" />
+<meta property="og:url" content="<%- appMeta.url %>" />
+<meta property="og:image" content="<%- appMeta.url + appMeta.thumbnail %>" />
 
-<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="icon" type="image/png" href="<%- appMeta.favicon %>">
 
 <% if(typeof ga !== 'undefined') { %>
 	<script>

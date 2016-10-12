@@ -32,9 +32,11 @@ app.listen(8080)
 console.log('knock on the magic 8080 port')
 
 app.render('pages/502', {
-		title: 'Twitto.be - down for maintenance'
-		, description: 'Twitto is temporarily unavailable - please try again in a few seconds'
+		appMeta: params.content.appMeta
+		, logo: params.content.logo
+		, appText: params.content.appText
 		, ga: params.googleAnalytics
+		, maintenance: true
 	}, function(err, res) {
 	if (err)
 		console.log('Error rendering 502.html', err)
@@ -47,16 +49,19 @@ app.render('pages/502', {
 // index page route
 app.get('/', function (req, res) {
 	res.render('pages/index', {
-		title: 'Twitto.be - realtime tweets dashboard'
-		, description: 'Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. Curious about what\'s being tweeted right now? Come have a look'
+		appMeta : params.content.appMeta
+		, logo: params.content.logo
+		, appText: params.content.appText
 		, ga: params.googleAnalytics
 	})
 })
 app.get('/502', function (req, res) {
 	res.render('pages/502', {
-		title: 'Twitto.be - down for maintenance'
-		, description: 'Twitto is temporarily unavailable - please try again in a few seconds'
+		appMeta: params.content.appMeta
+		, logo: params.content.logo
+		, appText: params.content.appText
 		, ga: params.googleAnalytics
+		, maintenance: true
 	})
 })
 
@@ -87,14 +92,19 @@ twitto.controller.io.on('connection', function(socket) {
 	debug('client connection', socket.id)
 
 	socket.on('tweets', function() {
-//~ console.log(twitto.model.tweets.getTimelines())
 
-		socket.emit('tweetStats', twitto.model.tweets.getStats())
+		// send tweet statistics (for donut chart)
+		socket.emit('tweetStats', twitto.model.tweets.getTweetCounts())
+
+		// send tweet timelines (for timeline chart)
 		socket.emit('timelines', twitto.model.tweets.getTimelines())
 
+		// send tweets (for map)
+		socket.emit('tweets', twitto.model.tweets.getAllTweets())
+
+		// send top trends (for bar charts)
 		socket.emit('entitiesStats', twitto.model.tweets.getEntitiesStats())
 
-		socket.emit('tweets', twitto.model.tweets.getAll())
 	})
 
 	

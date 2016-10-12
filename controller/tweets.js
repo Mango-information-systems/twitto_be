@@ -1,4 +1,5 @@
-var debug = require('debug')('tweets')
+var params = require('../params')
+	, debug = require('debug')('tweets')
 /**
 * Set of functions to process incoming tweets
 *
@@ -14,6 +15,7 @@ function Tweets (app) {
 	this.app = app
 
 	connectTweetStream()
+	initTweetBot()
 
 	/****************************************
 	* 
@@ -33,7 +35,7 @@ function Tweets (app) {
 	function connectTweetStream() {
 		
 		this.tweetStream = require('child_process').fork(__dirname + '/tweetStream')
-	
+
 		// create listener to 'message' event
 		this.tweetStream.on('message', function(tweet) {
 
@@ -71,8 +73,18 @@ function Tweets (app) {
 				data.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
 			}
 			
-			app.model.tweets.add(data)
+			// store new tweet, update stats, and check for changed.
+			var hasRankingChanged = app.model.tweets.add(data)
+			
+			// send new tweet to the clients
 			app.controller.io.sockets.emit('tweet', data)
+			
+			if (hasRankingChanged) {
+				// send new top10 ranks to the clients
+				app.controller.io.sockets.emit('entitiesStats', app.model.tweets.getEntitiesStats())
+			}
+			
+			
 		})
 		
 		// create listener to 'disconnect' event
@@ -81,7 +93,61 @@ function Tweets (app) {
 			connectTweetStream()
 		})
 	}
-	
+
+	/****************************
+	 *
+	 * create the tweetBot child process
+	 *
+	 * @private
+	 *
+	 *****************************/
+	function initTweetBot() {
+		this.tweetBot = require('child_process').fork(__dirname + '/tweetBot')
+		this.hourlyDelay = 60 * 60 * 1000
+		this.dailyDelay = 24 * 60 * 60 * 1000
+
+		// Check if we need to send the daily tweet today, or tomorrow
+		var now = new Date()
+			, nextDay = (now.getHours() < params.tweetBot.autoTweetHour ? now.getDate() : now.getDate() + 1 )
+			, nextDate = new Date(
+								now.getFullYear()
+								, now.getMonth()
+								, nextDay
+								, params.tweetBot.autoTweetHour, 0, 0 // ...at 10:00:00
+							)
+
+
+		setTimeout(function () {
+			callTweetbot('hourly')
+		}, this.hourlyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
+
+		setTimeout(function () {
+			callTweetbot('daily')
+		}, nextDate.getTime() - now.getTime())
+
+	}
+
+	/**
+	 *
+	 * Call tweetbot
+	 *
+	 * @private
+	 *
+	 */
+	function callTweetbot(type) {
+		var delay = (type == 'hourly' ? this.hourlyDelay : this.dailyDelay)
+
+		setTimeout(function () {
+			callTweetbot(type)
+		}, delay)
+
+		this.tweetBot.send({
+			'type': type
+			, 'tweets': app.model.tweets.getTweetCounts()
+			, 'entities': app.model.tweets.getEntitiesStats()
+		})
+	}
+
 	/****************************
 	* 
 	* generateRandomPointwithinBbox

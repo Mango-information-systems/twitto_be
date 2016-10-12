@@ -1,0 +1,61 @@
+{
+	"profileName" : "local dev version"
+	, "twitter" : {
+		"consumer_key" : "--fill-me--"
+		, "consumer_secret" : "--fill-me--"
+		, "access_token_key" : "--fill-me--"
+		, "access_token_secret" : "--fill-me--"
+	}
+	, "googleAnalytics": ""
+	, "twitterUsersBlacklist" : []
+	, "content": {
+		"logo" : {
+			"src": "img/twitto_be-0.4.0-square-logo-40x40.png"
+			, "width" : 40
+			, "height" : 40
+		}
+		, "appText" : {
+			"title" : "twitto.gr"
+			, "subtitle" : "real time dashboard of tweets in Greece"
+			, "about" : "Twitto.gr is a live dashboard providing analytics about the tweets geolocated in Greece. The data you're seeing is what is happening right now on twitter, it's real real-time."
+		}
+		, "appMeta" : {
+			"title" : "Twitto.gr - realtime tweets dashboard"
+			, "title502" : "Twitto.gr - down for maintenance"
+			, "description" : "Twitto.gr is a live dashboard providing analytics about the tweets geolocated in Greece. Curious about what's being tweeted right now? Come have a look"
+			, "description502" : "Twitto.gr is temporarily unavailable - please try again in a few seconds"
+			, "url" : "https://twitto.gr"
+			, "thumbnail" : "/img/twitto-be-dashboard-screenshot.png"
+			, "favicon" : "/img/favicon.png"
+		}
+	}
+	, "tweetBot": {
+		"enableTweets": false
+		, "autoTweetHour": 10
+		, "tweetText" : {
+			"dailyStats" : "Over the past 24 hours, Greece sent $1 tweets > https://twitto.gr"
+			, "hourlyHashtags" : "Hashtags trending now in Greece: $1 > https://twitto.gr"
+			, "hourlyMentions" : "Top mentions right now in Greece: $1 > https://twitto.gr"
+		}
+	}
+	, "map": {
+		"geojson" : "data/greece.json"
+		, "stream" : {
+			"sw": {
+				"lat": 34.125448
+				, "long": 19.379883
+			}
+			, "ne": {
+				"lat": 42.163403
+				, "long": 29.003906
+			}
+		}
+		, "countryCode" : "GR"
+		, "canvas" : {
+			"centerLat" : 25.743871
+			, "centerLong" : 32.65381
+			, "scale": 4.5
+			, "dotRadius": 2
+		}
+	}
+}

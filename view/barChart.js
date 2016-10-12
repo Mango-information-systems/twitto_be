@@ -37,68 +37,6 @@ function BarChart (svg) {
 	* 
 	****************************************/
 
-	/**
-	 * Update statistics with data from one extra tweet
-	 *
-	 * @param {object} msg new tweet
-	 *
-	 * @private
-	 *
-	 */
-	function updateStats(entities) {
-		var result = {}
-			, tempLowestCount = 0
-
-			//~ console.log('entities', entities)
-
-			// increment statistics, and 
-			entities.forEach(function (entity) {
-
-				// Increase counter or add stat in allstats
-				if(self.allEntitiesStats.hasOwnProperty(entity))
-					self.allEntitiesStats[entity]++
-				else
-					self.allEntitiesStats[entity] = 1
-
-				// If the current entities counter is >= than the lowestcount
-				// update its value inside topEntitiesStats, or add it inside topEntitiesStats
-
-				if(self.topEntitiesStats.length < 10 || self.allEntitiesStats[entity] > self.lowestCount) {
-
-					var alreadyExists = false
-					
-					// increment value in the top10
-					self.topEntitiesStats.forEach(function(stats, ix) {
-
-						if (stats.key === entity) {
-							self.topEntitiesStats[ix].value = self.allEntitiesStats[entity]
-							alreadyExists = true
-						}
-					})
-					
-					// new entity to add to the top10
-					if (!alreadyExists)
-						self.topEntitiesStats.push({'key': entity, 'value': self.allEntitiesStats[entity]})
-					
-					tempLowestCount = self.topEntitiesStats.length ? self.topEntitiesStats[self.topEntitiesStats.length - 1].value : 0
-					
-					//~ console.log('tempLowestCount', tempLowestCount ,'self.lowestCount', self.lowestCount)
-				}
-
-			})
-
-			// Reorder top stats records based on value, then key for records having equal values
-			self.topEntitiesStats.sort(function (p1, p2) {
-				return p2.value !== p1.value ? p2.value - p1.value : p2.key.toLowerCase() < p1.key.toLowerCase()
-			})
-			
-			self.topEntitiesStats = self.topEntitiesStats.slice(0, 10)
-			
-			self.lowestCount = tempLowestCount
-
-			self.redrawChart()
-	}
-
 	/****************************************
 	 *
 	 * Public methods
@@ -112,34 +50,14 @@ function BarChart (svg) {
 	 * @param {object} timeline time series data
 	 *
 	 ************/
-	this.init = function (entityType, allEntitiesStats, topEntitiesStats, lowestCount) {
-		self.allEntitiesStats = allEntitiesStats
-		self.topEntitiesStats = topEntitiesStats
-		self.lowestCount = lowestCount
+	this.render = function (entityType, topEntitiesStats) {
 
 		self.prefix = entityType === 'hashtags' ? '#' : '@'
 
-		if(topEntitiesStats.length){
-			self.redrawChart()
-		}
-
-
-	}
-
-	this.addTweet = function (entities) {
-		if(typeof self.topEntitiesStats !== 'undefined') {
-			updateStats(entities)
-		}
-	}
-
-	this.redrawChart = function(){
-
-		//~ console.log('redraw', self.topEntitiesStats )
-
 		//Reset domains
-		y.domain(d3.range(self.topEntitiesStats.length))
+		y.domain(d3.range(topEntitiesStats.length))
 		
-		var barmax = d3.max(self.topEntitiesStats, function (e) {
+		var barmax = d3.max(topEntitiesStats, function (e) {
 			return e.value
 		})
 		x.domain([0, barmax])
@@ -153,7 +71,7 @@ function BarChart (svg) {
 
 		//Create chart row and move to below the bottom of the chart
 		var chartRow = g.selectAll('g.chartRow')
-			.data(self.topEntitiesStats, function (d) {
+			.data(topEntitiesStats, function (d) {
 				return d.key
 			})
 
@@ -197,15 +115,52 @@ function BarChart (svg) {
 		newRow.append('text')
 			.attr('class', 'category')
 			.attr('text-overflow', 'ellipsis')
-			.attr('x', '2.8em')
+			.attr('x', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '2.8em'
+					break
+					case i === 2:
+						return '2.4em'
+					break
+					case i === 1:
+						return '2.2em'
+					break
+					case i === 0:
+						return '1.8em'
+					break
+				}
+			})
 			.attr('y', y.bandwidth() / 10)
 			.attr('opacity', 0)
-			.attr('dy', '.9em')
+			.attr('dy', function(d, i) {return i ===0 ? '.75em' : '.9em'})
+			.style('font-weight', function(d, i) {return i < 3 ? '600' : '400'})
+			.style('font-size', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '1.6em'
+					break
+					case i === 2:
+						return '1.8em'
+					break
+					case i === 1:
+						return '2em'
+					break
+					case i === 0:
+						return '2.4em'
+					break
+				}
+			})
 			.text(function (d) {
 				return self.prefix + d.key
 			}).transition()
 			.duration(300)
 			.attr('opacity', 1)
+
+
+		////////////////
+		//UPDATE//
+		////////////////
 
 		//Update bar widths
 		chartRow.select(".bar").transition()
@@ -220,9 +175,43 @@ function BarChart (svg) {
 			.text(function (d) {
 				return d.value
 		})
-		////////////////
-		//REORDER ROWS//
-		////////////////
+		
+		//Update data labels
+		chartRow.select(".category")
+			.attr('x', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '2.8em'
+					break
+					case i === 2:
+						return '2.4em'
+					break
+					case i === 1:
+						return '2.2em'
+					break
+					case i === 0:
+						return '1.8em'
+					break
+				}
+			})
+			.attr('dy', function(d, i) {return i ===0 ? '.75em' : '.9em'})
+			.style('font-weight', function(d, i) {return i < 3 ? '600' : '400'})
+			.style('font-size', function(d, i) {
+				switch(true) {
+					case i > 2:
+						return '1.6em'
+					break
+					case i === 2:
+						return '1.8em'
+					break
+					case i === 1:
+						return '2em'
+					break
+					case i === 0:
+						return '2.4em'
+					break
+				}
+			})
 
 		chartRow.transition()
 			.duration(1000)

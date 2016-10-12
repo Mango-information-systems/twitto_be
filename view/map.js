@@ -1,4 +1,5 @@
 var d3 = require('d3')
+	, params = require('../params')
 	, debug = require('debug')('map')
 
 /**
@@ -22,13 +23,23 @@ function Map (container) {
 	this.height = containerSize.width / 1.348
 
 	this.projection = d3.geoMercator()
-		.center([5, 48.9])
-		.scale(this.width * 13)
+		.center([params.map.canvas.centerLat, params.map.canvas.centerLong])
+		.scale(this.width * params.map.canvas.scale)
 		.translate([this.width * 1.25 / 2, this.height * 1.25])
-	
+
+	// Zoom scale
+	this.zoom = d3.zoom()
+		.scaleExtent([0.5, 4])
+		
+	this.zoomTransformX = 0
+	this.zoomTransformY = 0
+	this.zoomTransformK = 1
+
 	// render the map background
 	this.canvas = this.container.append('canvas').attr('height', this.height).attr('width', this.width)
-	
+	this.canvas.call(this.zoom
+		.on('zoom', updateCanvas))
+
 	this.context = this.canvas.node().getContext('2d')
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
 	
@@ -43,10 +54,11 @@ function Map (container) {
 
 	this.dataContainer = d3.select(detachedContainer)
 
-	d3.json('/data/belgian-provinces.json', function (error, belgianProvinces) {
-		
-		self.belgianProvinces = belgianProvinces
-		
+
+	d3.json(params.map.geojson, function (error, geoJsonMap) {
+
+		self.geoJsonMap = geoJsonMap
+
 	})
 	
 	
@@ -76,7 +88,7 @@ function Map (container) {
 		dataBinding.enter()
 		  .append('custom')
 		  .classed('dot', true)
-		  .attr('r', '3')
+		  .attr('r', params.map.canvas.dotRadius)
 		  .attr('cx', function(d) {
 			return self.projection(d.coordinates)[0]
 		  })
@@ -90,17 +102,37 @@ function Map (container) {
 		updateCanvas()
 
 	}
-	
+
+	/****************************************
+	* 
+	* render the d3 data binding as canvas
+	* 
+	****************************************/
 	function updateCanvas() {
 
-		// clear canvas
-		self.context.fillStyle = "#fff"
-		self.context.rect(0, 0, self.width, self.height)
-		self.context.fill()
+		if (d3.event) {
+			// set zoom level and panning
+			self.zoomTransformK = d3.event.transform.k
+			self.zoomTransformX = d3.event.transform.x
+			self.zoomTransformY = d3.event.transform.y
+		}
+		
+		self.context.save()
+		
+		self.context.clearRect(0, 0, self.width, self.height)
+		
+		self.context.translate(self.zoomTransformX, self.zoomTransformY)
+			
+		self.context.scale(self.zoomTransformK, self.zoomTransformK)
 
-		// draw map of Belgium as background
+		// clear canvas
+		//~ self.context.fillStyle = "#fff"
+		//~ self.context.rect(0, 0, self.width, self.height)
+		//~ self.context.fill()
+
+		// draw map of the country as background
 		self.context.beginPath()
-		self.path(self.belgianProvinces)
+		self.path(self.geoJsonMap)
 		
 		self.context.fillStyle = '#eeeeee'
 		self.context.fill()
@@ -117,12 +149,15 @@ function Map (container) {
 
 			self.context.beginPath()
 			self.context.fillStyle = node.attr('fillStyle')
-			self.context.arc(node.attr('cx'), node.attr('cy'), node.attr('r'), 0, 2 * Math.PI, false);
+			self.context.arc(node.attr('cx'), node.attr('cy'), self.zoomTransformK > 2 ? 1 : 3, 0, 2 * Math.PI, false);
 
 			self.context.fill()
 			self.context.closePath()
 
 		})
+		
+		self.context.restore()
+		
 	}
 	
 	/****************************************
