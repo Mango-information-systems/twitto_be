@@ -17,6 +17,9 @@ function TweetBot() {
 		, dailyText = params.tweetBot.tweetText.dailyStats
 
 	process.on('message', function (msg) {
+		
+		debug('received ' + msg.type + ' signal to publish tweets')
+		
 		var topHashtags = ''
 			, topMentions = ''
 			, listOfTweets = []
@@ -24,21 +27,14 @@ function TweetBot() {
 
 		if(msg.type == 'hourly') {
 
-			topMentions = msg.entities.topMentions.slice(0, 3).reduce(
-				function (string, obj) {
-					return string + '@' + obj.key + ' '
-				}, '')
-			topHashtags = msg.entities.topHashtags.slice(0, 3).reduce(
-				function (string, obj) {
-					return string + '#' + obj.key + ' '
-				}, '')
+			topMentions = '@' + msg.entities.topMentions[0].key + ', @' + msg.entities.topMentions[1].key + ' and @' + msg.entities.topMentions[2].key
+			
+			topHashtags = '#' + msg.entities.topHashtags[0].key + ', #' + msg.entities.topHashtags[1].key + ' and #' + msg.entities.topHashtags[2].key
+			
+			listOfTweets.push(hourlyMentionsText.replace('$1', topMentions))
 
-			if(topMentions) {
-				listOfTweets.push(hourlyMentionsText.replace('$1', topMentions))
-			}
-			if(topHashtags) {
-				listOfTweets.push(hourlyHashtagsText.replace('$1', topHashtags))
-			}
+			listOfTweets.push(hourlyHashtagsText.replace('$1', topHashtags))
+
 		}
 		else {
 			listOfTweets.push(dailyText.replace('$1', msg.tweets.totalCount))
@@ -49,10 +45,9 @@ function TweetBot() {
 				tu.update({status: tweet}, function (err, data) {
 				})
 			}
-			console.log('Tweeting ', msg.type, ' : ', tweet)
+			else 
+				console.log('tweetBot disabled, would have sent', msg.type, ':', tweet)
 		})
 
 	})
-
-	debug('starting tweetBot')
 }
