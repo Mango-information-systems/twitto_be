@@ -109,11 +109,11 @@ function Tweets (app) {
 		var now = new Date()
 			, nextDay = (now.getHours() < params.auto_tweet_hour ? now.getDate() : now.getDate() + 1 )
 			, nextDate = new Date(
-			now.getFullYear()
-			, now.getMonth()
-			, nextDay
-			, params.auto_tweet_hour, 0, 0 // ...at 10:00:00
-		)
+								now.getFullYear()
+								, now.getMonth()
+								, nextDay
+								, params.auto_tweet_hour, 0, 0 // ...at 10:00:00
+							)
 
 
 		setTimeout(function () {
