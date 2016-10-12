@@ -42,7 +42,7 @@ function TweetStream () {
 		tu.filter({locations: [params.map.stream.sw, params.map.stream.ne]}, function(stream){
 			stream.on('tweet', function(tweet){
 
-				if (tweet.place.countryCode === params.map.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
+				if (tweet.place.country_code === params.map.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
 					// send tweet to the parent process
 					process.send(tweet)
 				}

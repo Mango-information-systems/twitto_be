@@ -23,19 +23,22 @@ function Map (container) {
 	this.height = containerSize.width / 1.348
 
 	this.projection = d3.geoMercator()
-		.center([params.map.canvas.centerLat, params.map.canvas.centerLon])
+		.center([params.map.canvas.centerLat, params.map.canvas.centerLong])
 		.scale(this.width * params.map.canvas.scale)
 		.translate([this.width * 1.25 / 2, this.height * 1.25])
 
 	// Zoom scale
 	this.zoom = d3.zoom()
 		.scaleExtent([0.5, 4])
-	this.zoomTransformK = 0
+		
+	this.zoomTransformX = 0
+	this.zoomTransformY = 0
+	this.zoomTransformK = 1
 
 	// render the map background
 	this.canvas = this.container.append('canvas').attr('height', this.height).attr('width', this.width)
 	this.canvas.call(this.zoom
-		.on('zoom', zoomed))
+		.on('zoom', updateCanvas))
 
 	this.context = this.canvas.node().getContext('2d')
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
@@ -96,31 +99,31 @@ function Map (container) {
 	}
 
 	/****************************************
-	 *
-	 * On mouse scroll zoom
-	 *
-	 ****************************************/
-	function zoomed() {
-
-		self.zoomTransformK = d3.event.transform.k
-
-		self.context.save()
-		self.context.clearRect(0, 0, self.width, self.height)
-		self.context.translate(d3.event.transform.x, d3.event.transform.y)
-		self.context.scale(d3.event.transform.k, d3.event.transform.k)
-
-		updateCanvas()
-		self.context.restore()
-		self.dataContainer.selectAll('custom.dot').attr('r', self.zoomTransformK > 2 ? 1 : 3)
-	}
-
-
+	* 
+	* render the d3 data binding as canvas
+	* 
+	****************************************/
 	function updateCanvas() {
 
+		if (d3.event) {
+			// set zoom level and panning
+			self.zoomTransformK = d3.event.transform.k
+			self.zoomTransformX = d3.event.transform.x
+			self.zoomTransformY = d3.event.transform.y
+		}
+		
+		self.context.save()
+		
+		self.context.clearRect(0, 0, self.width, self.height)
+		
+		self.context.translate(self.zoomTransformX, self.zoomTransformY)
+			
+		self.context.scale(self.zoomTransformK, self.zoomTransformK)
+
 		// clear canvas
-		self.context.fillStyle = "#fff"
-		self.context.rect(0, 0, self.width, self.height)
-		self.context.fill()
+		//~ self.context.fillStyle = "#fff"
+		//~ self.context.rect(0, 0, self.width, self.height)
+		//~ self.context.fill()
 
 		// draw map of Belgium as background
 		self.context.beginPath()
@@ -141,12 +144,15 @@ function Map (container) {
 
 			self.context.beginPath()
 			self.context.fillStyle = node.attr('fillStyle')
-			self.context.arc(node.attr('cx'), node.attr('cy'), node.attr('r'), 0, 2 * Math.PI, false);
+			self.context.arc(node.attr('cx'), node.attr('cy'), self.zoomTransformK > 2 ? 1 : 3, 0, 2 * Math.PI, false);
 
 			self.context.fill()
 			self.context.closePath()
 
 		})
+		
+		self.context.restore()
+		
 	}
 	
 	/****************************************

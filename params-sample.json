@@ -53,7 +53,7 @@
 		, "countryCode" : "BE"
 		, "canvas" : {
 			"centerLat" : 5
-			, "centerLon" :48.9
+			, "centerLong" :48.9
 			, "scale": 13
 			, "dotRadius": 3
 		}
