@@ -32,9 +32,9 @@ app.listen(8080)
 console.log('knock on the magic 8080 port')
 
 app.render('pages/502', {
-		app_meta: params.app_meta
-		, logo: params.logo
-		, app_text: params.app_text
+		appMeta: params.content.appMeta
+		, logo: params.content.logo
+		, appText: params.content.appText
 		, ga: params.googleAnalytics
 		, maintenance: true
 	}, function(err, res) {
@@ -49,17 +49,17 @@ app.render('pages/502', {
 // index page route
 app.get('/', function (req, res) {
 	res.render('pages/index', {
-		app_meta : params.app_meta
-		, logo: params.logo
-		, app_text: params.app_text
+		appMeta : params.content.appMeta
+		, logo: params.content.logo
+		, appText: params.content.appText
 		, ga: params.googleAnalytics
 	})
 })
 app.get('/502', function (req, res) {
 	res.render('pages/502', {
-		app_meta: params.app_meta
-		, logo: params.logo
-		, app_text: params.app_text
+		appMeta: params.content.appMeta
+		, logo: params.content.logo
+		, appText: params.content.appText
 		, ga: params.googleAnalytics
 		, maintenance: true
 	})

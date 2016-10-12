@@ -23,8 +23,8 @@ function Map (container) {
 	this.height = containerSize.width / 1.348
 
 	this.projection = d3.geoMercator()
-		.center([params.canvas.center_lat, params.canvas.center_long])
-		.scale(this.width * params.canvas.scale)
+		.center([params.map.canvas.centerLat, params.map.canvas.centerLon])
+		.scale(this.width * params.map.canvas.scale)
 		.translate([this.width * 1.25 / 2, this.height * 1.25])
 
 	// Zoom scale
@@ -47,7 +47,7 @@ function Map (container) {
 
 
 
-	d3.json(params.geojson, function (error, geoJsonMap) {
+	d3.json(params.map.geojson, function (error, geoJsonMap) {
 
 		self.geoJsonMap = geoJsonMap
 
@@ -82,7 +82,7 @@ function Map (container) {
 		dataBinding.enter()
 		  .append('custom')
 		  .classed('dot', true)
-		  .attr('r', params.canvas.dot_radius)
+		  .attr('r', params.map.canvas.dotRadius)
 		  .attr('cx', function(d) {
 			return self.projection(d.coordinates)[0]
 		  })

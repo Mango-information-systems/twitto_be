@@ -12,9 +12,9 @@ var tweetBot = new TweetBot()
 function TweetBot() {
 
 	var tu = require('tuiter')(params.twitter)
-		, hourlyMentionsText = params.tweet_text.hourly_mentions
-		, hourlyHashtagsText = params.tweet_text.hourly_hashtags
-		, dailyText = params.tweet_text.daily_stats
+		, hourlyMentionsText = params.tweetBot.tweetText.hourlyMentions
+		, hourlyHashtagsText = params.tweetBot.tweetText.hourlyHashtags
+		, dailyText = params.tweetBot.tweetText.dailyStats
 
 	process.on('message', function (msg) {
 		var topHashtags = ''
@@ -45,7 +45,7 @@ function TweetBot() {
 		}
 
 		listOfTweets.forEach(function (tweet) {
-			if(params.enable_tweets) {
+			if(params.tweetBot.enableTweets) {
 				tu.update({status: tweet}, function (err, data) {
 				})
 			}

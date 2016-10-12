@@ -39,10 +39,10 @@ function TweetStream () {
 	function streamTweets() {
 		debug('running streamTweets')
 		
-		tu.filter({locations: [params.stream.sw, params.stream.ne]}, function(stream){
+		tu.filter({locations: [params.map.stream.sw, params.map.stream.ne]}, function(stream){
 			stream.on('tweet', function(tweet){
 
-				if (tweet.place.country_code === params.country_code && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
+				if (tweet.place.countryCode === params.map.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
 					// send tweet to the parent process
 					process.send(tweet)
 				}
