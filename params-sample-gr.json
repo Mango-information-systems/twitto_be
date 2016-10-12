@@ -19,7 +19,9 @@
 	}
 	, "app_meta" : {
 		"title" : "Twitto.gr - realtime tweets dashboard"
+		, "title_502" : "Twitto.gr - down for maintenance"
 		, "description" : "Twitto.gr is a live dashboard providing analytics about the tweets geolocated in Greece. Curious about what's being tweeted right now? Come have a look"
+		, "description_502" : "Twitto.gr is temporarily unavailable - please try again in a few seconds"
 		, "url" : "https://twitto.gr"
 		, "thumbnail" : "/img/twitto-be-dashboard-screenshot.png"
 		, "favicon" : "/img/favicon.png"
