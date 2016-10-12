@@ -91,7 +91,7 @@ function LineChart (svg, granularity) {
 	}
 	
 	function tickCountSetter(n){
-		if (n <=2)
+		if (n <= 10)
 			return n
 		else
 			return 6
