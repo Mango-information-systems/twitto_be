@@ -44,10 +44,10 @@ function Map (container) {
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
 	
 	this.colors = {
-		'en': 'rgba(0, 0, 0, .3)'
-		, 'fr': 'rgba(255, 233, 54, .3)'
+		'en': 'rgba(0, 172, 237, .3)'
+		, 'fr': 'rgba(0, 128, 0, .3)'
 		, 'nl': 'rgba(255, 15, 33, .3)'
-		, 'fallback': 'rgba(0, 172, 237, .3)'
+		, 'fallback': 'rgba(0, 0, 0, .3)'
 	}
 
 	var detachedContainer = document.createElement('custom')
@@ -181,7 +181,7 @@ function Map (container) {
 
 			self.context.beginPath()
 			self.context.fillStyle = node.attr('fillStyle')
-			console.log('cx', node.attr('cx'), node.attr('cy'))
+
 			self.context.arc(node.attr('cx'), node.attr('cy'), self.zoomTransformK > 2 ? 1 : 3, 0, 2 * Math.PI, false)
 
 			self.context.fill()
