@@ -108,28 +108,46 @@ function Tweets(storage) {
 		self.stats.entities.topHashtags = []
 		self.stats.entities.topMentions = []
 
-		// count each hashtag and mention inside the staging array
-		self.tweets.forEach(function (tweet) {
+		var now = new Date()
+			, hoursAgo = 2 * 60 * 60 * 1000
+			, currentIndex = self.tweets.length-1
+			, withinTimeframe = true
+
+		// iterate through the tweets to extract mentions and hashtags
+		// while loop used to start from more recent tweets, and move backwards until 2 hours ago.
+		while(withinTimeframe && currentIndex >= 0) {
+
+			var tweet = self.tweets[currentIndex]
 			
-			if(tweet.has_hashtag) {
-				
-				tweet.hashtags.forEach(function (hashtag) {
-					
-					self.staging.hashtagsCount[hashtag] = ++self.staging.hashtagsCount[hashtag] || 1
-					
-				})
+			if ((new Date(tweet.created_at) - now) > hoursAgo) {
+				// tweet  is older than 2 hours ago, exit loop
+				withinTimeframe = false
 			}
+			else {
+			// populate the staging array with count of each hashtag and mention from recent tweets
 			
-			if(tweet.has_mention){
+				if(tweet.has_hashtag) {
+					
+					tweet.hashtags.forEach(function (hashtag) {
+						
+						self.staging.hashtagsCount[hashtag] = ++self.staging.hashtagsCount[hashtag] || 1
+						
+					})
+				}
 				
-				tweet.mentions.forEach(function (mention){
+				if(tweet.has_mention){
+					
+					tweet.mentions.forEach(function (mention){
 
-					self.staging.mentionsCount[mention] = ++self.staging.mentionsCount[mention] || 1
+						self.staging.mentionsCount[mention] = ++self.staging.mentionsCount[mention] || 1
 
-				})
+					})
+				}
+				
+				currentIndex--
 			}
 
-		})
+		}
 		
 		// TODO make the following DRY: run the same code for mentions and for hashtags
 		
