@@ -13,25 +13,29 @@ var d3 = require('d3')
 function LineChart (svg, granularity) {
 
 	var self = this
-	
+		
+		
 	if (granularity === 'm') {
 		var timeRes = 60000
 			, barCount = 30
-			, svgWidth = 450
-			, idFunc = function(d) { return d.getMinutes() }
+			
+		this.barId = 30
 	}
 	else {
 		var timeRes = 1000
 			, barCount = 60
-			, svgWidth = 450
-			, idFunc = function(d) { return + ('' + d.getMinutes() + d.getSeconds()) }
+			
+		this.barId = 60
+
 	}
 	
-	var margin = {top: 20, right: 20, bottom: 80, left: 80},
-		width = svgWidth - margin.left - margin.right,
-		height = 300 - margin.top - margin.bottom
+	var svgWidth = 450
+		, margin = {top: 20, right: 20, bottom: 80, left: 80}
+		, width = svgWidth - margin.left - margin.right
+		, height = 300 - margin.top - margin.bottom
 		
 	var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	
 	this.bars = g.append('g')
 	
 	/****************************************
@@ -46,14 +50,14 @@ function LineChart (svg, granularity) {
 	* 
 	****************************************/
 	function nextTimeInterval() {
-console.log('running nextTimeInterval', self.timeline.length)
+
 		self.timeline.shift()
 		
 		self.timeline.push({
-			id: idFunc(new Date())
+			id: ++self.barId
 			, count: 0
 		})
-
+		
 		var rect = self.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
 
 		rect.enter()
@@ -66,25 +70,25 @@ console.log('running nextTimeInterval', self.timeline.length)
 				.style('stroke', 'white')
 				.style('stroke-width', '1')
 			.transition()
-				.duration(650)
+				.duration(400)
 				.attr('y', function(d) { return self.y(d.count)})
 				.attr('height', function(d) { return height - self.y(d.count)})
 
 		rect.transition()
-			.duration(650)
+			.duration(400)
 				.attr('x', function(d, i) { return self.x(i - barCount)})
 				.style('fill', '#66B366')
 		
 		self.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
-		
+
 		rect.exit().transition()
-			.duration(650)
+			.duration(400)
 			.attr('y', height)
 			.attr('height', 0)
-			.attr('x', function(d, i) {  if (granularity === 's') console.log('removing bar', d, i ); return self.x(i - barCount)})
+			.attr('x', function(d, i) { return self.x(i - barCount)})
 			.remove()
+
 	
-console.log('done nextTimeInterval', self.timeline.length)
 	}
 	
 	function tickCountSetter(n){
