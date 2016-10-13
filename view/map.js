@@ -43,12 +43,8 @@ function Map (container) {
 	this.context = this.canvas.node().getContext('2d')
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
 	
-	this.colors = {
-		'en': 'rgba(0, 172, 237, .3)'
-		, 'fr': 'rgba(0, 128, 0, .3)'
-		, 'nl': 'rgba(255, 15, 33, .3)'
-		, 'fallback': 'rgba(0, 0, 0, .3)'
-	}
+	// map dot colors
+	this.colors = params.map.colors
 
 	var detachedContainer = document.createElement('custom')
 
@@ -70,10 +66,86 @@ function Map (container) {
 	
 	/****************************************
 	* 
+	* paint the map's background inside the canvas
+	* 
+	* @private
+	* 
+	****************************************/
+	function drawBackground() {
+		
+		self.context.beginPath()
+		self.path(self.geoJsonMap)
+		
+		self.context.fillStyle = '#eeeeee'
+		self.context.fill()
+
+		self.context.lineWidth = '1'
+		self.context.strokeStyle = '#bbbbbb'
+		self.context.stroke()
+		
+	}
+	
+	/****************************************
+	* 
+	* paint the map's legend inside the canvas
+	* 
+	* @private
+	* 
+	****************************************/
+	function drawLegend() {
+		
+		Object.keys(self.colors).forEach(function(colorName, i) {
+		
+			var y = 360 - 20 * (Object.keys(self.colors).length - 1 - i)
+
+			self.context.beginPath()
+			self.context.fillStyle = self.colors[colorName]
+			self.context.arc(40, y, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
+			self.context.fill()
+			self.context.closePath()
+			
+			self.context.fillStyle = 'black'
+			self.context.fillText(colorName, 52, y +3)
+			
+			
+		})
+		
+	}
+	
+	/****************************************
+	* 
+	* paint the map's tweet dots inside the canvas
+	* 
+	* @private
+	* 
+	****************************************/
+	function drawTweets() {
+		
+		var elements = self.dataContainer.selectAll('custom.dot')
+		
+		elements.each(function(d) {
+			var node = d3.select(this)
+
+			self.context.beginPath()
+			self.context.fillStyle = node.attr('fillStyle')
+
+			self.context.arc(node.attr('cx'), node.attr('cy'), self.zoomTransformK > 2 ? 1 : 3, 0, 2 * Math.PI, false)
+
+			self.context.fill()
+			self.context.closePath()
+
+		})
+		
+	}
+	
+	/****************************************
+	* 
 	* bind tweets data to a d3.js selection into a dummy DOM node
 	* 
 	* 
 	* @param {object} tweets array of tweets to be displayed in the map
+	* 
+	* @private
 	* 
 	****************************************/
 	function bindData(tweets) {
@@ -96,7 +168,7 @@ function Map (container) {
 			return self.projection(d.coordinates)[1]
 		  })
 		  .attr('fillStyle', function(d) {
-			  return self.colors[d.lang] || self.colors.fallback
+			  return self.colors[d.lang] || self.colors.other
 		  })
 
 		updateCanvas()
@@ -106,6 +178,8 @@ function Map (container) {
 	/****************************************
 	* 
 	* render the d3 data binding as canvas
+	* 
+	* @private
 	* 
 	****************************************/
 	function updateCanvas() {
@@ -126,68 +200,13 @@ function Map (container) {
 		self.context.scale(self.zoomTransformK, self.zoomTransformK)
 
 		// draw map of the country as background
-		self.context.beginPath()
-		self.path(self.geoJsonMap)
-		
-		self.context.fillStyle = '#eeeeee'
-		self.context.fill()
-
-		self.context.lineWidth = '1'
-		self.context.strokeStyle = '#bbbbbb'
-		self.context.stroke()
+		drawBackground()
 
 		// draw legend
-		self.context.beginPath()
-		self.context.fillStyle = self.colors['en']
-		self.context.arc(40, 300, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
-		self.context.fill()
-		self.context.closePath()
-		
-		self.context.fillStyle = 'black'
-		self.context.fillText('en', 52, 303)
-		
-		self.context.beginPath()
-		self.context.fillStyle = self.colors['fr']
-		self.context.arc(40, 320, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
-		self.context.fill()
-		self.context.closePath()
-		
-		self.context.fillStyle = 'black'
-		self.context.fillText('fr', 52, 323)
-		
-		self.context.beginPath()
-		self.context.fillStyle = self.colors['nl']
-		self.context.arc(40, 340, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
-		self.context.fill()
-		self.context.closePath()
-		
-		self.context.fillStyle = 'black'
-		self.context.fillText('nl', 52, 343)
-		
-		self.context.beginPath()
-		self.context.fillStyle = self.colors['fallback']
-		self.context.arc(40, 360, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
-		self.context.fill()
-		self.context.closePath()
-		
-		self.context.fillStyle = 'black'
-		self.context.fillText('other', 52, 363)
+		drawLegend()
 		
 		// draw the tweet dots
-		var elements = self.dataContainer.selectAll('custom.dot')
-		
-		elements.each(function(d) {
-			var node = d3.select(this)
-
-			self.context.beginPath()
-			self.context.fillStyle = node.attr('fillStyle')
-
-			self.context.arc(node.attr('cx'), node.attr('cy'), self.zoomTransformK > 2 ? 1 : 3, 0, 2 * Math.PI, false)
-
-			self.context.fill()
-			self.context.closePath()
-
-		})
+		drawTweets()
 		
 		self.context.restore()
 		
