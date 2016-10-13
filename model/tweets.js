@@ -233,22 +233,21 @@ function Tweets(storage) {
 		if (granularity === 'm') {
 			var timeRes = 60000
 				, barCount = 30
-				, idFunc = minutes
 		}
 		else {
 			var timeRes = 1000
 				, barCount = 60
-				, idFunc = seconds
 		}
 		
 		var ts = Date.now()
 			, position = self.tweets.length-1
 			, allValidTweetsProcessed = false
+			, barId = 0
 			
 		// initialize data structure
 		var tweetsTimeline = d3.range(barCount).map(function(d, i) {
 			return {
-				id: idFunc(new Date(ts - (barCount-1-i) * timeRes)) // id to be used as data key by d3 in the client
+				id: ++barId // id to be used as data key by d3 in the client
 				, count: 0
 			}
 		})
@@ -323,36 +322,6 @@ function Tweets(storage) {
 		
 		self.stats.tweets.totalCount = self.tweets.length
 		
-	}
-
-	/**
-	* 
-	* return the number of minutes of a date
-	* 
-	* @param {date} d
-	* 
-	* @return {number} minutes of the date
-	*
-	* @private
-	* 
-	*/	
-	function minutes(d) {
-		return  ('' + d.getHours() + d.getMinutes())
-	}
-
-	/**
-	* 
-	* return the number of seconds of a date
-	* 
-	* @param {date} d
-	* 
-	* @return {number} minutes + seconds of the date
-	*
-	* @private
-	* 
-	*/	
-	function seconds(d) {
-		return + ('' + d.getMinutes() + d.getSeconds())
 	}
 
 	/**

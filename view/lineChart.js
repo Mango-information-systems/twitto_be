@@ -13,26 +13,28 @@ var d3 = require('d3')
 function LineChart (svg, granularity) {
 
 	var self = this
-		, transitionDelay = 650
 
 	if (granularity === 'm') {
 		var timeRes = 60000
 			, barCount = 30
-			, svgWidth = 450
-			, idFunc = function(d) { return d.getMinutes() }
+			
+		this.barId = 30
 	}
 	else {
 		var timeRes = 1000
 			, barCount = 60
-			, svgWidth = 450
-			, idFunc = function(d) { return + ('' + d.getMinutes() + d.getSeconds()) }
+			
+		this.barId = 60
+
 	}
 	
-	var margin = {top: 20, right: 20, bottom: 80, left: 80},
-		width = svgWidth - margin.left - margin.right,
-		height = 300 - margin.top - margin.bottom
+	var svgWidth = 450
+		, margin = {top: 20, right: 20, bottom: 80, left: 80}
+		, width = svgWidth - margin.left - margin.right
+		, height = 300 - margin.top - margin.bottom
 		
 	var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	
 	this.bars = g.append('g')
 	
 	/****************************************
@@ -51,15 +53,15 @@ function LineChart (svg, granularity) {
 		self.timeline.shift()
 		
 		self.timeline.push({
-			id: idFunc(new Date())
+			id: ++self.barId
 			, count: 0
 		})
-
+		
 		var rect = self.bars.selectAll('rect').data(self.timeline, function(d) {return d.id})
 
 		rect.enter()
 			.append('rect')
-				.attr('x', function(d, i) { return self.x(-1)})
+				.attr('x', function(d, i) {return self.x(-1)})
 				.attr('y', height)
 				.attr('width', width / barCount)
 				.attr('height', 0)
@@ -67,14 +69,13 @@ function LineChart (svg, granularity) {
 				.style('stroke', 'white')
 				.style('stroke-width', '1')
 
-
 		rect.transition()
-			.duration(transitionDelay)
+			.duration(400)
 				.attr('y', function(d) { return self.y(d.count)})
 				.attr('height', function(d) { return height - self.y(d.count)})
 
 		rect.transition()
-			.duration(transitionDelay)
+			.duration(400)
 				.attr('x', function(d, i) { return self.x(i - barCount)})
 				.style('fill', '#66B366')
 
@@ -82,7 +83,7 @@ function LineChart (svg, granularity) {
 		self.yAxis.call(d3.axisLeft(self.y).tickFormat(d3.format('d')).ticks(tickCountSetter(self.maxCount)))
 
 		rect.exit().transition()
-			.duration(transitionDelay)
+			.duration(400)
 			.attr('y', height)
 			.attr('height', 0)
 			.attr('x', function(d, i) { return self.x(i - barCount)})
@@ -170,7 +171,7 @@ function LineChart (svg, granularity) {
 			this.bars.selectAll('rect')
 				.data(self.timeline, function(d) {return d.id})
 					.transition()
-					.delay(transitionDelay)
+					.delay(400)
 					  .attr('y', function(d) { return self.y(d.count) })
 					  .attr('height', function(d) { return height - self.y(d.count)})
 		}
