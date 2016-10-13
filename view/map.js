@@ -125,11 +125,6 @@ function Map (container) {
 			
 		self.context.scale(self.zoomTransformK, self.zoomTransformK)
 
-		// clear canvas
-		//~ self.context.fillStyle = "#fff"
-		//~ self.context.rect(0, 0, self.width, self.height)
-		//~ self.context.fill()
-
 		// draw map of the country as background
 		self.context.beginPath()
 		self.path(self.geoJsonMap)
@@ -141,6 +136,43 @@ function Map (container) {
 		self.context.strokeStyle = '#bbbbbb'
 		self.context.stroke()
 
+		// draw legend
+		self.context.beginPath()
+		self.context.fillStyle = self.colors['en']
+		self.context.arc(40, 300, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
+		self.context.fill()
+		self.context.closePath()
+		
+		self.context.fillStyle = 'black'
+		self.context.fillText('en', 52, 303)
+		
+		self.context.beginPath()
+		self.context.fillStyle = self.colors['fr']
+		self.context.arc(40, 320, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
+		self.context.fill()
+		self.context.closePath()
+		
+		self.context.fillStyle = 'black'
+		self.context.fillText('fr', 52, 323)
+		
+		self.context.beginPath()
+		self.context.fillStyle = self.colors['nl']
+		self.context.arc(40, 340, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
+		self.context.fill()
+		self.context.closePath()
+		
+		self.context.fillStyle = 'black'
+		self.context.fillText('nl', 52, 343)
+		
+		self.context.beginPath()
+		self.context.fillStyle = self.colors['fallback']
+		self.context.arc(40, 360, self.zoomTransformK > 2 ? 2 : 6, 0, 2 * Math.PI, false)
+		self.context.fill()
+		self.context.closePath()
+		
+		self.context.fillStyle = 'black'
+		self.context.fillText('other', 52, 363)
+		
 		// draw the tweet dots
 		var elements = self.dataContainer.selectAll('custom.dot')
 		
@@ -149,7 +181,8 @@ function Map (container) {
 
 			self.context.beginPath()
 			self.context.fillStyle = node.attr('fillStyle')
-			self.context.arc(node.attr('cx'), node.attr('cy'), self.zoomTransformK > 2 ? 1 : 3, 0, 2 * Math.PI, false);
+			console.log('cx', node.attr('cx'), node.attr('cy'))
+			self.context.arc(node.attr('cx'), node.attr('cy'), self.zoomTransformK > 2 ? 1 : 3, 0, 2 * Math.PI, false)
 
 			self.context.fill()
 			self.context.closePath()
