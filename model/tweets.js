@@ -135,7 +135,7 @@ function Tweets(storage) {
 					})
 				}
 				
-				if(tweet.has_mention){
+				if(tweet.has_mention) {
 					
 					tweet.mentions.forEach(function (mention){
 

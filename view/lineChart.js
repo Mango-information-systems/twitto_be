@@ -64,19 +64,19 @@ function LineChart (svg, granularity) {
 				.attr('x', function(d, i) {return self.x(-1)})
 				.attr('y', height)
 				.attr('width', width / barCount)
-				.attr('height', 0)
+				.attr('height', function(d) { return height - self.y(d.count)})
 				.style('fill', '#008000')
 				.style('stroke', 'white')
 				.style('stroke-width', '1')
-
-		rect.transition()
+			.transition()
 			.duration(400)
 				.attr('y', function(d) { return self.y(d.count)})
-				.attr('height', function(d) { return height - self.y(d.count)})
 
 		rect.transition()
 			.duration(400)
 				.attr('x', function(d, i) { return self.x(i - barCount)})
+				.attr('y', function(d) { return self.y(d.count)})
+				.attr('height', function(d) { return height - self.y(d.count)})
 				.style('fill', '#66B366')
 
 		
