@@ -1,61 +1,61 @@
 {
-	"profileName" : "local dev version"
-	, "twitter" : {
-		"consumer_key" : "--fill-me--"
-		, "consumer_secret" : "--fill-me--"
-		, "access_token_key" : "--fill-me--"
-		, "access_token_secret" : "--fill-me--"
-	}
-	, "googleAnalytics": ""
-	, "twitterUsersBlacklist" : []
-	, "content": {
-		"logo" : {
-			"src": "img/twitto_be-0.4.0-square-logo-40x40.png"
-			, "width" : 40
-			, "height" : 40
+	"profileName": "local dev version",
+	"twitter": {
+		"consumer_key": "--fill-me--",
+		"consumer_secret": "--fill-me--",
+		"access_token_key": "--fill-me--",
+		"access_token_secret": "--fill-me--"
+	},
+	"googleAnalytics": "",
+	"twitterUsersBlacklist": [],
+	"content": {
+		"logo": {
+			"src": "img/twitto_be-0.4.0-square-logo-40x40.png",
+			"width": 40,
+			"height": 40
+		},
+		"appText": {
+			"title": "twitto.be",
+			"subtitle": "real time dashboard of Belgian tweets",
+			"about": "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. The data you're seeing is what is happening right now on twitter, it's real real-time."
+		},
+		"appMeta": {
+			"title": "Twitto.be - realtime tweets dashboard",
+			"title502": "Twitto.be - down for maintenance",
+			"description": "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. Curious about what's being tweeted right now? Come have a look",
+			"description502": "Twitto.be is temporarily unavailable - please try again in a few seconds",
+			"url": "https://twitto.be",
+			"thumbnail": "/img/twitto-be-dashboard-screenshot.png",
+			"favicon": "/img/favicon.png"
 		}
-		, "appText" : {
-			"title" : "twitto.be"
-			, "subtitle" : "real time dashboard of Belgian tweets"
-			, "about" : "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. The data you're seeing is what is happening right now on twitter, it's real real-time."
+	},
+	"tweetBot": {
+		"enableTweets": false,
+		"autoTweetHour": 10,
+		"tweetText": {
+			"dailyStats": "Over the past 24 hours, Belgium sent $1 tweets > https://twitto.be",
+			"hourlyHashtags": "Hashtags trending now in Belgium: $1 > https://twitto.be",
+			"hourlyMentions": "Top mentions right now in Belgium: $1 > https://twitto.be"
 		}
-		, "appMeta" : {
-			"title" : "Twitto.be - realtime tweets dashboard"
-			, "title502" : "Twitto.be - down for maintenance"
-			, "description" : "Twitto.be is a live dashboard providing analytics about the tweets geolocated in Belgium. Curious about what's being tweeted right now? Come have a look"
-			, "description502" : "Twitto.be is temporarily unavailable - please try again in a few seconds"
-			, "url" : "https://twitto.be"
-			, "thumbnail" : "/img/twitto-be-dashboard-screenshot.png"
-			, "favicon" : "/img/favicon.png"
-		}
-	}
-	, "tweetBot": {
-		"enableTweets": false
-		, "autoTweetHour": 10
-		, "tweetText" : {
-			"dailyStats" : "Over the past 24 hours, Belgium sent $1 tweets > https://twitto.be"
-			, "hourlyHashtags" : "Hashtags trending now in Belgium: $1 > https://twitto.be"
-			, "hourlyMentions" : "Top mentions right now in Belgium: $1 > https://twitto.be"
-		}
-	}
-	, "map": {
-		"geojson" : "data/belgian-provinces.json"
-		, "stream" : {
+	},
+	"map": {
+		"geojson": "data/belgian-provinces.json",
+		"stream": {
 			"sw": {
-				"lat": 49.496899
-				, "long": 2.54563
+				"lat": 49.496899,
+				"long": 2.54563
+			},
+			"ne": {
+				"lat": 51.505081,
+				"long": 6.40791
 			}
-			, "ne": {
-				"lat": 51.505081
-				, "long": 6.40791
-			}
-		}
-		, "countryCode" : "BE"
-		, "canvas" : {
-			"centerLat" : 5
-			, "centerLong" :48.9
-			, "scale": 13
-			, "dotRadius": 3
+		},
+		"countryCode": "BE",
+		"canvas": {
+			"centerLat": 5,
+			"centerLong": 48.9,
+			"scale": 13,
+			"dotRadius": 3
 		}
 	}
 }
