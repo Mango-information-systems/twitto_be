@@ -37,8 +37,8 @@ function Map (container) {
 
 	// render the map background
 	this.canvas = this.container.append('canvas').attr('height', this.height).attr('width', this.width)
-	this.canvas.call(this.zoom
-		.on('zoom', updateCanvas))
+	this.canvas.call(this.zoom.on('zoom', updateCanvas))
+		.on('wheel', function() { d3.event.preventDefault() })
 
 	this.context = this.canvas.node().getContext('2d')
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
