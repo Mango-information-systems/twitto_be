@@ -1,0 +1,26 @@
+{
+	"geojson" : "data/belgian-provinces.json"
+	, "stream" : {
+		"sw": {
+			"lat": 49.496899
+			, "long": 2.54563
+		}
+		, "ne": {
+			"lat": 51.505081
+			, "long": 6.40791
+		}
+	}
+	, "countryCode" : "BE"
+	, "canvas" : {
+		"centerLat" : 5
+		, "centerLong" :48.9
+		, "scale": 13
+		, "dotRadius": 3
+	}
+	, "colors": {
+		"en": "rgba(0, 172, 237, .3)"
+		, "fr": "rgba(0, 128, 0, .3)"
+		, "nl": "rgba(255, 115, 0, .3)"
+		, "other": "rgba(0, 0, 0, .3)"
+	}
+}

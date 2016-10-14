@@ -37,31 +37,5 @@
 			"hourlyHashtags": "Hashtags trending now in Greece: $1 > https://twitto.gr",
 			"hourlyMentions": "Top mentions right now in Greece: $1 > https://twitto.gr"
 		}
-	},
-	"map": {
-		"geojson": "data/greece.json",
-		"stream": {
-			"sw": {
-				"lat": 34.125448,
-				"long": 19.379883
-			},
-			"ne": {
-				"lat": 42.163403,
-				"long": 29.003906
-			}
-		},
-		"countryCode": "GR",
-		"canvas": {
-			"centerLat": 25.743871,
-			"centerLong": 32.65381,
-			"scale": 4.5,
-			"dotRadius": 2
-		}
-		, "colors": {
-			"en": "rgba(0, 172, 237, .3)"
-			, "fr": "rgba(0, 128, 0, .3)"
-			, "nl": "rgba(255, 115, 0, .3)"
-			, "other": "rgba(0, 0, 0, .3)"
-		}
 	}
 }

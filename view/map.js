@@ -1,5 +1,5 @@
 var d3 = require('d3')
-	, params = require('../params')
+	, geoSettings = require('../data/geoSettings')
 	, debug = require('debug')('map')
 
 /**
@@ -23,8 +23,8 @@ function Map (container) {
 	this.height = containerSize.width / 1.348
 
 	this.projection = d3.geoMercator()
-		.center([params.map.canvas.centerLat, params.map.canvas.centerLong])
-		.scale(this.width * params.map.canvas.scale)
+		.center([geoSettings.canvas.centerLat, geoSettings.canvas.centerLong])
+		.scale(this.width * geoSettings.canvas.scale)
 		.translate([this.width * 1.25 / 2, this.height * 1.25])
 
 	// Zoom scale
@@ -44,14 +44,14 @@ function Map (container) {
 	this.path = d3.geoPath().projection(this.projection).context(this.context)
 	
 	// map dot colors
-	this.colors = params.map.colors
+	this.colors = geoSettings.colors
 
 	var detachedContainer = document.createElement('custom')
 
 	this.dataContainer = d3.select(detachedContainer)
 
 
-	d3.json(params.map.geojson, function (error, geoJsonMap) {
+	d3.json(geoSettings.geojson, function (error, geoJsonMap) {
 
 		self.geoJsonMap = geoJsonMap
 
@@ -160,7 +160,7 @@ function Map (container) {
 		dataBinding.enter()
 		  .append('custom')
 		  .classed('dot', true)
-		  .attr('r', params.map.canvas.dotRadius)
+		  .attr('r', geoSettings.canvas.dotRadius)
 		  .attr('cx', function(d) {
 			return self.projection(d.coordinates)[0]
 		  })

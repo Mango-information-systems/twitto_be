@@ -1,4 +1,5 @@
 var params = require('../params')
+	, geoSettings = require('../data/geoSettings')
 	, debug = require('debug')('tweetStream')
 
 var tweetStream = new TweetStream()
@@ -39,10 +40,10 @@ function TweetStream () {
 	function streamTweets() {
 		debug('running streamTweets')
 		
-		tu.filter({locations: [params.map.stream.sw, params.map.stream.ne]}, function(stream){
+		tu.filter({locations: [geoSettings.stream.sw, geoSettings.stream.ne]}, function(stream){
 			stream.on('tweet', function(tweet){
 
-				if (tweet.place.country_code === params.map.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
+				if (tweet.place.country_code === geoSettings.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
 					// send tweet to the parent process
 					process.send(tweet)
 				}
