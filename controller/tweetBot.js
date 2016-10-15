@@ -43,6 +43,11 @@ function TweetBot() {
 		listOfTweets.forEach(function (tweet) {
 			if(params.tweetBot.enableTweets) {
 				tu.update({status: tweet}, function (err, data) {
+					if (err) {
+						if (data && data.errors[0].code !== 187)
+							console.log('error sending tweet', err, data)
+						// no action in case error code is 187: means that the tweet is considered as a duplicate by twitter - exactly the same trends as previous tweet.
+					}
 				})
 			}
 			else 
