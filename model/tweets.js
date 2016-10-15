@@ -66,7 +66,7 @@ function Tweets(storage) {
 		// schedule next execution in an hour
 		setTimeout(cleanCache, delay)
 		
-		console.log('before cache clean', self.tweets.length)
+		// console.log('before cache clean', self.tweets.length)
 		
 		var yesterday = new Date()
 		yesterday.setDate(yesterday.getDate() - 1)
@@ -77,7 +77,7 @@ function Tweets(storage) {
 				
 		})
 	
-		console.log('after cache clean', self.tweets.length)
+		// console.log('after cache clean', self.tweets.length)
 	
 		storage.setItem('tweets', self.tweets)
 		
