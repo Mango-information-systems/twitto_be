@@ -119,7 +119,7 @@ function Tweets(storage) {
 
 			var tweet = self.tweets[currentIndex]
 			
-			if ((new Date(tweet.created_at) - now) > hoursAgo) {
+			if (now - (new Date(tweet.created_at)) > hoursAgo) {
 				// tweet  is older than 2 hours ago, exit loop
 				withinTimeframe = false
 			}
