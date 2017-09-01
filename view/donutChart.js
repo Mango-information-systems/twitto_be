@@ -178,11 +178,11 @@ function DonutChart(svg) {
 	 */
 	function updateTotalCount() {
 		
-		self.replyCount.text(self.stats.replyCount)
-		self.hashtagCount.text(self.stats.hashtagCount)
-		self.linkCount.text(self.stats.linkCount)
-		self.mentionCount.text(self.stats.mentionCount)
-		self.mediaCount.text(self.stats.mediaCount)
+		self.replyCount.text(self.stats.replyCount + ' replies')
+		self.hashtagCount.text(self.stats.hashtagCount + ' hashtags')
+		self.linkCount.text(self.stats.linkCount + ' links')
+		self.mentionCount.text(self.stats.mentionCount + ' mentions')
+		self.mediaCount.text(self.stats.mediaCount + ' pics/videos')
 		
 		self.totalCount.datum(self.stats.totalCount).transition()
 		    .tween('text', textTween(self.stats.previousTotal, self.stats.totalCount))
