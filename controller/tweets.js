@@ -108,7 +108,7 @@ function Tweets (app) {
 
 		// Check if we need to send the daily tweet today, or tomorrow
 		var now = new Date()
-			, nextDay = (now.getHours() < params.tweetBot.autoTweetHour ? now.getDate() : now.getDate() + 1 )
+			, nextDay = (now.getHours() < params.tweetBot.autoTweetHour ? now.getDate() + 1 : now.getDate() + 2 )
 			, nextDate = new Date(
 								now.getFullYear()
 								, now.getMonth()
