@@ -57,7 +57,7 @@ function TweetStream () {
 				setTimeout(function() {
 					errCount++
 					streamTweets()
-				}, Math.min(700 * (1 + errCount * 4), 120000))
+				}, Math.min(700 * (1 + errCount * 4), 10000))
 				
 			})
 		})
