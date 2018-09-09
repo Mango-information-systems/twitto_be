@@ -41,7 +41,10 @@ app.render('pages/502', {
 	if (err)
 		console.log('Error rendering 502.html', err)
 	else {
-		fs.writeFile(__dirname + '/public/502.html', res)
+		fs.writeFile(__dirname + '/public/502.html', res, function(err, res) {
+			if (err)
+				console.log('error saving 502.html file', err)
+		})
 	}
 })
 
