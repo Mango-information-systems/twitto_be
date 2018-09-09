@@ -27,13 +27,15 @@ function TweetBot() {
 
 		if(msg.type == 'hourly') {
 
-			topMentions = '@' + msg.entities.topMentions[0].key + ', @' + msg.entities.topMentions[1].key + ' and @' + msg.entities.topMentions[2].key
+			if (msg.entities.topMentions.length >= 3) {
+				topMentions = '@' + msg.entities.topMentions[0].key + ', @' + msg.entities.topMentions[1].key + ' and @' + msg.entities.topMentions[2].key
+				listOfTweets.push(hourlyMentionsText.replace('$1', topMentions))
+			}
 			
-			topHashtags = '#' + msg.entities.topHashtags[0].key + ', #' + msg.entities.topHashtags[1].key + ' and #' + msg.entities.topHashtags[2].key
-			
-			listOfTweets.push(hourlyMentionsText.replace('$1', topMentions))
-
-			listOfTweets.push(hourlyHashtagsText.replace('$1', topHashtags))
+			if (msg.entities.topHashtags.length >= 3) {
+				topHashtags = '#' + msg.entities.topHashtags[0].key + ', #' + msg.entities.topHashtags[1].key + ' and #' + msg.entities.topHashtags[2].key
+				listOfTweets.push(hourlyHashtagsText.replace('$1', topHashtags))
+			}
 
 		}
 		else {
