@@ -38,9 +38,12 @@ function TweetBot() {
 			}
 
 		}
-		else {
+		else if (msg.tweets.totalCount.length > 0){
+			// msg.type === 'daily'
 			listOfTweets.push(dailyText.replace('$1', msg.tweets.totalCount))
 		}
+		
+		debug('# tweets planned to be sent:', listOfTweets.length)
 
 		listOfTweets.forEach(function (tweet) {
 			if(params.tweetBot.enableTweets) {
@@ -53,7 +56,7 @@ function TweetBot() {
 				})
 			}
 			else 
-				console.log('tweetBot disabled, would have sent', msg.type, ':', tweet)
+				console.log('.. tweetBot disabled, would have sent', msg.type, ':', tweet)
 		})
 
 	})
