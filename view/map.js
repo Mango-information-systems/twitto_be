@@ -50,8 +50,9 @@ function Map (container) {
 
 	this.dataContainer = d3.select(detachedContainer)
 
+	debug('loading country map from', window.location.href + geoSettings.geojson)
 
-	d3.json(geoSettings.geojson, function (error, geoJsonMap) {
+	d3.json(window.location.href + geoSettings.geojson, function (error, geoJsonMap) {
 
 		self.geoJsonMap = geoJsonMap
 
