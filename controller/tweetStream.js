@@ -17,12 +17,18 @@ function TweetStream () {
 
 	// validate that the connection works, cf. https://github.com/impronunciable/Tuiter/issues/40
 	tu.rateLimitStatus(function(err, data){
+		
 		if (err) {
+			
 			console.log('error connecting to twitter API' , data)
 			throw err
 		}
-		else
-			debug('successfully tested twitter API connection')
+		else {
+			
+		   debug('successfully tested twitter API connection. Rate-limit status:')
+		   debug(JSON.stringify(data.resources.tweets, null, '\t'))
+	   }
+	   
 	})
 
 	/****************************************
