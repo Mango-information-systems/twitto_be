@@ -33,6 +33,7 @@ function Tweets(storage) {
 	calculateEntitiesStats()
 
 	// compute tweets time series
+	//  TODO do this 60 seconds after server start - init to empty timeline in the mean time
 	self.tweetsPerMinute = computeTimeline('m')
 
 	// update tweets per minute statistics every minute
