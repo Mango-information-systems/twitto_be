@@ -1,4 +1,5 @@
 var params = require('../params')
+	, Twit = require('twit')
 	, debug = require('debug')('tweetBot')
 
 var tweetBot = new TweetBot()
@@ -11,7 +12,7 @@ var tweetBot = new TweetBot()
  */
 function TweetBot() {
 
-	var tu = require('tuiter')(params.twitter)
+	var twit = new Twit(params.twitter)
 		, hourlyMentionsText = params.tweetBot.tweetText.hourlyMentions
 		, hourlyHashtagsText = params.tweetBot.tweetText.hourlyHashtags
 		, dailyText = params.tweetBot.tweetText.dailyStats
@@ -47,7 +48,7 @@ function TweetBot() {
 
 		listOfTweets.forEach(function (tweet) {
 			if(params.tweetBot.enableTweets) {
-				tu.update({status: tweet}, function (err, data) {
+				twit.post({status: tweet}, function (err, data, response) {
 					if (err) {
 						if (data && data.errors[0].code !== 187)
 							console.log('error sending tweet', err, data)
