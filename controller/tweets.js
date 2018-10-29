@@ -64,14 +64,14 @@ function Tweets (app) {
 				})
 			}
 				
-			if (tweet.geo) {
+			//~ if (tweet.geo) {
 				//~ // console.log('tweet with .geo', msg.geo)
-				data.coordinates = [tweet.geo.coordinates[1], tweet.geo.coordinates[0]]
-			}
-			else if (tweet.place.place_type !== 'country'){
-				 //~ console.log('place', JSON.stringify(msg.place.bounding_box.coordinates))
-				data.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
-			}
+				//~ data.coordinates = [tweet.geo.coordinates[1], tweet.geo.coordinates[0]]
+			//~ }
+			//~ else if (tweet.place && tweet.place.place_type !== 'country'){
+				 //~ // console.log('place', JSON.stringify(msg.place.bounding_box.coordinates))
+				//~ data.coordinates = generateRandomPointwithinBbox(tweet.place.bounding_box.coordinates[0])
+			//~ }
 			
 			// store new tweet, update stats, and check for changed.
 			var hasRankingChanged = app.model.tweets.add(data)

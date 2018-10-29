@@ -96,6 +96,9 @@ twitto.controller.io.on('connection', function(socket) {
 
 	socket.on('tweets', function() {
 
+		// send tweets mentions and hashtags graph (for graph viz)
+		//~ socket.emit('graph', twitto.model.tweets.getAllTweets())
+		
 		// send tweet statistics (for donut chart)
 		socket.emit('tweetStats', twitto.model.tweets.getTweetCounts())
 
@@ -103,10 +106,10 @@ twitto.controller.io.on('connection', function(socket) {
 		socket.emit('timelines', twitto.model.tweets.getTimelines())
 
 		// send tweets (for map)
-		socket.emit('tweets', twitto.model.tweets.getAllTweets())
+		//~ socket.emit('tweets', twitto.model.tweets.getAllTweets())
 
 		// send top trends (for bar charts)
-		socket.emit('entitiesStats', twitto.model.tweets.getEntitiesStats())
+		//~ socket.emit('entitiesStats', twitto.model.tweets.getEntitiesStats())
 
 	})
 

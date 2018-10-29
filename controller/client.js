@@ -3,7 +3,7 @@ window.debug = require('debug')
 var d3 = require('d3')
 	, io = require('socket.io-client')
 	, polyfills = require('../controller/polyfills')
-	, Map = require('../view/map')
+	//~ , Map = require('../view/map')
 	, LineChart = require('../view/lineChart')
 	, BarChart = require('../view/barChart')
 	, DonutChart = require('../view/donutChart')
@@ -19,7 +19,7 @@ var d3 = require('d3')
 	}
 
 // Initialize views
-app.view.map = new Map(d3.select('#mapWrap'))
+//~ app.view.map = new Map(d3.select('#mapWrap'))
 app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
 app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
@@ -36,17 +36,14 @@ app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 app.socket.emit('tweets')
 
 // listener: set of historical tweets sent by the server
-app.socket.on('tweets', function (tweets) {
-	
-	app.model.tweets = app.model.tweets.concat(tweets.filter(function(tweet) {
-		return typeof tweet.coordinates !== 'undefined'
-	}))
-
-	d3.selectAll('#mapWrap').classed('loading', false)
-	
-	app.view.map.addPoints(app.model.tweets)
-
-})
+//~ app.socket.on('tweets', function (tweets) {
+	//~ 
+	//~ app.model.tweets = app.model.tweets.concat(tweets.filter(function(tweet) {
+		//~ return typeof tweet.coordinates !== 'undefined'
+	//~ }))
+//~ 
+//~ 
+//~ })
 
 // listener: tweet stats sent by the server
 app.socket.on('tweetStats', function (stats) {
@@ -72,17 +69,17 @@ app.socket.on('timelines', function (stats) {
 })
 
 // listener: top stats sent by the server
-app.socket.on('entitiesStats', function (stats) {
-	
-	debug('entitiesStats', stats)
-
-	d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
-
-	app.view.topHashTags.render('hashtags', stats.topHashtags)
-	
-	app.view.topMentions.render('mentions', stats.topMentions)
-
-})
+//~ app.socket.on('entitiesStats', function (stats) {
+	//~ 
+	//~ debug('entitiesStats', stats)
+//~ 
+	//~ d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
+//~ 
+	//~ app.view.topHashTags.render('hashtags', stats.topHashtags)
+	//~ 
+	//~ app.view.topMentions.render('mentions', stats.topMentions)
+//~ 
+//~ })
 
 // listener: new tweet
 app.socket.on('tweet', function (tweet) {
@@ -92,7 +89,7 @@ app.socket.on('tweet', function (tweet) {
 	if (typeof tweet.coordinates !== 'undefined') {
 		app.model.tweets.push(tweet)
 
-		app.view.map.addPoints(app.model.tweets)
+		//~ app.view.map.addPoints(app.model.tweets)
 	}
 	
 	app.view.tweetsPerMinute.addTweet()

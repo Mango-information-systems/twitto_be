@@ -46,13 +46,17 @@ function TweetStream () {
 	function streamTweets() {
 		debug('running streamTweets')
 		
-		tu.filter({locations: [geoSettings.stream.sw, geoSettings.stream.ne]}, function(stream){
+		tu.filter({locations: [geoSettings.stream.sw, geoSettings.stream.ne], track: ['#belgium','#belgie','#belgique']}, function(stream){
+		//~ tu.filter({track: ['#belgium','#belgie','#belgique']}, function(stream){
 			stream.on('tweet', function(tweet){
 
-				if (tweet.place.country_code === geoSettings.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
+			debug('tweet', tweet.id_str)
+
+				// TODO add check for presence of tracked entities in clause below (OR)
+				//~ if (tweet.place.country_code === geoSettings.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
 					// send tweet to the parent process
 					process.send(tweet)
-				}
+				//~ }
 			})
 			stream.on('error', function(err){
 				console.log('error with twitter streaming API', err)
