@@ -1,4 +1,5 @@
-var params = require('../params')
+let params = require('../params')
+	, fork = require('child_process').fork
 	, debug = require('debug')('tweets')
 /**
 * Set of functions to process incoming tweets
@@ -34,7 +35,7 @@ function Tweets (app) {
 	*****************************/
 	function connectTweetStream() {
 		
-		this.tweetStream = require('child_process').fork(__dirname + '/tweetStream')
+		this.tweetStream = fork(__dirname + '/tweetStream')
 
 		// create listener to 'message' event
 		this.tweetStream.on('message', function(tweet) {
@@ -94,7 +95,7 @@ function Tweets (app) {
 	 *
 	 *****************************/
 	function initTweetBot() {
-		this.tweetBot = require('child_process').fork(__dirname + '/tweetBot')
+		this.tweetBot = fork(__dirname + '/tweetBot')
 		this.hourlyDelay = 2 * 60 * 60 * 1000
 		this.dailyDelay = 24 * 60 * 60 * 1000
 
