@@ -48,12 +48,21 @@ function TweetBot() {
 
 		listOfTweets.forEach(function (tweet) {
 			if(params.tweetBot.enableTweets) {
-				twit.post({status: tweet}, function (err, data, response) {
-					if (err) {
-						if (data && data.errors[0].code !== 187)
-							console.log('error sending tweet', err, data)
-						// no action in case error code is 187: means that the tweet is considered as a duplicate by twitter - exactly the same trends as previous tweet.
+				twit.post('statuses/update', {status: tweet}, function (err, data, response) {
+					if (typeof err !== 'undefined') {
+						if (err.code !== 187) {
+							console.log('error sending tweet')
+							console.log('err:', err)
+							console.log('data:', data)
+						}
+						else {
+							// Error code 187: the tweet is considered as a duplicate by twitter - exactly the same trends as previous tweet.
+							// no action
+							debug('error 187, ignoring this tweet')
+						}
 					}
+					else
+						debug('tweet posted', tweet.id_str, tweet.text, tweet.created_at)
 				})
 			}
 			else 
