@@ -35,7 +35,7 @@
     "node-persist": "^1.0.0",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
-    "tuiter": "^0.2.12"
+    "twit": "^2.2.11"
   },
   "devDependencies": {
     "browser-sync": "^2.26.3",
