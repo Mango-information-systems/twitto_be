@@ -36,6 +36,8 @@ function Tweets(storage) {
 	//  TODO do this 60 seconds after server start - init to empty timeline in the mean time
 	self.tweetsPerMinute = computeTimeline('m')
 
+//~ console.log('self.stats', JSON.stringify(self.stats, null, '    '))
+
 	// update tweets per minute statistics every minute
 	setInterval(function() {
 		computeTimeline('m')
@@ -121,7 +123,7 @@ function Tweets(storage) {
 			var tweet = self.tweets[currentIndex]
 			
 			if (now - (new Date(tweet.created_at)) > hoursAgo) {
-				// tweet  is older than 2 hours ago, exit loop
+				// tweet is older than 2 hours ago, exit loop
 				withinTimeframe = false
 			}
 			else {
