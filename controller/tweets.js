@@ -104,7 +104,7 @@ function Tweets (app) {
 	 *****************************/
 	function initTweetBot() {
 		this.tweetBot = fork(__dirname + '/tweetBot')
-		this.hourlyDelay = 2 /** 60 * 60*/ * 1000
+		this.hourlyDelay = 2 * 60 * 60 * 1000
 		this.dailyDelay = 24 * 60 * 60 * 1000
 
 		// Check if we need to send the daily tweet today, or tomorrow
