@@ -1,5 +1,6 @@
-var debug = require('debug')('tweetsModel')
+const debug = require('debug')('tweetsModel')
 	, d3 = require('d3')
+	, {UndirectedGraph} = require('graphology')
 
 /********************************************************
 * Tweets datastore
@@ -7,20 +8,13 @@ var debug = require('debug')('tweetsModel')
 * @constructor
 * 
 *********************************************************/
-function Tweets(storage) {
+function Tweets() {
 
-	var self = this
+	let self = this
+	
+	self.graph = new UndirectedGraph()
 
-	if (storage.keys().indexOf('tweets') === -1) {
-		// no tweets are already stored
-		self.tweets = []
-		// initialize tweets storage to an empty array in case 
-		storage.setItemSync('tweets', [])
-	}
-	else {
-		// cache persisted tweets
-		self.tweets = storage.getItemSync('tweets')
-	}
+	self.tweets = []
 	
 	self.stats = {
 		tweets: {} // tweets counts (# replies, hashtags, links etc)
@@ -82,8 +76,6 @@ function Tweets(storage) {
 	
 		// console.log('after cache clean', self.tweets.length)
 	
-		storage.setItem('tweets', self.tweets)
-		
 		// recompute statistics after a cache cleanup
 		calculateTweetCounts()
 		
@@ -129,23 +121,23 @@ function Tweets(storage) {
 			else {
 			// populate the staging array with count of each hashtag and mention from recent tweets
 			
-				if(tweet.has_hashtag) {
+				//~if(tweet.has_hashtag) {
 					
-					tweet.hashtags.forEach(function (hashtag) {
+					//~tweet.hashtags.forEach(function (hashtag) {
 						
-						self.staging.hashtagsCount[hashtag] = ++self.staging.hashtagsCount[hashtag] || 1
+						//~self.staging.hashtagsCount[hashtag] = ++self.staging.hashtagsCount[hashtag] || 1
 						
-					})
-				}
+					//~})
+				//~}
 				
-				if(tweet.has_mention) {
+				//~if(tweet.has_mention) {
 					
-					tweet.mentions.forEach(function (mention){
+					//~tweet.mentions.forEach(function (mention){
 
-						self.staging.mentionsCount[mention] = ++self.staging.mentionsCount[mention] || 1
+						//~self.staging.mentionsCount[mention] = ++self.staging.mentionsCount[mention] || 1
 
-					})
-				}
+					//~})
+				//~}
 				
 				currentIndex--
 			}
@@ -329,132 +321,6 @@ function Tweets(storage) {
 
 	/**
 	* 
-	* update entities statistics
-	*
-	* @param {object} tweet new tweet
-	* 
-	* @return {boolean} has any of the top10 rankings changed
-	* 
-	* @private
-	* 
-	*/	
-	function updateEntityStats(tweet){
-		
-		// update mentions and hashtags counts, and if appropriate, the top 10 ranking
-		
-		var topHashtagsChanged = false
-			, topMentionsChanged = false
-			
-		if(tweet.has_hashtag) {
-			
-			tweet.hashtags.forEach(function (hashtag) {
-				
-				self.staging.hashtagsCount[hashtag] = ++self.staging.hashtagsCount[hashtag] || 1
-				
-				var count = self.staging.hashtagsCount[hashtag]
-				
-				// check whether the number of occurences of this hashtag is greater than lowest value currently in the top10
-				if (self.stats.entities.topHashtags.length < 10 || count >= self.staging.topHashtagCountThreshold) {
-					
-					topHashtagsChanged = true
-					
-					//check whether this hashtag was already inside the top10 ranking
-					var hashtagIndex = self.stats.entities.topHashtags.findIndex(function(topHashtag) {
-						return topHashtag.key === hashtag
-					})
-
-					if (hashtagIndex !== -1) {
-						// update count value inside the top10 ranking
-						self.stats.entities.topHashtags[hashtagIndex].value = count
-					}
-					else {
-						// this hashtag is new inside the top 10
-						// add new value to the top 10
-						self.stats.entities.topHashtags.push({
-							key: hashtag
-							, value: count
-						})
-					}
-					
-					// update threshold value
-					self.staging.topHashtagCountThreshold = self.stats.entities.topHashtags.reduce(function(memo, topHashtag) {
-						return Math.min(memo, topHashtag.value)
-					}, +Infinity)
-				}
-				
-			})
-			
-			if (topHashtagsChanged) {
-				
-				// sort the top ranking
-				self.stats.entities.topHashtags.sort(function(a, b) {
-					return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
-				})
-				
-				// timit to top 10 values
-				self.stats.entities.topHashtags = self.stats.entities.topHashtags.slice(0, 10)
-				
-			}
-		}
-		
-		if(tweet.has_mention){
-			
-			tweet.mentions.forEach(function (mention) {
-				
-				self.staging.mentionsCount[mention] = ++self.staging.mentionsCount[mention] || 1
-				
-				var count = self.staging.mentionsCount[mention]
-				
-				// check whether the number of occurences of this mention is greater than lowest value currently in the top10
-				if (self.stats.entities.topMentions.length < 10 || count >= self.staging.topMentionCountThreshold) {
-					
-					topMentionsChanged = true
-					
-					//check whether this mention was already inside the top10 ranking
-					var mentionIndex = self.stats.entities.topMentions.findIndex(function(topMention) {
-						return topMention.key === mention
-					})
-
-					if (mentionIndex !== -1) {
-						// update count value inside the top10 ranking
-						self.stats.entities.topMentions[mentionIndex].value = count
-					}
-					else {
-						// this mention is new inside the top 10
-						// add new value to the top 10
-						self.stats.entities.topMentions.push({
-							key: mention
-							, value: count
-						})
-					}
-					
-					// update threshold value
-					self.staging.topMentionCountThreshold = self.stats.entities.topMentions.reduce(function(memo, topMention) {
-						return Math.min(memo, topMention.value)
-					}, +Infinity)
-				}
-				
-			})
-			
-			if (topMentionsChanged) {
-				
-				// sort the top ranking
-				self.stats.entities.topMentions.sort(function(a, b) {
-					return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
-				})
-				
-				// timit to top 10 values
-				self.stats.entities.topMentions = self.stats.entities.topMentions.slice(0, 10)
-				
-			}
-		}
-		
-		return topHashtagsChanged || topMentionsChanged
-		
-	}
-		
-	/**
-	* 
 	* count new tweet in the tweets per minute time series data
 	*
 	* @private
@@ -490,10 +356,8 @@ function Tweets(storage) {
 
 	/**
 	* 
-	* store a new tweet
+	* store a new tweet's data
 	*
-	* @return {boolean} flag indicating whether top hashtags and/or top mentions ranking has changed
-	* 
 	*/
 	this.add = function(tweet) {
 		
@@ -501,12 +365,48 @@ function Tweets(storage) {
 		
 		self.tweets.push(tweet)
 		
-		storage.setItem('tweets', self.tweets)
+		//~console.log('entities', tweet.entities)
+		
+		// store nodes
+		tweet.entities.forEach(function(entity) {
+		
+			//~console.log('entity', entity)
+			self.graph.mergeNode(entity, {lastUpdate: tweet.created_at})
+			
+			self.graph.updateNodeAttribute(entity, 'count', n => (n || 1) + 1)
+
+		})
+		
+		let source, target
+		
+		//compute and store edges
+		for (var i = 0; i < tweet.entities.length-1; i++) {
+		
+			source = tweet.entities[i]
+		
+			for (var j = i+1; j < tweet.entities.length; j++) {
+				
+				target = tweet.entities[j]
+				
+				//~console.log('saving edge', source, target)
+				
+				self.graph.mergeEdge(source, target)
+				
+				self.graph.updateEdgeAttribute(source, target, 'weight', n => (n || 1) + 1)
+				
+			}
+			
+		}
 		
 		updateTweetCounts(tweet)
 		
-		return updateEntityStats(tweet)
 	}
+
+
+setInterval(function() {
+	console.log('graph stats', self.graph.order, self.graph.size)
+
+}, 150000)
 
 	/**
 	* 
