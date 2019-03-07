@@ -373,7 +373,7 @@ function Tweets() {
 			//~console.log('entity', entity)
 			self.graph.mergeNode(entity, {lastUpdate: tweet.created_at})
 			
-			self.graph.updateNodeAttribute(entity, 'count', n => (n || 1) + 1)
+			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
 
 		})
 		
@@ -392,7 +392,7 @@ function Tweets() {
 				
 				self.graph.mergeEdge(source, target)
 				
-				self.graph.updateEdgeAttribute(source, target, 'weight', n => (n || 1) + 1)
+				self.graph.updateEdgeAttribute(source, target, 'weight', n => (n || 0) + 1)
 				
 			}
 			
@@ -403,10 +403,14 @@ function Tweets() {
 	}
 
 
-setInterval(function() {
-	console.log('graph stats', self.graph.order, self.graph.size)
-
-}, 150000)
+//~ setTimeout(function() {
+	//~ console.log('graph stats', self.graph.order, self.graph.size)
+	//~ const fs = require('fs')
+	//~ fs.writeFile('graphExport.json', JSON.stringify(self.graph.export()), 'utf8', function(err, res) {
+		//~ console.log('graph export result', err, res)
+	//~ })
+//~ 
+//~ }, 1.8e+6)
 
 	/**
 	* 
