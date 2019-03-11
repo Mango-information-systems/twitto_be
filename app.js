@@ -108,8 +108,8 @@ twitto.controller.io.on('connection', function(socket) {
 		// send tweets (for map)
 		//~ socket.emit('tweets', twitto.model.tweets.getAllTweets())
 
-		// send top trends (for bar charts)
-		//~ socket.emit('entitiesStats', twitto.model.tweets.getEntitiesStats())
+		// send top entities graph
+		 socket.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 
 	})
 

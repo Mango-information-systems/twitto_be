@@ -44,6 +44,11 @@ function Tweets() {
 
 	setTimeout(cleanCache, delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
+// Temp
+	const graph = require('../graphExport')
+	
+	console.log('graph', graph)
+
 
 	/********************************************************
 	* 
@@ -321,6 +326,55 @@ function Tweets() {
 
 	/**
 	* 
+	* filter the entities graph in order to return 
+	* 
+	*   * only the giant component
+	*   * only the top ranked entities, and related edges
+	*
+	* @private
+	* 
+	*/	
+	function filterGraph(){ 
+		// TODO
+	}
+	
+
+	// TEMP 
+	
+	self.subGraph = require('../graphExport')
+	
+	
+	/**
+	 *
+	 * convert graph to d3 format
+	 *
+	 * @return {object} graph in a suitable format for use in d3
+	 * 
+	 * @private
+	 *
+	 */
+	function formatGraph(graph) {
+		
+		let res = {nodes: graph.nodes, edges: []}
+		
+		// TODO check whether graphology has a better way to do this
+		graph.edges.forEach(function(edge) {
+			let sourceIndex = res.nodes.findIndex(function(node, index){
+				return node.key == edge.source
+			})
+			let targetIndex = res.nodes.findIndex(function(node, index){
+				return node.key == edge.target
+			})
+			
+			res.edges.push({source: sourceIndex, target: targetIndex})
+		})
+		
+		return res
+		
+		
+	}
+	/**
+	* 
 	* count new tweet in the tweets per minute time series data
 	*
 	* @private
@@ -434,15 +488,16 @@ function Tweets() {
 		return self.stats.tweets
 	}
 
+
 	/**
 	* 
-	* get top entities (trending hashtags / mentions)
+	* get top entities subgraph
 	*
-	* @return {object} trending entities stats
+	* @return {object} trending entities graph data
 	* 
 	*/
-	this.getEntitiesStats = function () {
-		return self.stats.entities
+	this.getEntitiesGraph = function () {
+		return formatGraph(self.subGraph)
 	}
 	
 	/**

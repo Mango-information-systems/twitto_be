@@ -5,8 +5,9 @@ var d3 = require('d3')
 	, polyfills = require('../controller/polyfills')
 	//~ , Map = require('../view/map')
 	, LineChart = require('../view/lineChart')
-	, BarChart = require('../view/barChart')
+	//~, BarChart = require('../view/barChart')
 	, DonutChart = require('../view/donutChart')
+	, Force = require('../view/force')
 	, debug = window.debug('clientApp')
 	, app = {
 		model: {
@@ -23,8 +24,9 @@ var d3 = require('d3')
 app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
 app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
-app.view.topHashTags = new BarChart(d3.select('#topHashTags'))
-app.view.topMentions = new BarChart(d3.select('#topMentions'))
+//~app.view.topHashTags = new BarChart(d3.select('#topHashTags'))
+//~app.view.topMentions = new BarChart(d3.select('#topMentions'))
+app.view.force = new Force(d3.select('#graph'))
 
 
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''
@@ -68,18 +70,25 @@ app.socket.on('timelines', function (stats) {
 	
 })
 
-// listener: top stats sent by the server
-//~ app.socket.on('entitiesStats', function (stats) {
-	//~ 
-	//~ debug('entitiesStats', stats)
-//~ 
-	//~ d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
-//~ 
-	//~ app.view.topHashTags.render('hashtags', stats.topHashtags)
-	//~ 
-	//~ app.view.topMentions.render('mentions', stats.topMentions)
-//~ 
-//~ })
+// listener: top entities graph sent by the server
+ app.socket.on('entitiesGraph', function (graphData) {
+	 
+	 debug('entitiesGraph', graphData)
+	 console.log('entitiesGraph', graphData)
+	 
+
+ 
+	 //~d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
+ 
+	 //~app.view.topHashTags.render('hashtags', stats.topHashtags)
+	 
+	 //~app.view.topMentions.render('mentions', stats.topMentions)
+	 
+	 app.view.force.init()
+	 app.view.force.update(graphData)
+	 d3.selectAll('#graph').classed('loading', false)
+ 
+ })
 
 // listener: new tweet
 app.socket.on('tweet', function (tweet) {
