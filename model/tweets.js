@@ -366,7 +366,7 @@ function Tweets() {
 				return node.key == edge.target
 			})
 			
-			res.edges.push({source: sourceIndex, target: targetIndex})
+			res.edges.push({source: sourceIndex, target: targetIndex, weight: edge.attributes.weight})
 		})
 		
 		return res

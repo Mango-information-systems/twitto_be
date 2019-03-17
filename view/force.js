@@ -11,10 +11,10 @@ var d3 = require('d3')
 function ForceChart() {
 
 	var self = this
-		, nodeMargin = 45
+		, nodeMargin = 15
 	
 	var textScale = d3.scaleLinear()
-			.range([1, 3])
+			.range([.5, .6])
 		, color = d3.scaleOrdinal(d3.schemeCategory10)
 		, linkDistanceScale = d3.scaleLinear()
 			.domain([100, 1000])
@@ -37,11 +37,20 @@ function ForceChart() {
 	 */
 	 function ticked() {
 		 
-		self.node.attr('transform', function(d) {
+		self.node.attr('transform', function(d, i) {
 			
-			d.x = Math.max(nodeMargin, Math.min(self.width - nodeMargin, d.x || self.width / 2))
-				d.y = Math.max(nodeMargin, Math.min(self.height - nodeMargin, d.y || self.height / 2))
+			//~if (i === 0) {
+				//~console.log('d.x', d.x)
+				//~console.log('nodeMargin', nodeMargin)
+				//~console.log('self.width - nodeMargin', self.width - nodeMargin)
+				//~console.log('set d.x',Math.max(nodeMargin, Math.min(self.width - nodeMargin, d.x)))
+				
+			//~}
 			
+			d.x = Math.max(nodeMargin, Math.min(self.width - nodeMargin, d.x))
+				d.y = Math.max(nodeMargin, Math.min(self.height - nodeMargin, d.y))
+			
+				
 			return 'translate(' + d.x + ',' + d.y + ')'
 		})
 
@@ -60,20 +69,22 @@ function ForceChart() {
 		
 		// curved links lines
 		// as seen in https://stackoverflow.com/a/13456081
-		self.link.attr('d', function(d) {
+		//~self.link.attr('d', function(d, i) {
 
-			var dx = d.target.x - d.source.x
-				, dy = d.target.y - d.source.y
-				, dr = Math.sqrt(dx * dx + dy * dy)
-			return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y
-		  })
-		  .attr('stroke-opacity', function(d) { return self.weightScale(d.weight)})
-		  .attr('stroke-width', function(d) { return .5 + 3 * self.weightScale(d.weight)})
-		  .attr('stroke',  function(d) { return color(d.source.group)})
+			//~var dx = d.target.x - d.source.x
+				//~, dy = d.target.y - d.source.y
+				//~, dr = Math.sqrt(dx * dx + dy * dy)
+			
+			//~return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y
+		  //~})
+		  //~.attr('stroke-opacity', function(d) { return self.weightScale(d.weight)})
+		  //~.attr('stroke-width', function(d) { return .5 + 3 * self.weightScale(d.weight)})
+		  //~.attr('stroke',  function(d) { return color(d.source.group)})
 
-		d3.select('#links')
-		  .transition()
-		    .style('opacity', .3)
+		//~d3.select('#links')
+		  //~.transition()
+		    //~.style('opacity', .3)
+
 		    
 		// avoid overlapping labels
 		//~relax(self.node)
@@ -168,12 +179,12 @@ function ForceChart() {
 		// Adjust our line leaders here
 		// so that they follow the labels. 
 		if(again) {
-			//~setTimeout(function() {relax(textLabels)}, 10)
+			setTimeout(function() {relax(textLabels)}, 10)
 		}
-		else {
-			// both force layout and overlap prevention are finished, display export button
-			d3.select('#exportLink').style('display', 'block')
-		}
+		//~else {
+			//~// both force layout and overlap prevention are finished, display export button
+			//~d3.select('#exportLink').style('display', 'block')
+		//~}
 	}
 
 	function overlap (a, b) {
@@ -262,7 +273,6 @@ function ForceChart() {
 	 */
 	this.init = function (opts) {
 		
-		
 		self.width = 650
 		self.height = 350
 		
@@ -278,7 +288,7 @@ function ForceChart() {
 		self.link = self.svg.append('g')
 			.attr('id', 'links')
 			.attr('stroke', '#ddd')
-			.attr('stroke-width', 1.5)
+			.attr('stroke-width', .5)
 			.style('opacity', 0)
 			.selectAll('.link')
 		
@@ -298,15 +308,14 @@ function ForceChart() {
 
 		textScale.domain([data.nodes[data.nodes.length-1].attributes.count, data.nodes[0].attributes.count])
 
-
-//~console.log
 		self.weightScale = d3.scaleLog()
 			.domain(d3.extent(data.edges, function (d) { return d.weight }))
 			.range([.1, 1])
-			
+
 		self.simulation = d3.forceSimulation(data.nodes)
 			.force('link', d3.forceLink(data.edges).distance(linkDistanceScale(data.edges.length)).strength(function(d) {return self.weightScale(d.weight)}))
-			.force('charge', d3.forceManyBody().strength(-200))
+			//~.force('charge', d3.forceManyBody().strength(-200))
+			.force('charge', d3.forceManyBody().strength(10))
 			.force('center', d3.forceCenter(self.width / 2, self.height / 2))
 			.force('x', d3.forceX().strength(xForceScale(data.edges.length)))
 			.on('tick', ticked)
@@ -323,7 +332,7 @@ function ForceChart() {
 		  .text(function(d) { return d.key})
 		  //~.attr('fill', function(d) { return color(d.group) })
 		  .attr('dy', '2.5')
-		  //~.attr('transform', function(d) { console.log('count', d.attributes); return 'scale(' + textScale(d.attributes.count) + ')'})
+		  .attr('transform', function(d) { return 'scale(' + textScale(d.attributes.count) + ')'})
 		
 		// Apply the general update pattern to the links.
 		self.link = self.link.data(data.edges, function(d) { 

@@ -26,7 +26,7 @@ function Tweets (app) {
 	
 	/****************************
 	* 
-	* connectTweetStream
+	* connect TweetStream
 	* 
 	* create the tweets extraction child process
 	*
