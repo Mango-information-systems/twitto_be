@@ -14,11 +14,11 @@ function ForceChart() {
 		, nodeMargin = 15
 	
 	var textScale = d3.scaleLinear()
-			.range([.5, .6])
+			.range([.4, .8])
 		, color = d3.scaleOrdinal(d3.schemeCategory10)
 		, linkDistanceScale = d3.scaleLinear()
 			.domain([100, 1000])
-			.range([50, 120])
+			.range([30, 90])
 		, xForceScale = d3.scaleLinear()
 			.domain([100, 1000])
 			.range([-.01, -.7])
@@ -69,25 +69,26 @@ function ForceChart() {
 		
 		// curved links lines
 		// as seen in https://stackoverflow.com/a/13456081
-		//~self.link.attr('d', function(d, i) {
+		self.link.attr('d', function(d, i) {
 
-			//~var dx = d.target.x - d.source.x
-				//~, dy = d.target.y - d.source.y
-				//~, dr = Math.sqrt(dx * dx + dy * dy)
+			var dx = d.target.x - d.source.x
+				, dy = d.target.y - d.source.y
+				, dr = Math.sqrt(dx * dx + dy * dy)
 			
-			//~return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y
-		  //~})
-		  //~.attr('stroke-opacity', function(d) { return self.weightScale(d.weight)})
-		  //~.attr('stroke-width', function(d) { return .5 + 3 * self.weightScale(d.weight)})
-		  //~.attr('stroke',  function(d) { return color(d.source.group)})
+			return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y
+		  })
+		  .attr('stroke-opacity', .5)
+		  .attr('stroke-width', function(d) { return .8 + 3 * self.weightScale(d.weight)})
+		  .attr('stroke',  function(d) { return color(d.source.group)})
+		  .attr('fill',  'none')
 
-		//~d3.select('#links')
-		  //~.transition()
-		    //~.style('opacity', .3)
+		d3.select('#links')
+		  .transition()
+		    .style('opacity', 1)
 
 		    
 		// avoid overlapping labels
-		//~relax(self.node)
+		relax(self.node)
 		
 	 }
 
@@ -274,7 +275,7 @@ function ForceChart() {
 	this.init = function (opts) {
 		
 		self.width = 650
-		self.height = 350
+		self.height = 600
 		
 		self.svg = d3.select('#graph').html('')
 			.append('svg')
@@ -306,7 +307,7 @@ function ForceChart() {
 		
 		//~ console.log('graph data', data)
 
-		textScale.domain([data.nodes[data.nodes.length-1].attributes.count, data.nodes[0].attributes.count])
+		textScale.domain([d3.min(data.nodes, function(d) { return d.attributes.count}), d3.max(data.nodes, function(d) { return d.attributes.count})])
 
 		self.weightScale = d3.scaleLog()
 			.domain(d3.extent(data.edges, function (d) { return d.weight }))
@@ -315,9 +316,10 @@ function ForceChart() {
 		self.simulation = d3.forceSimulation(data.nodes)
 			.force('link', d3.forceLink(data.edges).distance(linkDistanceScale(data.edges.length)).strength(function(d) {return self.weightScale(d.weight)}))
 			//~.force('charge', d3.forceManyBody().strength(-200))
-			.force('charge', d3.forceManyBody().strength(10))
+			.force('charge', d3.forceManyBody().strength(-5))
 			.force('center', d3.forceCenter(self.width / 2, self.height / 2))
-			.force('x', d3.forceX().strength(xForceScale(data.edges.length)))
+			//~ .force('x', d3.forceX().strength(xForceScale(data.edges.length)))
+			//~ .force('y', d3.forceY().strength(xForceScale(data.edges.length)))
 			.on('tick', ticked)
 			.on('end', ended)
 
@@ -329,7 +331,7 @@ function ForceChart() {
 				  .on('end', dragended))
 
 		self.node.append('text')
-		  .text(function(d) { return d.key})
+		  .text(function(d) { return d.key })
 		  //~.attr('fill', function(d) { return color(d.group) })
 		  .attr('dy', '2.5')
 		  .attr('transform', function(d) { return 'scale(' + textScale(d.attributes.count) + ')'})
