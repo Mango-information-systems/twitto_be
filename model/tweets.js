@@ -2,6 +2,7 @@ const debug = require('debug')('tweetsModel')
 	, d3 = require('d3')
 	, {UndirectedGraph} = require('graphology')
 	, {weightedDegree} = require('graphology-metrics')
+	, FA2Layout = require('graphology-layout-forceatlas2')
 	, {subGraph} = require('graphology-utils')
 
 /********************************************************
@@ -399,19 +400,31 @@ function Tweets() {
 			
 			
 			console.time('sortByDegree')
+			
 			let topNodesKeys = Object.keys(degrees).sort(function(a, b) {
 				return degrees[b] - degrees[a]
 			}).slice(0, 50)
 			console.timeEnd('sortByDegree')
 			
 			
-			console.log('topNodesKeys', topNodesKeys)
+			//~console.log('topNodesKeys', topNodesKeys)
 			
 			console.time('subGraph')
 			
 			self.filteredGraph = subGraph(self.graph, topNodesKeys)
 			
 			console.timeEnd('subGraph')
+			
+			
+			
+			console.time('FA2')
+			
+			FA2Layout.assign(self.filteredGraph, {iterations: 50})
+			
+			console.timeEnd('FA2')
+			
+			//~console.log('node after layout computation', self.filteredGraph.getNodeAttributes(self.filteredGraph.nodes()[0]))
+			
 
 		}
 	}
@@ -506,18 +519,21 @@ function Tweets() {
 		
 		//~console.log('entities', tweet.entities)
 		
+		console.time('store nodes')
 		// store nodes
 		tweet.entities.forEach(function(entity) {
 		
 			//~console.log('entity', entity)
-			self.graph.mergeNode(entity)
+			self.graph.mergeNode(entity, {x: Math.random(), y: Math.random()})
 			
 			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
 
 		})
+		console.timeEnd('store nodes')
 		
 		let source, target
 		
+		console.time('store edges')
 		//compute and store edges
 		for (var i = 0; i < tweet.entities.length-1; i++) {
 		
@@ -536,6 +552,7 @@ function Tweets() {
 			}
 			
 		}
+		console.timeEnd('store edges')
 		
 		updateTweetCounts(tweet)
 		
