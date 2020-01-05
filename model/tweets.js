@@ -1,6 +1,8 @@
 const debug = require('debug')('tweetsModel')
 	, d3 = require('d3')
 	, {UndirectedGraph} = require('graphology')
+	, {weightedDegree} = require('graphology-metrics')
+	, {subGraph} = require('graphology-utils')
 
 /********************************************************
 * Tweets datastore
@@ -34,6 +36,7 @@ function Tweets() {
 
 	// update tweets per minute statistics every minute
 	setInterval(function() {
+		console.log('graph stats', self.graph.order, self.graph.size)
 		computeTimeline('m')
 	}, 60000)
 	
@@ -45,9 +48,8 @@ function Tweets() {
 	setTimeout(cleanCache, delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
 // Temp
-	const graph = require('../graphExport')
-	
-	console.log('graph', graph)
+	//~const graph = require('../graphExport')
+	//~console.log('graph', graph)
 
 
 	/********************************************************
@@ -65,21 +67,65 @@ function Tweets() {
 	*/
 	function cleanCache() {
 		
+		debug('cleanCache: removing old tweets')
+		
 		// schedule next execution in an hour
 		setTimeout(cleanCache, delay)
 		
-		// console.log('before cache clean', self.tweets.length)
+		debug('before cache clean', self.tweets.length)
 		
 		var yesterday = new Date()
 		yesterday.setDate(yesterday.getDate() - 1)
 	
 		self.tweets = self.tweets.filter(function(tweet, ix){
 			
-			return new Date(Date.parse(tweet.created_at)) > yesterday
+			if (new Date(Date.parse(tweet.created_at)) <= yesterday) {
+			
+				let source, target
+				
+				// decrement edge weights and remove obsolete edges
+				for (var i = 0; i < tweet.entities.length-1; i++) {
+				
+					source = tweet.entities[i]
+				
+					for (var j = i+1; j < tweet.entities.length; j++) {
+						
+						target = tweet.entities[j]
+						
+						//~console.log('saving edge', source, target)
+						
+						self.graph.updateEdgeAttribute(source, target, 'weight', n => n - 1)
+						
+						if (self.graph.getEdgeAttribute(source, target, 'weight') === 0 ){
+							self.graph.dropEdge(source, target)
+						}
+						
+					}
+					
+				}
+			
+				// store nodes
+				tweet.entities.forEach(function(entity) {
+				
+					self.graph.updateNodeAttribute(entity, 'count', n => n - 1)
+					
+					if (self.graph.getNodeAttribute(entity, 'count') === 0 ){
+							self.graph.dropNode(entity)
+						}
+						
+					
+
+				})
+				
+				// remove from self.tweets
+				return false
+			}
+			else
+				return true
 				
 		})
 	
-		// console.log('after cache clean', self.tweets.length)
+		debug('after cache clean', self.tweets.length)
 	
 		// recompute statistics after a cache cleanup
 		calculateTweetCounts()
@@ -97,6 +143,8 @@ function Tweets() {
 	 */
 	function calculateEntitiesStats() {
 
+		debug('calculateEntitiesStats')
+		
 		// staging area keeping the number of occurence of each hashtag and mention, and threshold count to enter in the top 10
 		self.staging = {
 			hashtagsCount: {}
@@ -229,6 +277,8 @@ function Tweets() {
 	* 
 	*/	
 	function computeTimeline (granularity){
+
+		debug('computeTimeline')
 	
 		if (granularity === 'm') {
 			var timeRes = 60000
@@ -294,6 +344,8 @@ function Tweets() {
 	* 
 	*/	
 	function calculateTweetCounts(){
+
+		debug('calculateTweetCounts')
 		
 		self.stats.tweets.replyCount = 0
 		self.stats.tweets.hashtagCount = 0
@@ -335,13 +387,39 @@ function Tweets() {
 	* 
 	*/	
 	function filterGraph(){ 
-		// TODO
+
+		debug('filterGraph')
+		//~console.log('graph', self.graph.toJSON())
+		
+		if (self.graph.order >0) {
+			
+			console.time('degree')
+			const degrees = weightedDegree(self.graph, {weighted: true})
+			console.timeEnd('degree')
+			
+			
+			console.time('sortByDegree')
+			let topNodesKeys = Object.keys(degrees).sort(function(a, b) {
+				return degrees[b] - degrees[a]
+			}).slice(0, 50)
+			console.timeEnd('sortByDegree')
+			
+			
+			console.log('topNodesKeys', topNodesKeys)
+			
+			console.time('subGraph')
+			
+			self.filteredGraph = subGraph(self.graph, topNodesKeys)
+			
+			console.timeEnd('subGraph')
+
+		}
 	}
 	
 
 	// TEMP 
 	
-	self.subGraph = require('../graphExport')
+	//~self.filteredGraph = require('../graphExport')
 	
 	
 	/**
@@ -354,6 +432,8 @@ function Tweets() {
 	 *
 	 */
 	function formatGraph(graph) {
+
+		debug('formatGraph')
 		
 		let res = {nodes: graph.nodes, edges: []}
 		
@@ -381,6 +461,9 @@ function Tweets() {
 	* 
 	*/	
 	function updateTimeline(){
+
+		debug('updateTimeline')
+		
 		self.tweetsPerMinute[self.tweetsPerMinute.length-1].count++
 	}
 
@@ -394,6 +477,8 @@ function Tweets() {
 	* 
 	*/
 	function updateTweetCounts(tweet){
+
+		debug('updateTweetCounts')
 
 		if (tweet.is_reply)
 			self.stats.tweets.replyCount++
@@ -425,7 +510,7 @@ function Tweets() {
 		tweet.entities.forEach(function(entity) {
 		
 			//~console.log('entity', entity)
-			self.graph.mergeNode(entity, {lastUpdate: tweet.created_at})
+			self.graph.mergeNode(entity)
 			
 			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
 
@@ -453,6 +538,11 @@ function Tweets() {
 		}
 		
 		updateTweetCounts(tweet)
+		
+		console.log('graph stats:')
+		console.log('-- nodes count', self.graph.order)
+		console.log('-- edges count', self.graph.size)
+		filterGraph()
 		
 	}
 
@@ -497,7 +587,8 @@ function Tweets() {
 	* 
 	*/
 	this.getEntitiesGraph = function () {
-		return formatGraph(self.subGraph)
+		//~return formatGraph(self.filteredGraph)
+		return formatGraph(self.graph)
 	}
 	
 	/**
