@@ -47,7 +47,7 @@ function TweetStream () {
 	function streamTweets() {
 		debug('running streamTweets')
 		
-		var stream = twit.stream('statuses/filter', { locations: [geoSettings.stream.sw.long, geoSettings.stream.sw.lat, geoSettings.stream.ne.long, geoSettings.stream.ne.lat], track: ['#belgium','#belgie','#belgique']})
+		var stream = twit.stream('statuses/filter', { track: ['#belgium','#belgie','#belgique', '#belgien']})
 
 		stream.on('tweet', function(tweet){
 
