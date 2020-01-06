@@ -27,7 +27,7 @@ app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
 //~app.view.topHashTags = new BarChart(d3.select('#topHashTags'))
 //~app.view.topMentions = new BarChart(d3.select('#topMentions'))
 app.view.force = new Force(d3.select('#graph'))
-
+app.view.force.init()
 
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 //var suffix = ':3031'
@@ -74,9 +74,6 @@ app.socket.on('timelines', function (stats) {
  app.socket.on('entitiesGraph', function (graphData) {
 	 
 	 debug('entitiesGraph', graphData)
-	 console.log('entitiesGraph', graphData)
-	 
-
  
 	 //~d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
  
@@ -84,7 +81,7 @@ app.socket.on('timelines', function (stats) {
 	 
 	 //~app.view.topMentions.render('mentions', stats.topMentions)
 	 
-	 app.view.force.init()
+
 	 app.view.force.update(graphData)
 	 d3.selectAll('#graph').classed('loading', false)
  

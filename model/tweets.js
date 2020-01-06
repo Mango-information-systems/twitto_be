@@ -15,7 +15,7 @@ function Tweets() {
 
 	let self = this
 	
-	self.graph = new UndirectedGraph()
+	self.graph = self.filteredGraph = new UndirectedGraph()
 
 	self.tweets = []
 	
@@ -448,19 +448,31 @@ function Tweets() {
 
 		debug('formatGraph')
 		
-		let res = {nodes: graph.nodes, edges: []}
+		let res = {nodes: [], edges: []}
+		
+		graph.forEachNode((node, attributes) => {
+			res.nodes.push({
+				key: node
+				, count: attributes.count
+				, x: attributes.x
+				, y: attributes.y
+				, modularity: 0
+			})
+		})
 		
 		// TODO check whether graphology has a better way to do this
-		graph.edges.forEach(function(edge) {
+		graph.forEachEdge(function(edge, attributes, source, target) {
 			let sourceIndex = res.nodes.findIndex(function(node, index){
-				return node.key == edge.source
+				return node.key == source
 			})
 			let targetIndex = res.nodes.findIndex(function(node, index){
-				return node.key == edge.target
+				return node.key == target
 			})
 			
-			res.edges.push({source: sourceIndex, target: targetIndex, weight: edge.attributes.weight})
+			res.edges.push({source: sourceIndex, target: targetIndex, weight: attributes.weight})
 		})
+		
+		//~console.log('formatted graph', res)
 		
 		return res
 		
@@ -604,8 +616,8 @@ function Tweets() {
 	* 
 	*/
 	this.getEntitiesGraph = function () {
-		//~return formatGraph(self.filteredGraph)
-		return formatGraph(self.graph)
+		return formatGraph(self.filteredGraph)
+		//~return formatGraph(self.graph)
 	}
 	
 	/**
