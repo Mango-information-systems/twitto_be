@@ -16,7 +16,6 @@ function Tweets() {
 	let self = this
 	
 	self.graph = new UndirectedGraph()
-	self.filteredGraph = { export: function() {return {}}}
 
 	self.tweets = []
 	
@@ -525,7 +524,7 @@ function Tweets() {
 		tweet.entities.forEach(function(entity) {
 		
 			//~console.log('entity', entity)
-			self.graph.mergeNode(entity, {label: entity, x: Math.random(), y: Math.random()})
+			self.graph.mergeNode(entity, {x: Math.random(), y: Math.random()})
 			
 			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
 
@@ -605,8 +604,8 @@ function Tweets() {
 	* 
 	*/
 	this.getEntitiesGraph = function () {
-		return self.filteredGraph.export()
-		//~return formatGraph(self.graph)
+		//~return formatGraph(self.filteredGraph)
+		return formatGraph(self.graph)
 	}
 	
 	/**
