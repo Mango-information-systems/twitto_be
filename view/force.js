@@ -18,9 +18,9 @@ function ForceChart() {
 			.range([.4, .8])
 		, color = d3.scaleOrdinal(d3.schemeCategory10)
 		, x = d3.scaleLinear()
-			.range([0, width])
+			.range([nodeMargin, width - nodeMargin])
 		, y = d3.scaleLinear()
-			.range([0, height])
+			.range([nodeMargin, height - nodeMargin])
 
 	/****************************************
 	 *
@@ -320,16 +320,16 @@ function ForceChart() {
 				  enter => 
 					  enter.append('text')
 						  .attr('class', 'node')
-						  .text(function(d) { return d.key })
+						  .text( d => d.key )
 						  .attr('dy', '2.5')
-						  .attr('transform', function(d) { return 'scale(' + textScale(d.count) + ')'})
+						  .attr('transform', d => 'scale(' + textScale(d.count) + ')')
 				  )
 				.call(all => all.transition()
-						  .attr('x', function(d) { return x(d.x) })
-						  .attr('y', function(d) { return y(d.y) })
-						  .attr('transform', function(d) { return 'scale(' + textScale(d.count) + ')'})
-						  )
+						  .attr('x', d => x(d.x))
+						  .attr('y', d => y(d.y))
+						  .attr('transform', d => 'scale(' + textScale(d.count) + ')')
 						  //~.attr('fill', function(d) { return color(d.modularity) })
+				)
 		
 		
 		//~let nodeEnter = node.enter()
