@@ -11,9 +11,9 @@ var d3 = require('d3')
 function ForceChart() {
 
 	let self = this
-		, nodeMargin = 15
+		, nodeMargin = 55
 		, width = 650
-		, height = 600
+		, height = 400
 		, textScale = d3.scaleLinear()
 			.range([.4, .8])
 		, color = d3.scaleOrdinal(d3.schemeCategory10)
@@ -21,6 +21,8 @@ function ForceChart() {
 			.range([nodeMargin, width - nodeMargin])
 		, y = d3.scaleLinear()
 			.range([nodeMargin, height - nodeMargin])
+		, weightScale = d3.scaleLog()
+			.range([1, 8])
 
 	/****************************************
 	 *
@@ -64,7 +66,7 @@ function ForceChart() {
 	 function ended() {
 		
 		//~ debug('force simulation ended')
-		console.log('force simulation ended')
+		self.linkconsole.log('force simulation ended')
 		
 		// curved links lines
 		// as seen in https://stackoverflow.com/a/13456081
@@ -91,33 +93,6 @@ function ForceChart() {
 		
 	 }
 
-	function dragstarted(d) {
-		// hide export button when layout is being computed
-		d3.select('#exportLink').style('display', 'none')
-		
-		if (!d3.event.active) {
-			
-			self.simulation.alphaTarget(0.3).restart()
-		
-			d3.select('#links')
-				.transition()
-				.style('opacity', 0) // hide links when the animation restarts
-		}
-		d.fx = d.x
-		d.fy = d.y
-	}
-
-	function dragged(d) {
-		d.fx = d3.event.x
-		d.fy = d3.event.y
-	}
-
-	function dragended(d) {
-		if (!d3.event.active)
-			self.simulation.alphaTarget(0)
-		d.fx = null
-		d.fy = null
-	}
 
 	/**
 	 * relax position of text labels, whenever they are overlapping.
@@ -286,8 +261,7 @@ function ForceChart() {
 			.attr('id', 'links')
 			.attr('stroke', '#ddd')
 			.attr('stroke-width', .5)
-			.style('opacity', 0)
-			.selectAll('.link')
+			.style('opacity', .3)
 		
 		self.node = self.svg.append('g')
 			.attr('id', 'nodes')
@@ -301,58 +275,68 @@ function ForceChart() {
 	 */
 	this.update = function (data) {
 		
-		//~ console.log('graph data', data)
-		
-		const t = self.svg.transition()
+		 //~console.log('graph data', data)
+		window.graph = data
+		const t = self.svg.transition().duration(900)
 
 		textScale.domain([d3.min(data.nodes, function(d) { return d.count}), d3.max(data.nodes, function(d) { return d.count})])
 		x.domain([d3.min(data.nodes, function(d) { return d.x}), d3.max(data.nodes, function(d) { return d.x})])
 		y.domain([d3.min(data.nodes, function(d) { return d.y}), d3.max(data.nodes, function(d) { return d.y})])
 
-		self.weightScale = d3.scaleLog()
-			.domain(d3.extent(data.edges, function (d) { return d.weight }))
-			.range([.1, 1])
+		weightScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
 
 		// Apply the general update pattern to the nodes.
-		let node = self.node.selectAll('.node')
+		let nodeSelection = self.node.selectAll('.node')
 			  .data(data.nodes, d => d.key)
-				.join(
-				  enter => 
-					  enter.append('text')
-						  .attr('class', 'node')
-						  .text( d => d.key )
-						  .attr('dy', '2.5')
-						  .attr('transform', d => 'scale(' + textScale(d.count) + ')')
-				  )
-				.call(all => all.transition()
-						  .attr('x', d => x(d.x))
-						  .attr('y', d => y(d.y))
-						  .attr('transform', d => 'scale(' + textScale(d.count) + ')')
-						  //~.attr('fill', function(d) { return color(d.modularity) })
-				)
+			  
+			  
+		nodeSelection.join(
+		  enter => 
+			  enter.append('text')
+				  .attr('class', 'node')
+				  .text( d => d.key )
+				  .attr('dy', '2.5')
+				  //~.attr('transform', d => 'scale(' + textScale(d.count) + ')')
+		)
+		.call(all => all.transition(t)
+				  .attr('x', d => x(d.x))
+				  .attr('y', d => y(d.y))
+				  //~.attr('transform', d => 'scale(' + textScale(d.count) + ')')
+				  //~.style('fill', function(d) { return color(d.modularity) })
+		)
 		
 		
-		//~let nodeEnter = node.enter()
+		nodeSelection.exit().remove()
 		
-		//~node = nodeEnter.merge(node) // enter + update on the text
 		
-		//~node
-			
+		
+		// Apply the general update pattern to the links.
+		let linkSelection = self.link.selectAll('.link')
+			.data(data.edges, d => d.key)
 				
-		//~node = nodeEnter.merge(node) // enter + update on the text
-		
-		//~node
-			
-		
-		
-		
-		//~// Apply the general update pattern to the links.
-		//~self.link = self.link.data(data.edges, function(d) { 
-			//~return d.source + '-' + d.target
-		//~})
+		linkSelection.join(
+		  enter => 
+			  enter.append('path')
+				  .attr('class', 'link')
+				  .style('stroke-opacity', 0)
+				  .style('stroke-width', function(d) { return weightScale(d.weight)})
+				  //~.style('stroke',  function(d) { return color(data.nodes[d.source].modularity)})
+				  .style('stroke',  '#ccc')
+				  .style('fill',  'none')
+		  )
+		.call(all => all.transition(t)
+				  .attr('d', (d, i) => {
 
-		//~self.link = self.link.enter().append('path')
+					var dx = x(data.nodes[d.target].x - data.nodes[d.source].x)
+						, dy = y(data.nodes[d.target].y - data.nodes[d.source].y)
+						, dr = Math.sqrt(dx * dx + dy * dy)
+					
+					return 'M' + x(data.nodes[d.source].x) + ',' + y(data.nodes[d.source].y) + 'A' + dr + ',' + dr + ' 0 0,1 ' + x(data.nodes[d.target].x) + ',' + y(data.nodes[d.target].y)
+				  })
+				  .style('stroke-opacity', .7)
+		)
 		
+		linkSelection.exit().remove()
 
 	}
 

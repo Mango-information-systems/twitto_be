@@ -419,7 +419,14 @@ function Tweets() {
 			
 			console.time('FA2')
 			
-			FA2Layout.assign(self.filteredGraph, {iterations: 50})
+			FA2Layout.assign(self.filteredGraph, {
+				iterations: 50
+				, settings: {
+					adjustSizes: true
+					//~, edgeWeightInfluence: 50
+					//~, scalingRatio: 2
+				}
+			})
 			
 			console.timeEnd('FA2')
 			
@@ -463,13 +470,18 @@ function Tweets() {
 		// TODO check whether graphology has a better way to do this
 		graph.forEachEdge(function(edge, attributes, source, target) {
 			let sourceIndex = res.nodes.findIndex(function(node, index){
-				return node.key == source
+				return node.key === source
 			})
 			let targetIndex = res.nodes.findIndex(function(node, index){
-				return node.key == target
+				return node.key === target
 			})
 			
-			res.edges.push({source: sourceIndex, target: targetIndex, weight: attributes.weight})
+			res.edges.push({
+				key: source + '-' + target
+				, source: sourceIndex
+				, target: targetIndex
+				, weight: attributes.weight
+			})
 		})
 		
 		//~console.log('formatted graph', res)
