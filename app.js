@@ -116,4 +116,11 @@ twitto.controller.io.on('connection', function(socket) {
 	
 })
 
+// update graphs every n seconds
+//~setInterval(function() {
+
+	//~twitto.controller.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
+
+//~}, 2000)
+
 twitto.controller.io.listen(3031)
