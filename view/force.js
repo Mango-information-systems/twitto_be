@@ -13,7 +13,7 @@ function ForceChart() {
 	let self = this
 		, nodeMargin = 55
 		, width = 650
-		, height = 400
+		, height = 650
 		, textScale = d3.scaleLinear()
 			.range([.4, .8])
 		, color = d3.scaleOrdinal(d3.schemeCategory10)
@@ -252,7 +252,7 @@ function ForceChart() {
 			.append('svg')
 			  .attr('id', 'chartSVG')
 			  .attr('width', '100%')
-			  .attr('height', '80%')
+			  .attr('height', '100%')
 			  .attr('preserveAspectRatio', 'xMinYMin')
 			  .attr('viewBox', '0 0 ' + width + ' ' + height)
 			  .append('g')
@@ -275,13 +275,20 @@ function ForceChart() {
 	 */
 	this.update = function (data) {
 		
-		 //~console.log('graph data', data)
+		//~ console.log('graph data', data)
+		// temp
 		window.graph = data
+		
 		const t = self.svg.transition().duration(900)
+			, minX = d3.min(data.nodes, function(d) { return d.x})
+			, minY = d3.min(data.nodes, function(d) { return d.y})
+			, maxX = d3.max(data.nodes, function(d) { return d.x})
+			, maxY = d3.max(data.nodes, function(d) { return d.y})
 
 		textScale.domain([d3.min(data.nodes, function(d) { return d.count}), d3.max(data.nodes, function(d) { return d.count})])
-		x.domain([d3.min(data.nodes, function(d) { return d.x}), d3.max(data.nodes, function(d) { return d.x})])
-		y.domain([d3.min(data.nodes, function(d) { return d.y}), d3.max(data.nodes, function(d) { return d.y})])
+		
+		x.domain([Math.min(minX, minY), Math.max(maxX, maxY)])
+		y.domain([Math.min(minX, minY), Math.max(maxX, maxY)])
 
 		weightScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
 
