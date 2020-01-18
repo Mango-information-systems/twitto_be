@@ -17,6 +17,13 @@ function Tweets() {
 	
 	self.graph = self.filteredGraph = new UndirectedGraph()
 
+// temp - read offline graph
+	const fs = require('fs')
+	let t = fs.readFileSync('./graphExport.json', 'utf8')
+	self.graph.import(JSON.parse(t))
+	
+	console.log('graph stats', self.graph.order, self.graph.size)
+
 	self.tweets = []
 	
 	self.stats = {
@@ -595,7 +602,7 @@ function Tweets() {
 		//~ console.log('graph export result', err, res)
 	//~ })
 //~ 
-//~ }, 1.8e+6)
+//~ }, 6 * 60 * 1000)
 
 	/**
 	* 
@@ -629,7 +636,8 @@ function Tweets() {
 	*/
 	this.getEntitiesGraph = function () {
 		return formatGraph(self.filteredGraph)
-		//~return formatGraph(self.graph)
+		//~ return formatGraph(self.graph)
+		//~ return self.filteredGraph.export()
 	}
 	
 	/**
