@@ -18,11 +18,11 @@ function Tweets() {
 	self.graph = self.filteredGraph = new UndirectedGraph()
 
 // temp - read offline graph
-	const fs = require('fs')
-	let t = fs.readFileSync('./graphExport.json', 'utf8')
-	self.graph.import(JSON.parse(t))
+	//~ const fs = require('fs')
+	//~ let t = fs.readFileSync('./graphExport.json', 'utf8')
+	//~ self.graph.import(JSON.parse(t))
 	
-	console.log('graph stats', self.graph.order, self.graph.size)
+	//~ console.log('graph stats', self.graph.order, self.graph.size)
 
 	self.tweets = []
 	
@@ -401,27 +401,6 @@ function Tweets() {
 		
 		if (self.graph.order >0) {
 			
-			console.time('degree')
-			const degrees = weightedDegree(self.graph, {weighted: true})
-			console.timeEnd('degree')
-			
-			
-			console.time('sortByDegree')
-			
-			let topNodesKeys = Object.keys(degrees).sort(function(a, b) {
-				return degrees[b] - degrees[a]
-			}).slice(0, 50)
-			console.timeEnd('sortByDegree')
-			
-			
-			//~console.log('topNodesKeys', topNodesKeys)
-			
-			console.time('subGraph')
-			
-			self.filteredGraph = subGraph(self.graph, topNodesKeys)
-			
-			console.timeEnd('subGraph')
-			
 			
 			
 			console.time('FA2')
@@ -438,6 +417,29 @@ function Tweets() {
 			console.timeEnd('FA2')
 			
 			//~console.log('node after layout computation', self.filteredGraph.getNodeAttributes(self.filteredGraph.nodes()[0]))
+			
+			console.time('degree')
+			const degrees = weightedDegree(self.graph, {weighted: true})
+			console.timeEnd('degree')
+			
+			
+			console.time('sortByDegree')
+			
+			let topNodesKeys = Object.keys(degrees).sort(function(a, b) {
+				return degrees[b] - degrees[a]
+			}).slice(0, 200)
+			console.timeEnd('sortByDegree')
+			
+			
+			//~console.log('topNodesKeys', topNodesKeys)
+			
+			console.time('subGraph')
+			
+			self.filteredGraph = subGraph(self.graph, topNodesKeys)
+			
+			console.timeEnd('subGraph')
+			
+			
 			
 
 		}
