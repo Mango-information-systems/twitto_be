@@ -15,7 +15,7 @@ function ForceChart() {
 		, width = 650
 		, height = 650
 		, textScale = d3.scaleLinear()
-			.range([.4, .8])
+			.range([.4, 1.5])
 		, color = d3.scaleOrdinal(d3.schemeCategory10)
 		, x = d3.scaleLinear()
 			.range([nodeMargin, width - nodeMargin])
