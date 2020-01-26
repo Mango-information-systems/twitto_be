@@ -1,5 +1,6 @@
 const debug = require('debug')('tweetsModel')
 	, d3 = require('d3')
+	, debounce = require('just-debounce')
 	, {UndirectedGraph} = require('graphology')
 	, {weightedDegree} = require('graphology-metrics')
 	, FA2Layout = require('graphology-layout-forceatlas2')
@@ -394,8 +395,7 @@ function Tweets() {
 	* @private
 	* 
 	*/	
-	function filterGraph(){ 
-
+	let filterGraph = debounce(function() {
 		debug('filterGraph')
 		//~console.log('graph', self.graph.toJSON())
 		
@@ -443,7 +443,7 @@ function Tweets() {
 			
 
 		}
-	}
+	}, 150)
 	
 
 	// TEMP 

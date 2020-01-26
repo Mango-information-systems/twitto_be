@@ -1,5 +1,6 @@
-var Io = require('socket.io')
+const Io = require('socket.io')
 	, path = require('path')
+	, debounce = require('just-debounce')
 	, fs = require('fs')
 	, express = require('express')
 	, utils = require('./controller/utils')
@@ -112,6 +113,7 @@ twitto.controller.io.on('connection', function(socket) {
 		 socket.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 
 	})
+	
 	//~setTimeout(function() {
 
        //~socket.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
@@ -121,12 +123,17 @@ twitto.controller.io.on('connection', function(socket) {
 	
 })
 
+//debounced send graph function
+twitto.controller.sendGraph = debounce(function() {
+	twitto.controller.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
+}, 150, true)
+
 // update graphs every n seconds
-setInterval(function() {
+//~ setInterval(function() {
 
-       twitto.controller.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
+       //~ twitto.controller.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 
-}, 5000)
+//~ }, 5000)
 
 
 twitto.controller.io.listen(3031)

@@ -57,18 +57,26 @@ function Tweets (app) {
 					data.entities.push('#' + h.text)
 				})
 			//~}
+			
+			// tmp - check entities actually present in the tweet. 
+			//~ if (!tweet.entities.hashtags.find(t => t.text.toLowerCase() ==='trump'))
+				//~ console.log('missing', tweet.text, JSON.stringify(tweet.entities))
 
 			//~if(tweet.entities.user_mentions.length !== 0) {
-				tweet.entities.user_mentions.forEach(function (m) {
-					data.entities.push('@' + m.screen_name)
-				})
+				//~ tweet.entities.user_mentions.forEach(function (m) {
+					//~ data.entities.push('@' + m.screen_name)
+				//~ })
 			//~}
 				
-			// store new tweet, update stats, and check for changed.
+			// store new tweet, update stats.
 			app.model.tweets.add(data)
 			
 			// send new tweet to the clients
 			app.controller.io.sockets.emit('tweet', data)
+			// send graph
+			app.controller.sendGraph()
+			
+			
 			
 		})
 		
