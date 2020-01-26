@@ -255,15 +255,26 @@ function ForceChart() {
 			  .attr('height', '100%')
 			  .attr('preserveAspectRatio', 'xMinYMin')
 			  .attr('viewBox', '0 0 ' + width + ' ' + height)
-			  .append('g')
 		
-		self.link = self.svg.append('g')
+		self.g = self.svg.append('g')
+			  
+		self.svg.call(d3.zoom()
+		  .extent([[0, 0], [width, height]])
+		  .scaleExtent([1, 8])
+		  .on("zoom", zoomed)
+		)
+
+		function zoomed() {
+			self.g.attr("transform", d3.event.transform)
+		}
+		
+		self.link = self.g.append('g')
 			.attr('id', 'links')
 			.attr('stroke', '#ddd')
 			.attr('stroke-width', .5)
 			.style('opacity', .3)
 		
-		self.node = self.svg.append('g')
+		self.node = self.g.append('g')
 			.attr('id', 'nodes')
 	}
 
