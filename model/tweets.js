@@ -2,8 +2,9 @@ const debug = require('debug')('tweetsModel')
 	, d3 = require('d3')
 	, debounce = require('just-debounce')
 	, {UndirectedGraph} = require('graphology')
-	, {weightedDegree} = require('graphology-metrics')
+	, louvain = require('graphology-communities-louvain')
 	, FA2Layout = require('graphology-layout-forceatlas2')
+	, {weightedDegree} = require('graphology-metrics')
 	, {subGraph} = require('graphology-utils')
 
 /********************************************************
@@ -52,7 +53,8 @@ function Tweets() {
 	// initiate a cache cleanup at the next round hour
 	// based on http://stackoverflow.com/a/19847644/1006854
 	var now = new Date()
-		, delay = 60 * 60 * 1000
+		//~ , delay = 60 * 60 * 1000
+		, delay = 10 * 1000
 
 	setTimeout(cleanCache, delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
@@ -83,51 +85,46 @@ function Tweets() {
 		
 		debug('before cache clean', self.tweets.length)
 		
-		var yesterday = new Date()
+		let yesterday = new Date()
 		yesterday.setDate(yesterday.getDate() - 1)
+		
+		// temp: testing cleanup by expiring tweets from few moments ago instead of 1 day ago
+		//~ let yesterday = new Date(new Date() - 30000)
 	
 		self.tweets = self.tweets.filter(function(tweet, ix){
 			
 			if (new Date(Date.parse(tweet.created_at)) <= yesterday) {
 			
-				let source, target
 				
-				// decrement edge weights and remove obsolete edges
-				for (var i = 0; i < tweet.entities.length-1; i++) {
+				tweet.entities.forEach(function(source, i) {
 				
-					source = tweet.entities[i]
-				
-					for (var j = i+1; j < tweet.entities.length; j++) {
+					// decrement edge weights and remove obsolete edges
+					for (var j = i+1; j < tweet.relatedEntities.length; j++) {
 						
-						target = tweet.entities[j]
+						let target = tweet.relatedEntities[j]
 						
-						//~console.log('saving edge', source, target)
-						
+						//~ console.log('decrement edge', i, j, source, target)
 						self.graph.updateEdgeAttribute(source, target, 'weight', n => n - 1)
 						
-						if (self.graph.getEdgeAttribute(source, target, 'weight') === 0 ){
+						if (self.graph.getEdgeAttribute(source, target, 'weight') <= 0 ){
+							console.log('dropped')
 							self.graph.dropEdge(source, target)
 						}
 						
 					}
 					
-				}
-			
-				// store nodes
-				tweet.entities.forEach(function(entity) {
-				
-					self.graph.updateNodeAttribute(entity, 'count', n => n - 1)
+					// decrement / remove nodes
+					self.graph.updateNodeAttribute(source, 'count', n => n - 1)
 					
-					if (self.graph.getNodeAttribute(entity, 'count') === 0 ){
-							self.graph.dropNode(entity)
-						}
+					if (self.graph.getNodeAttribute(source, 'count') === 0 ){
+						self.graph.dropNode(source)
+					}
 						
-					
-
 				})
 				
 				// remove from self.tweets
 				return false
+				
 			}
 			else
 				return true
@@ -401,11 +398,10 @@ function Tweets() {
 		
 		if (self.graph.order >0) {
 			
-			
-			
 			//~ console.time('FA2')
 			
-			FA2Layout.assign(self.filteredGraph, {
+			FA2Layout.assign(self.graph, {
+			//~ FA2Layout.assign(self.filteredGraph, {
 				iterations: 50
 				, settings: {
 					adjustSizes: true
@@ -416,6 +412,12 @@ function Tweets() {
 			
 			//~ console.timeEnd('FA2')
 			
+			//~ console.time('louvain')
+			
+			louvain.assign(self.graph)
+			
+			//~ console.timeEnd('louvain')
+			
 			//~console.log('node after layout computation', self.filteredGraph.getNodeAttributes(self.filteredGraph.nodes()[0]))
 			
 			//~ console.time('degree')
@@ -423,13 +425,14 @@ function Tweets() {
 			//~ console.timeEnd('degree')
 			
 			// testing: no filter by degree
-			let topNodesKeys = Object.keys(degrees)
+			//~ let topNodesKeys = Object.keys(degrees)
 			
 			//~ console.time('filterByDegree')
 			
-			//~ let topNodesKeys = Object.keys(degrees).filter(function(key) {
-				//~ return degrees[key] > 4
-			//~ })
+			let topNodesKeys = Object.keys(degrees).filter(function(key) {
+				return degrees[key] > 4
+			})
+			
 			//~ console.timeEnd('filterByDegree')
 			
 			
@@ -482,7 +485,7 @@ function Tweets() {
 				, count: attributes.count
 				, x: attributes.x
 				, y: attributes.y
-				, modularity: 0
+				, community: attributes.community
 			})
 		})
 		
@@ -509,6 +512,7 @@ function Tweets() {
 		
 		
 	}
+
 	/**
 	* 
 	* count new tweet in the tweets per minute time series data
@@ -563,18 +567,33 @@ function Tweets() {
 		//~console.log('entities', tweet.entities)
 		
 		//~ console.time('store nodes')
+		
 		// store nodes
 		tweet.entities.forEach(function(entity) {
 		
-			//~console.log('entity', entity)
+			//~ console.log('entity', entity)
 			self.graph.mergeNode(entity, {x: Math.random(), y: Math.random()})
 			
 			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
 
 		})
+		
+		let extraEntities = tweet.relatedEntities.filter(entity => !tweet.entities.includes(entity))
+		
+		// add extra entities nodes in case they are not yet present in the graph
+		// count is not incremented for these.
+		extraEntities.forEach(function(entity) {
+		
+			self.graph.mergeNode(entity, {x: Math.random(), y: Math.random()})
+			
+			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
+			
+		})
+		
 		//~ console.timeEnd('store nodes')
 		
-		console.log('edge targets', tweet.relatedEntities)
+		//~ console.log('edge targets', tweet.relatedEntities)
+		
 		//~ console.time('store edges')
 		//compute and store edges
 		tweet.entities.forEach(function(source, i) {
@@ -583,7 +602,7 @@ function Tweets() {
 				
 				let target = tweet.relatedEntities[j]
 				
-				console.log('saving edge', i, j, source, target)
+				//~ console.log('saving edge', i, j, source, target)
 				
 				self.graph.mergeEdge(source, target)
 				

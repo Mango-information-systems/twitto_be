@@ -314,14 +314,13 @@ function ForceChart() {
 				  .attr('class', 'node')
 				  .text( d => d.key )
 				  .attr('dy', '2.5')
-				  .style('font-size', d => textScale(d.count) + 'rem')
 				  .style('text-anchor', 'middle')
 		)
 		.call(all => all.transition(t)
 				  .attr('x', d => x(d.x))
 				  .attr('y', d => y(d.y))
-				  //~.attr('transform', d => 'scale(' + textScale(d.count) + ')')
-				  //~.style('fill', function(d) { return color(d.modularity) })
+				  .style('font-size', d => textScale(d.count) + 'rem')
+				  .style('fill', function(d) {return color(d.community) })
 		)
 		
 		
@@ -339,8 +338,6 @@ function ForceChart() {
 				  .attr('class', 'link')
 				  .style('stroke-opacity', 0)
 				  .style('stroke-width', function(d) { return weightScale(d.weight)})
-				  //~.style('stroke',  function(d) { return color(data.nodes[d.source].modularity)})
-				  .style('stroke',  '#ccc')
 				  .style('fill',  'none')
 		  )
 		.call(all => all.transition(t)
@@ -352,6 +349,8 @@ function ForceChart() {
 					
 					return 'M' + x(data.nodes[d.source].x) + ',' + y(data.nodes[d.source].y) + 'A' + dr + ',' + dr + ' 0 0,1 ' + x(data.nodes[d.target].x) + ',' + y(data.nodes[d.target].y)
 				  })
+				  .style('stroke',  function(d) { return color(data.nodes[d.source].community)})
+				  //~ .style('stroke',  '#ccc')
 				  .style('stroke-opacity', .7)
 		)
 		

@@ -102,12 +102,13 @@ function Tweets (app) {
 							data.relatedEntities.push('#' + h.text)
 					})
 					
-					entities.user_mentions.forEach(function (m) {
-						if (!data.relatedEntities.includes('@' + m.screen_name))
-							data.relatedEntities.push('@' + m.screen_name)
-					})
+					//~ entities.user_mentions.forEach(function (m) {
+						//~ if (!data.relatedEntities.includes('@' + m.screen_name))
+							//~ data.relatedEntities.push('@' + m.screen_name)
+					//~ })
 				}
 			}
+			
 			//~ console.log('related entities processed', data.relatedEntities)
 			// store new tweet, update stats.
 			app.model.tweets.add(data)
@@ -151,13 +152,13 @@ function Tweets (app) {
 							)
 
 
-		setTimeout(function () {
-			callTweetbot('hourly')
-		}, this.hourlyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
+		//~ setTimeout(function () {
+			//~ callTweetbot('hourly')
+		//~ }, this.hourlyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
-		setTimeout(function () {
-			callTweetbot('daily')
-		}, nextDate.getTime() - now.getTime())
+		//~ setTimeout(function () {
+			//~ callTweetbot('daily')
+		//~ }, nextDate.getTime() - now.getTime())
 
 	}
 
