@@ -46,28 +46,69 @@ function Tweets (app) {
 				, is_reply: tweet.in_reply_to_user_id !== null
 				, has_hashtag: tweet.entities.hashtags.length !== 0
 				, entities: []
+				, relatedEntities: []
 				, has_link: tweet.entities.urls.length !== 0
 				, has_mention: tweet.entities.user_mentions.length !== 0
 				, has_media: tweet.entities.media && tweet.entities.media.length !== 0
 				, lang: tweet.lang
 			}
-
-			//~if(tweet.entities.hashtags.length !== 0){
-				tweet.entities.hashtags.forEach(function (h) {
-					data.entities.push('#' + h.text)
-				})
-			//~}
 			
 			// tmp - check entities actually present in the tweet. 
-			//~ if (!tweet.entities.hashtags.find(t => t.text.toLowerCase() ==='trump'))
-				//~ console.log('missing', tweet.text, JSON.stringify(tweet.entities))
+			//~ if (!tweet.entities.hashtags.find(t => t.text.toLowerCase() ==='trump')) {
+				//~ console.log('--------------------------------------------')
+				//~ console.log('missing', tweet.text, JSON.stringify(tweet.entities.hashtags, null, '    '))
+				//~ console.log('related entities', JSON.stringify(tweet, null, '    '))
+			//~ }
 
-			//~if(tweet.entities.user_mentions.length !== 0) {
-				//~ tweet.entities.user_mentions.forEach(function (m) {
-					//~ data.entities.push('@' + m.screen_name)
-				//~ })
-			//~}
+			let entities = tweet.truncated? tweet.extended_tweet.entities : tweet.entities
+			
+			entities.hashtags.forEach(function (h) {
+				data.entities.push('#' + h.text)
+				data.relatedEntities.push('#' + h.text)
+			})
+			
+			//~ entities.user_mentions.forEach(function (m) {
+				//~ data.entities.push('@' + m.screen_name)
+				//~ data.relatedEntities.push('@' + m.screen_name)
+			//~ })
 				
+				
+			if (data.entities.length) {
+			// the current tweet contains new entities, record entities present in the quoted and/or retweet, in order to be able to save an edge between these.
+				
+				// in case of quoted tweet, record hashtags of the original tweet.
+				if (typeof tweet.quoted_status !== 'undefined') {
+					
+					entities = tweet.quoted_status.truncated? tweet.quoted_status.extended_tweet.entities : tweet.quoted_status.entities
+					
+					entities.hashtags.forEach(function (h) {
+						if (!data.relatedEntities.includes('#' + h.text))
+							data.relatedEntities.push('#' + h.text)
+					})
+					
+					//~ entities.user_mentions.forEach(function (m) {
+						//~ if (!data.relatedEntities.includes('@' + m.screen_name))
+							//~ data.relatedEntities.push('@' + m.screen_name)
+					//~ })
+				}
+					
+				// in case of retweet, record hashtags of the original tweet.
+				if (typeof tweet.retweeted_status !== 'undefined') {
+					
+					entities = tweet.retweeted_status.truncated? tweet.retweeted_status.extended_tweet.entities : tweet.retweeted_status.entities
+					
+					entities.hashtags.forEach(function (h) {
+						if (!data.relatedEntities.includes('#' + h.text))
+							data.relatedEntities.push('#' + h.text)
+					})
+					
+					entities.user_mentions.forEach(function (m) {
+						if (!data.relatedEntities.includes('@' + m.screen_name))
+							data.relatedEntities.push('@' + m.screen_name)
+					})
+				}
+			}
+			//~ console.log('related entities processed', data.relatedEntities)
 			// store new tweet, update stats.
 			app.model.tweets.add(data)
 			

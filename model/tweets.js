@@ -323,7 +323,7 @@ function Tweets() {
 					//~ console.log('Date.parse(self.tweets[position].created_at)', Date.parse(self.tweets[position].created_at))
 					//~ console.log('(ts - Date.parse(self.tweets[position].created_at)', (ts - Date.parse(self.tweets[position].created_at)))
 					//~ console.log('barIndex', barIndex)
-					//~ 
+					
 				//~ }
 				
 				if (barIndex > barCount-1)
@@ -403,7 +403,7 @@ function Tweets() {
 			
 			
 			
-			console.time('FA2')
+			//~ console.time('FA2')
 			
 			FA2Layout.assign(self.filteredGraph, {
 				iterations: 50
@@ -414,30 +414,40 @@ function Tweets() {
 				}
 			})
 			
-			console.timeEnd('FA2')
+			//~ console.timeEnd('FA2')
 			
 			//~console.log('node after layout computation', self.filteredGraph.getNodeAttributes(self.filteredGraph.nodes()[0]))
 			
-			console.time('degree')
+			//~ console.time('degree')
 			const degrees = weightedDegree(self.graph, {weighted: true})
-			console.timeEnd('degree')
+			//~ console.timeEnd('degree')
+			
+			// testing: no filter by degree
+			let topNodesKeys = Object.keys(degrees)
+			
+			//~ console.time('filterByDegree')
+			
+			//~ let topNodesKeys = Object.keys(degrees).filter(function(key) {
+				//~ return degrees[key] > 4
+			//~ })
+			//~ console.timeEnd('filterByDegree')
 			
 			
-			console.time('sortByDegree')
+			//~ console.time('sortByDegree')
 			
-			let topNodesKeys = Object.keys(degrees).sort(function(a, b) {
+			topNodesKeys = topNodesKeys.sort(function(a, b) {
 				return degrees[b] - degrees[a]
 			}).slice(0, 200)
-			console.timeEnd('sortByDegree')
+			//~ console.timeEnd('sortByDegree')
 			
 			
 			//~console.log('topNodesKeys', topNodesKeys)
 			
-			console.time('subGraph')
+			//~ console.time('subGraph')
 			
 			self.filteredGraph = subGraph(self.graph, topNodesKeys)
 			
-			console.timeEnd('subGraph')
+			//~ console.timeEnd('subGraph')
 			
 			
 			
@@ -552,7 +562,7 @@ function Tweets() {
 		
 		//~console.log('entities', tweet.entities)
 		
-		console.time('store nodes')
+		//~ console.time('store nodes')
 		// store nodes
 		tweet.entities.forEach(function(entity) {
 		
@@ -562,21 +572,18 @@ function Tweets() {
 			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
 
 		})
-		console.timeEnd('store nodes')
+		//~ console.timeEnd('store nodes')
 		
-		let source, target
-		
-		console.time('store edges')
+		console.log('edge targets', tweet.relatedEntities)
+		//~ console.time('store edges')
 		//compute and store edges
-		for (var i = 0; i < tweet.entities.length-1; i++) {
+		tweet.entities.forEach(function(source, i) {
 		
-			source = tweet.entities[i]
-		
-			for (var j = i+1; j < tweet.entities.length; j++) {
+			for (var j = i+1; j < tweet.relatedEntities.length; j++) {
 				
-				target = tweet.entities[j]
+				let target = tweet.relatedEntities[j]
 				
-				//~console.log('saving edge', source, target)
+				console.log('saving edge', i, j, source, target)
 				
 				self.graph.mergeEdge(source, target)
 				
@@ -584,14 +591,14 @@ function Tweets() {
 				
 			}
 			
-		}
-		console.timeEnd('store edges')
+		})
+		//~ console.timeEnd('store edges')
 		
 		updateTweetCounts(tweet)
 		
-		console.log('graph stats:')
-		console.log('-- nodes count', self.graph.order)
-		console.log('-- edges count', self.graph.size)
+		//~ console.log('graph stats:')
+		//~ console.log('-- nodes count', self.graph.order)
+		//~ console.log('-- edges count', self.graph.size)
 		filterGraph()
 		
 	}
@@ -655,10 +662,11 @@ function Tweets() {
 	this.getTimelines = function() {
 		
 		var perSecond = computeTimeline('s')
+			, perMinute = computeTimeline('m')
 				
 		return {
 			perSecond: perSecond
-			, perMinute: self.tweetsPerMinute
+			, perMinute: perMinute
 		}
 		
 	}
