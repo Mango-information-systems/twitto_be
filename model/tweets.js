@@ -53,8 +53,9 @@ function Tweets() {
 	// initiate a cache cleanup at the next round hour
 	// based on http://stackoverflow.com/a/19847644/1006854
 	var now = new Date()
-		//~ , delay = 60 * 60 * 1000
-		, delay = 10 * 1000
+		, delay = 60 * 60 * 1000
+		// testing
+		//~ , delay = 10 * 1000
 
 	setTimeout(cleanCache, delay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
@@ -405,6 +406,9 @@ function Tweets() {
 				iterations: 50
 				, settings: {
 					adjustSizes: true
+					, barnesHutOptimize: true
+					, gravity: .5
+					, strongGravityMode: true
 					//~, edgeWeightInfluence: 50
 					//~, scalingRatio: 2
 				}
@@ -424,14 +428,14 @@ function Tweets() {
 			const degrees = weightedDegree(self.graph, {weighted: true})
 			//~ console.timeEnd('degree')
 			
-			// testing: no filter by degree
-			//~ let topNodesKeys = Object.keys(degrees)
+			// alternative: no filter by degree
+			let topNodesKeys = Object.keys(degrees)
 			
 			//~ console.time('filterByDegree')
 			
-			let topNodesKeys = Object.keys(degrees).filter(function(key) {
-				return degrees[key] > 4
-			})
+			//~ let topNodesKeys = Object.keys(degrees).filter(function(key) {
+				//~ return degrees[key] > 20
+			//~ })
 			
 			//~ console.timeEnd('filterByDegree')
 			
@@ -486,6 +490,7 @@ function Tweets() {
 				, x: attributes.x
 				, y: attributes.y
 				, community: attributes.community
+				//~ , weightedDegree: attributes.weightedDegree
 			})
 		})
 		
