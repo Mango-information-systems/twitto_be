@@ -396,7 +396,7 @@ function Tweets() {
 		debug('filterGraph')
 		//~console.log('graph', self.graph.toJSON())
 		
-		if (self.graph.order >0) {
+		if (self.graph.size > 0) {
 			
 			//~ console.time('FA2')
 			
