@@ -47,7 +47,7 @@ function TweetStream () {
 	function streamTweets() {
 		debug('running streamTweets')
 		
-		var stream = twit.stream('statuses/filter', { track: ['#belgium','#belgie','#belgique', '#belgien']})
+		var stream = twit.stream('statuses/filter', { track: params.track})
 
 		stream.on('tweet', function(tweet){
 

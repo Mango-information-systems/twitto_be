@@ -1,5 +1,6 @@
 {
 	"profileName": "local dev version",
+	"track" : [],
 	"twitter": {
 		"consumer_key": "--fill-me--",
 		"consumer_secret": "--fill-me--",
