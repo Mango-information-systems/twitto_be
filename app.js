@@ -126,7 +126,7 @@ twitto.controller.io.on('connection', function(socket) {
 //debounced send graph function
 twitto.controller.sendGraph = debounce(function() {
 	twitto.controller.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
-}, 150, true)
+}, 500, true)
 
 // update graphs every n seconds
 //~ setInterval(function() {
