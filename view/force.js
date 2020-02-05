@@ -21,8 +21,10 @@ function ForceChart() {
 			.range([nodeMargin, width - nodeMargin])
 		, y = d3.scaleLinear()
 			.range([nodeMargin, height - nodeMargin])
-		, weightScale = d3.scaleLog()
-			.range([1, 8])
+		, edgeWidthScale = d3.scaleLinear()
+			.range([1, 4])
+		, edgeOpacityScale = d3.scaleLinear()
+			.range([.15, .6])
 
 	/****************************************
 	 *
@@ -30,70 +32,6 @@ function ForceChart() {
 	 *
 	 ****************************************/
 	
-	/**
-	 * update nodes on tick event
-	 * 
-	 * @private
-	 * 
-	 */
-	 function ticked() {
-		 
-		self.node.attr('transform', function(d, i) {
-			
-			//~if (i === 0) {
-				//~console.log('d.x', d.x)
-				//~console.log('nodeMargin', nodeMargin)
-				//~console.log('self.width - nodeMargin', self.width - nodeMargin)
-				//~console.log('set d.x',Math.max(nodeMargin, Math.min(self.width - nodeMargin, d.x)))
-				
-			//~}
-			
-			d.x = Math.max(nodeMargin, Math.min(self.width - nodeMargin, d.x))
-				d.y = Math.max(nodeMargin, Math.min(self.height - nodeMargin, d.y))
-			
-				
-			return 'translate(' + d.x + ',' + d.y + ')'
-		})
-
-	 }
-
-	/**
-	 * display links when the animation is over
-	 * 
-	 * @private
-	 * 
-	 */
-	 function ended() {
-		
-		//~ debug('force simulation ended')
-		self.linkconsole.log('force simulation ended')
-		
-		// curved links lines
-		// as seen in https://stackoverflow.com/a/13456081
-		self.link.attr('d', function(d, i) {
-
-			var dx = d.target.x - d.source.x
-				, dy = d.target.y - d.source.y
-				, dr = Math.sqrt(dx * dx + dy * dy)
-			
-			return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y
-		  })
-		  .attr('stroke-opacity', .5)
-		  .attr('stroke-width', function(d) { return .8 + 3 * self.weightScale(d.weight)})
-		  .attr('stroke',  function(d) { return color(d.source.group)})
-		  .attr('fill',  'none')
-
-		d3.select('#links')
-		  .transition()
-		    .style('opacity', 1)
-
-		    
-		// avoid overlapping labels
-		relax(self.node)
-		
-	 }
-
-
 	/**
 	 * relax position of text labels, whenever they are overlapping.
 	 * 
@@ -114,22 +52,16 @@ function ForceChart() {
 		textLabels.each(function (d, i) {
 			a = this
 			da = d3.select(a)
-			//~ y1 = da.attr('y')
+			 y1 = +da.attr('y')
 			
-			var daTransform = getTransformation(da.attr('transform'))
-			
-			y1 = daTransform.translateY
 			textLabels.each(function (d, j) {
 				b = this
 				// a & b are the same element and don't collide.
 				if (a == b) return
 				
 				db = d3.select(b)
-				// Now let's calculate the distance between
-				// these elements. 
-				//~ y2 = db.attr('y')
-				var dbTransform = getTransformation(db.attr('transform'))
-				y2 = dbTransform.translateY
+				// Now let's calculate the distance between these elements. 
+				 y2 = +db.attr('y')
 				
 				deltaY = y1 - y2
 				
@@ -146,9 +78,9 @@ function ForceChart() {
 				sign = deltaY > 0 ? 1 : -1
 				adjust = sign * alpha
 				
-				da.attr('transform', 'translate(' + daTransform.translateX + ',' + (y1 + adjust) + ')')
+				da.attr('y', y1 + adjust)
 
-				db.attr('transform', 'translate(' + dbTransform.translateX + ',' + (y2 - adjust) + ')')
+				db.attr('y', y2 - adjust)
 			})
 		})
 		// Adjust our line leaders here
@@ -270,9 +202,6 @@ function ForceChart() {
 		
 		self.link = self.g.append('g')
 			.attr('id', 'links')
-			.attr('stroke', '#ddd')
-			.attr('stroke-width', .5)
-			.style('opacity', .3)
 		
 		self.node = self.g.append('g')
 			.attr('id', 'nodes')
@@ -301,7 +230,8 @@ function ForceChart() {
 		x.domain([Math.min(minX, minY), Math.max(maxX, maxY)])
 		y.domain([Math.min(minX, minY), Math.max(maxX, maxY)])
 
-		weightScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
+		edgeWidthScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
+		edgeOpacityScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
 
 		// Apply the general update pattern to the nodes.
 		let nodeSelection = self.node.selectAll('.node')
@@ -337,7 +267,6 @@ function ForceChart() {
 			  enter.append('path')
 				  .attr('class', 'link')
 				  .style('stroke-opacity', 0)
-				  .style('stroke-width', function(d) { return weightScale(d.weight)})
 				  .style('fill',  'none')
 		  )
 		.call(all => all.transition(t)
@@ -349,13 +278,15 @@ function ForceChart() {
 					
 					return 'M' + x(data.nodes[d.source].x) + ',' + y(data.nodes[d.source].y) + 'A' + dr + ',' + dr + ' 0 0,1 ' + x(data.nodes[d.target].x) + ',' + y(data.nodes[d.target].y)
 				  })
-				  .style('stroke',  function(d) { return color(data.nodes[d.source].community)})
-				  //~ .style('stroke',  '#ccc')
-				  .style('stroke-opacity', .7)
+				  .style('stroke',  d => color(data.nodes[d.source].community))
+				  .attr('stroke-width', function(d) {console.log(d, edgeWidthScale(d.weight)); return edgeWidthScale(d.weight)})
+				  .style('stroke-opacity', d => edgeOpacityScale(d.weight))
 		)
 		
 		linkSelection.exit().remove()
 
+		// avoid overlapping labels
+		//~relax(nodeSelection)
 	}
 
 }
