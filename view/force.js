@@ -217,9 +217,9 @@ function ForceChart() {
 		
 		//~ console.log('graph data', data)
 		// temp
-		window.graph = data
+		//~window.graph = data
 		
-		const t = self.svg.transition().duration(900)
+		const t = self.svg.transition().duration(600)
 			, minX = d3.min(data.nodes, function(d) { return d.x})
 			, minY = d3.min(data.nodes, function(d) { return d.y})
 			, maxX = d3.max(data.nodes, function(d) { return d.x})
@@ -279,7 +279,7 @@ function ForceChart() {
 					return 'M' + x(data.nodes[d.source].x) + ',' + y(data.nodes[d.source].y) + 'A' + dr + ',' + dr + ' 0 0,1 ' + x(data.nodes[d.target].x) + ',' + y(data.nodes[d.target].y)
 				  })
 				  .style('stroke',  d => color(data.nodes[d.source].community))
-				  .attr('stroke-width', function(d) {console.log(d, edgeWidthScale(d.weight)); return edgeWidthScale(d.weight)})
+				  .attr('stroke-width', function(d) {return edgeWidthScale(d.weight)})
 				  .style('stroke-opacity', d => edgeOpacityScale(d.weight))
 		)
 		
