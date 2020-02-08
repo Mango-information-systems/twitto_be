@@ -8,7 +8,7 @@ const debug = require('debug')('tweetsModel')
 * @constructor
 * 
 *********************************************************/
-function Tweets() {
+function Tweets(model) {
 
 	let self = this
 	
@@ -21,6 +21,8 @@ function Tweets() {
 	
 	self.entitiesGraphWorker.on('message', function(data) {
 		self.graph = data
+		
+		model.emit('graphUpdate', self.graph)
 	})
 	
 	self.stats = {

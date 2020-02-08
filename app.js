@@ -12,11 +12,13 @@ const Io = require('socket.io')
 	, twitto = {
 		controller: {}
 		, model: {}
+		, router: {}
 	}
 
-twitto.controller.io = Io({ path: '/ws/'})
+twitto.router.io = Io({ path: '/ws/'})
 
-twitto.model = new Datastore(twitto)
+twitto.model = new Datastore()
+
 twitto.controller.tweets = new Tweets(twitto)
 
 // set the view engine to ejs
@@ -91,11 +93,11 @@ app.use(function(req, res, next){
 })
 
 // visitor connection, send all tweets
-twitto.controller.io.on('connection', function(socket) {
+twitto.router.io.on('connection', function(socket) {
 	
 	debug('client connection', socket.id)
 
-	socket.on('tweets', function() {
+	//~socket.on('tweets', function() {
 
 		// send tweets mentions and hashtags graph (for graph viz)
 		//~ socket.emit('graph', twitto.model.tweets.getAllTweets())
@@ -112,28 +114,19 @@ twitto.controller.io.on('connection', function(socket) {
 		// send top entities graph
 		 socket.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 
-	})
+	//~})
 	
-	//~setTimeout(function() {
+})
 
-       //~socket.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
-
-	//~}, 5000)
-
+twitto.model.on('graphUpdate', function(message) {
+	// send updated graph to clients
+	twitto.router.sendGraph()	
 	
 })
 
 //debounced send graph function
-twitto.controller.sendGraph = debounce(function() {
-	twitto.controller.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
+twitto.router.sendGraph = debounce(function() {
+	twitto.router.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 }, 750, true)
 
-// update graphs every n seconds
-//~ setInterval(function() {
-
-       //~ twitto.controller.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
-
-//~ }, 5000)
-
-
-twitto.controller.io.listen(3031)
+twitto.router.io.listen(3031)

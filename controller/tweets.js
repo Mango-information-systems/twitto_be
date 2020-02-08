@@ -13,8 +13,6 @@ function Tweets (app) {
 	
 	var self = this
 	
-	this.app = app
-
 	connectTweetStream()
 	initTweetBot()
 
@@ -114,10 +112,7 @@ function Tweets (app) {
 			app.model.tweets.add(data)
 			
 			// send new tweet to the clients
-			app.controller.io.sockets.emit('tweet', data)
-			// send graph
-			app.controller.sendGraph()
-			
+			app.router.io.sockets.emit('tweet', data)
 			
 			
 		})

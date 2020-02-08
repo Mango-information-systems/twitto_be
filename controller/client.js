@@ -12,10 +12,7 @@ const d3 = require('d3')
 	, debug = window.debug('clientApp')
 
 let app = {
-		model: {
-			tweets: [] // cache of tweets  - only contains tweets with geo-coordinates
-		}
-		, controller: {
+		controller: {
 			stats: {}
 		}
 		, view: {}
@@ -35,17 +32,7 @@ var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
 // ask for the historical tweets
-app.socket.emit('tweets')
-
-// listener: set of historical tweets sent by the server
-//~ app.socket.on('tweets', function (tweets) {
-	//~ 
-	//~ app.model.tweets = app.model.tweets.concat(tweets.filter(function(tweet) {
-		//~ return typeof tweet.coordinates !== 'undefined'
-	//~ }))
-//~ 
-//~ 
-//~ })
+//~app.socket.emit('tweets')
 
 // listener: tweet stats sent by the server
 app.socket.on('tweetStats', function (stats) {
@@ -92,12 +79,6 @@ app.socket.on('timelines', function (stats) {
 app.socket.on('tweet', function (tweet) {
 	
 	debug('tweet event', tweet)
-	
-	if (typeof tweet.coordinates !== 'undefined') {
-		app.model.tweets.push(tweet)
-
-		//~ app.view.map.addPoints(app.model.tweets)
-	}
 	
 	app.view.tweetsPerMinute.addTweet()
 	app.view.tweetsPerSecond.addTweet()

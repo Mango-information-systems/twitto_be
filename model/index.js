@@ -1,4 +1,6 @@
-var tweetsModel = require('./tweets')
+const events = require('events')
+	, util = require('util')
+	, tweetsModel = require('./tweets')
 
 /********************************************************
 * App datastore
@@ -8,12 +10,16 @@ var tweetsModel = require('./tweets')
 * @constructor
 * 
 *********************************************************/
-function Storage(app) {
+function Model() {
 
-	var self = this
-
-	this.tweets = new tweetsModel()
+	// event emitter
+	events.EventEmitter.call(this)
+	
+	this.tweets = new tweetsModel(this)
 
 }
 
-module.exports = Storage
+util.inherits(Model, events.EventEmitter)
+
+module.exports = Model
+
