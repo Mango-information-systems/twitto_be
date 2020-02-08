@@ -30,9 +30,9 @@ console.log('static', __dirname + '/public')
 app.use(express.static( __dirname + '/public'))
 
 // launch express server
-app.listen(8080)
+app.listen(params.ports.express)
 
-console.log('knock on the magic 8080 port')
+console.log('Express server started')
 
 app.render('pages/502', {
 		appMeta: params.content.appMeta
@@ -129,4 +129,4 @@ twitto.router.sendGraph = debounce(function() {
 	twitto.router.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 }, 750, true)
 
-twitto.router.io.listen(3031)
+twitto.router.io.listen(params.ports.socket)

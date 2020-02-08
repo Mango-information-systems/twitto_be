@@ -1,5 +1,9 @@
 {
 	"profileName": "local dev version",
+	"ports": {
+		"express": 8080
+		, "socket": 3031
+	},
 	"track" : [],
 	"twitter": {
 		"consumer_key": "--fill-me--",
