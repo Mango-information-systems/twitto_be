@@ -15,15 +15,13 @@ function ForceChart(svg, color) {
 		, width = 650
 		, height = 650
 		, textScale = d3.scaleLinear()
-			.range([.4, 1.5])
+			.range([.6, 1.5])
 		, x = d3.scaleLinear()
 			.range([nodeMargin, width - nodeMargin])
 		, y = d3.scaleLinear()
 			.range([nodeMargin, height - nodeMargin])
 		, edgeWidthScale = d3.scaleLinear()
 			.range([1, 4])
-		, edgeOpacityScale = d3.scaleLinear()
-			.range([.15, .6])
 			
 		
 	self.svg = svg.html('')
@@ -44,6 +42,7 @@ function ForceChart(svg, color) {
 	
 	self.link = self.g.append('g')
 		.attr('id', 'links')
+		.style('opacity', .3)
 	
 	self.node = self.g.append('g')
 		.attr('id', 'nodes')
@@ -229,7 +228,6 @@ function ForceChart(svg, color) {
 		y.domain([Math.min(minX, minY), Math.max(maxX, maxY)])
 
 		edgeWidthScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
-		edgeOpacityScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
 
 		// Apply the general update pattern to the nodes.
 		let nodeSelection = self.node.selectAll('.node')
@@ -278,7 +276,7 @@ function ForceChart(svg, color) {
 				  })
 				  .style('stroke',  d => color(data.nodes[d.source].community))
 				  .attr('stroke-width', function(d) {return edgeWidthScale(d.weight)})
-				  .style('stroke-opacity', d => edgeOpacityScale(d.weight))
+				  .style('stroke-opacity', 1)
 		)
 		
 		linkSelection.exit().remove()
