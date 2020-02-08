@@ -245,7 +245,10 @@ function formatGraph() {
 
 	debug('formatGraph')
 	
-	let res = {nodes: [], edges: []}
+	let res = {
+			nodes: []
+			, edges: []
+		}
 	
 	self.filteredGraph.forEachNode((node, attributes) => {
 		res.nodes.push({
@@ -273,6 +276,10 @@ function formatGraph() {
 			, weight: attributes.weight
 		})
 	})
+	
+	// get unique communities in order to display legend
+	// read also: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Remove_duplicate_elements_from_the_array
+	res.communities = [...new Set(res.nodes.map(d =>d.community))]
 	
 	//~console.log('formatted graph', res)
 	

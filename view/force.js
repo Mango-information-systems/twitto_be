@@ -8,7 +8,7 @@ var d3 = require('d3')
 * @return {string} chart SVG
 * 
 */
-function ForceChart() {
+function ForceChart(svg, color) {
 
 	let self = this
 		, nodeMargin = 55
@@ -16,7 +16,6 @@ function ForceChart() {
 		, height = 650
 		, textScale = d3.scaleLinear()
 			.range([.4, 1.5])
-		, color = d3.scaleOrdinal(d3.schemeCategory10)
 		, x = d3.scaleLinear()
 			.range([nodeMargin, width - nodeMargin])
 		, y = d3.scaleLinear()
@@ -25,6 +24,29 @@ function ForceChart() {
 			.range([1, 4])
 		, edgeOpacityScale = d3.scaleLinear()
 			.range([.15, .6])
+			
+		
+	self.svg = svg.html('')
+		.append('svg')
+		  .attr('id', 'chartSVG')
+		  .attr('width', '100%')
+		  .attr('height', '100%')
+		  .attr('preserveAspectRatio', 'xMinYMin')
+		  .attr('viewBox', '0 0 ' + width + ' ' + height)
+	
+	self.g = self.svg.append('g')
+		  
+	self.svg.call(d3.zoom()
+	  .extent([[0, 0], [width, height]])
+	  .scaleExtent([1, 8])
+	  .on("zoom", zoomed)
+	)
+	
+	self.link = self.g.append('g')
+		.attr('id', 'links')
+	
+	self.node = self.g.append('g')
+		.attr('id', 'nodes')
 
 	/****************************************
 	 *
@@ -167,45 +189,21 @@ function ForceChart() {
 	  };
 	}
 
-
+	/**
+	 * trigger zoom
+	 * 
+	 * @private
+	 * 
+	 */
+	function zoomed() {
+		self.g.attr("transform", d3.event.transform)
+	}
+	
 	/****************************************
 	 *
 	 * Public methods
 	 *
 	 ****************************************/
-
-	/**
-	 * initialize chart
-	 * 
-	 */
-	this.init = function (opts) {
-		
-		self.svg = d3.select('#graph').html('')
-			.append('svg')
-			  .attr('id', 'chartSVG')
-			  .attr('width', '100%')
-			  .attr('height', '100%')
-			  .attr('preserveAspectRatio', 'xMinYMin')
-			  .attr('viewBox', '0 0 ' + width + ' ' + height)
-		
-		self.g = self.svg.append('g')
-			  
-		self.svg.call(d3.zoom()
-		  .extent([[0, 0], [width, height]])
-		  .scaleExtent([1, 8])
-		  .on("zoom", zoomed)
-		)
-
-		function zoomed() {
-			self.g.attr("transform", d3.event.transform)
-		}
-		
-		self.link = self.g.append('g')
-			.attr('id', 'links')
-		
-		self.node = self.g.append('g')
-			.attr('id', 'nodes')
-	}
 
 	/**
 	 * Update chart

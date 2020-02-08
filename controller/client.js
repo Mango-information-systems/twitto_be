@@ -1,15 +1,17 @@
 window.debug = require('debug')
 
-var d3 = require('d3')
+const d3 = require('d3')
 	, io = require('socket.io-client')
 	, polyfills = require('../controller/polyfills')
-	//~ , Map = require('../view/map')
 	, LineChart = require('../view/lineChart')
 	//~, BarChart = require('../view/barChart')
 	, DonutChart = require('../view/donutChart')
 	, Force = require('../view/force')
+	, Legend = require('../view/legend')
+	, colorScale = d3.scaleOrdinal(d3.schemeCategory10)
 	, debug = window.debug('clientApp')
-	, app = {
+
+let app = {
 		model: {
 			tweets: [] // cache of tweets  - only contains tweets with geo-coordinates
 		}
@@ -20,17 +22,15 @@ var d3 = require('d3')
 	}
 
 // Initialize views
-//~ app.view.map = new Map(d3.select('#mapWrap'))
 app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
 app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
 //~app.view.topHashTags = new BarChart(d3.select('#topHashTags'))
 //~app.view.topMentions = new BarChart(d3.select('#topMentions'))
-app.view.force = new Force(d3.select('#graph'))
-app.view.force.init()
+app.view.force = new Force(d3.select('#graph'), colorScale)
+app.view.legend = new Legend(d3.select('#legend'), colorScale)
 
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''
-//var suffix = ':3031'
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
@@ -81,8 +81,9 @@ app.socket.on('timelines', function (stats) {
 	 
 	 //~app.view.topMentions.render('mentions', stats.topMentions)
 	 
-
 	 app.view.force.update(graphData)
+	 app.view.legend.update(graphData.communities)
+	 
 	 d3.selectAll('#graph').classed('loading', false)
  
  })
