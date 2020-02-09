@@ -240,6 +240,7 @@ function ForceChart(svg, color) {
 				  .attr('class', 'node')
 				  .text( d => d.key )
 				  .attr('dy', '2.5')
+				  .style('font-size', '1.5rem')
 				  .style('text-anchor', 'middle')
 		)
 		.call(all => all.transition(t)
