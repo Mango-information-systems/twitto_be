@@ -21,14 +21,16 @@ run `npm start`
 
 ### Production
 
-A deployment script is included, you may need to adapt it to your own setup. Edit the `deploy` script in `package.json` to modify the configuration:
-* debian jessie linux machine (may work in other unix environments)
+Deployment scripts are included, you may need to adapt them to your own setup. Edit `deploy:prod` scripts in `package.json` to modify the configuration:
+* debian stable linux machine (may work in other unix environments)
 * The application (`app.js`) is launched and maintained up by a systemd process called `node-twitto`
 * The application is deployed in the following directory: `/home/srv-node-mango/twitto`
 * The owner of `/home/srv-node-mango/twitto`, is user `srv-node-mango`
 
 1. Run `npm run build`
-2. If no error was met in previous step, run `npm run deploy`
+2. If no error was met in previous step, run `npm run deploy:prod`
+
+Similar script exists for a test environment ( `deploy:test` ).
 
 ## Contributing
 
