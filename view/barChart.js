@@ -81,6 +81,7 @@ function BarChart (svg) {
 			.enter()
 			.append('g')
 			.attr('class', 'chartRow')
+			.attr('opacity', 0)
 			.attr('transform', function (d, i) {
 				return 'translate(0,' + y(i) + ')'
 			})
@@ -89,27 +90,20 @@ function BarChart (svg) {
 		newRow.insert('rect')
 			.attr('class', 'bar')
 			.attr('x', 0)
-			.attr('opacity', 0)
 			.attr('height', 40)
-			.transition()
-			.duration(300)
 			.attr('width', function (d) {
 				return x(d.value)
 			})
-			.attr('opacity', 1)
 
 		//Add value labels
 		newRow.append('text')
 			.attr('class', 'label')
 			.attr('x', '2.4em')
 			.attr('y', y.bandwidth() / 10)
-			.attr('opacity', 0)
 			.attr('dy', '.9em')
 			.text(function (d) {
 				return d.value
-			}).transition()
-			.duration(300)
-			.attr('opacity', 1)
+			})
 
 		//Add Headlines
 		newRow.append('text')
@@ -132,7 +126,6 @@ function BarChart (svg) {
 				}
 			})
 			.attr('y', y.bandwidth() / 10)
-			.attr('opacity', 0)
 			.attr('dy', function(d, i) {return i ===0 ? '.75em' : '.9em'})
 			.style('font-weight', function(d, i) {return i < 3 ? '600' : '400'})
 			.style('font-size', function(d, i) {
@@ -153,9 +146,7 @@ function BarChart (svg) {
 			})
 			.text(function (d) {
 				return self.prefix + d.key
-			}).transition()
-			.duration(300)
-			.attr('opacity', 1)
+			})
 
 
 		////////////////
@@ -176,7 +167,7 @@ function BarChart (svg) {
 				return d.value
 		})
 		
-		//Update data labels
+		//Update font size
 		chartRow.select(".category")
 			.attr('x', function(d, i) {
 				switch(true) {
@@ -214,7 +205,8 @@ function BarChart (svg) {
 			})
 
 		chartRow.transition()
-			.duration(1000)
+			.duration(300)
+			.attr('opacity', 1)
 			.attr('transform', function (d, i) {
 				//~ console.log('reordering', d.key, i, y(i))
 				return 'translate(0,' + y(i) + ')'
