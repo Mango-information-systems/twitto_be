@@ -11,7 +11,8 @@ let params = require('../params')
 */
 function Tweets (app) {
 	
-	var self = this
+	let self = this
+		, searchHashtags = params.track.map( hashtag => hashtag.substr(1).toLowerCase())
 	
 	connectTweetStream()
 	initTweetBot()
@@ -61,8 +62,8 @@ function Tweets (app) {
 			let entities = tweet.truncated? tweet.extended_tweet.entities : tweet.entities
 			
 			entities.hashtags.forEach(function (h) {
-				data.entities.push('#' + h.text)
-				data.relatedEntities.push('#' + h.text)
+				data.entities.push(formatTag(h.text))
+				data.relatedEntities.push(formatTag(h.text))
 			})
 			
 			//~ entities.user_mentions.forEach(function (m) {
@@ -80,8 +81,8 @@ function Tweets (app) {
 					entities = tweet.quoted_status.truncated? tweet.quoted_status.extended_tweet.entities : tweet.quoted_status.entities
 					
 					entities.hashtags.forEach(function (h) {
-						if (!data.relatedEntities.includes('#' + h.text))
-							data.relatedEntities.push('#' + h.text)
+						if (!data.relatedEntities.includes(formatTag(h.text)))
+							data.relatedEntities.push(formatTag(h.text))
 					})
 					
 					//~ entities.user_mentions.forEach(function (m) {
@@ -96,8 +97,8 @@ function Tweets (app) {
 					entities = tweet.retweeted_status.truncated? tweet.retweeted_status.extended_tweet.entities : tweet.retweeted_status.entities
 					
 					entities.hashtags.forEach(function (h) {
-						if (!data.relatedEntities.includes('#' + h.text))
-							data.relatedEntities.push('#' + h.text)
+						if (!data.relatedEntities.includes(formatTag(h.text)))
+							data.relatedEntities.push(formatTag(h.text))
 					})
 					
 					//~ entities.user_mentions.forEach(function (m) {
@@ -123,6 +124,24 @@ function Tweets (app) {
 			connectTweetStream()
 		})
 	}
+
+
+	/****************************
+	 *
+	 * harmonize search hashtags case formatting
+	 *
+	 * @private
+	 *
+	 *****************************/
+	function formatTag(text) {
+		
+		if (searchHashtags.includes(text.toLowerCase()))
+			return '#' + text.charAt(0).toUpperCase() + text.slice(1)
+		else
+			return '#' + text
+	
+	}
+
 
 	/****************************
 	 *
@@ -157,13 +176,13 @@ function Tweets (app) {
 
 	}
 
-	/**
+	/****************************
 	 *
 	 * Call tweetbot
 	 *
 	 * @private
 	 *
-	 */
+	 *****************************/
 	function callTweetbot(type) {
 		var delay = (type == 'hourly' ? this.hourlyDelay : this.dailyDelay)
 
@@ -177,6 +196,8 @@ function Tweets (app) {
 			, 'entities': app.model.tweets.getEntitiesStats()
 		})
 	}
+
+
 
 }
 
