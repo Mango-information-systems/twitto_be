@@ -27,10 +27,12 @@ function Tweets(model) {
 	
 	self.stats = {
 		tweets: {} // tweets counts (# replies, hashtags, links etc)
+		, topMentions: []
 	}
 	
 	// compute tweet statistics
 	calculateTweetCounts()
+	calculateTopMentions()
 
 	// compute tweets time series
 	//  TODO do this 60 seconds after server start - init to empty timeline in the mean time
@@ -104,6 +106,7 @@ function Tweets(model) {
 	
 		// recompute statistics after a cache cleanup
 		calculateTweetCounts()
+		calculateTopMentions()
 		
 	}
 
@@ -178,6 +181,91 @@ function Tweets(model) {
 		
 	}
 
+
+	/**
+	 *
+	 * Calculate top mentions
+	 *
+	 * @private
+	 *
+	 */
+	function calculateTopMentions() {
+
+		// staging area keeping the number of occurence of each mention, and threshold count to enter in the top 10
+		self.staging = {
+			mentionsCount: {}
+			, topMentionCountThreshold: 0
+		}
+		
+		self.stats.topMentions = []
+
+		var now = new Date()
+			, hoursAgo = 2 * 60 * 60 * 1000
+			, currentIndex = self.tweets.length-1
+			, withinTimeframe = true
+
+		// iterate through the tweets to extract mentions and hashtags
+		// while loop used to start from more recent tweets, and move backwards until 2 hours ago.
+		while(withinTimeframe && currentIndex >= 0) {
+
+			var tweet = self.tweets[currentIndex]
+			
+			if (now - (new Date(tweet.created_at)) > hoursAgo) {
+				// tweet  is older than 2 hours ago, exit loop
+				withinTimeframe = false
+			}
+			else {
+			// populate the staging array with count of each mention from recent tweets
+				
+				if(tweet.has_mention) {
+					
+					tweet.mentions.forEach(function (mention){
+
+						self.staging.mentionsCount[mention] = ++self.staging.mentionsCount[mention] || 1
+
+					})
+				}
+				
+				currentIndex--
+			}
+
+		}
+		
+		// extract the top10 mentions
+		Object.keys(self.staging.mentionsCount).forEach( function(mention) {
+			
+			var count = self.staging.mentionsCount[mention]
+			
+			// check whether the number of occurences of this mention is greater than lowest value currently in the top10
+			if (self.stats.topMentions.length < 10 || count >= self.staging.topMentionCountThreshold) {
+				
+				// add new value to the top 10
+				self.stats.topMentions.push({
+					key: mention
+					, value: count
+				})
+				
+				// update threshold value
+				self.staging.topMentionCountThreshold = count
+				
+				// update threshold value: get the lowest value from the array
+				self.staging.topMentionCountThreshold = self.stats.topMentions.reduce(function(memo, topMention) {
+					return Math.min(memo, topMention.value)
+				}, +Infinity)
+			}
+			
+		})
+		
+		// sort the top ranking
+		self.stats.topMentions.sort(function(a, b) {
+			return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
+		})
+		
+		// timit to top 10 values
+		self.stats.topMentions = self.stats.topMentions.slice(0, 10)
+		
+	}
+
 	/**
 	* 
 	* Calculate tweet statistics: number of retweets, mentions, hashtags etc
@@ -236,6 +324,79 @@ function Tweets(model) {
 			, relatedEntities: tweet.relatedEntities
 		}
 	}
+
+/**
+	* 
+	* update top mentions statistics
+	*
+	* @param {object} tweet new tweet
+	* 
+	* @return {boolean} has any of the top10 rankings changed
+	* 
+	* @private
+	* 
+	*/	
+	function updateMentionsStats(tweet){
+		
+		// update mentions counts, and if appropriate, the top 10 ranking
+		
+		var  topMentionsChanged = false
+		
+		if(tweet.has_mention) {
+			
+			tweet.mentions.forEach(function (mention) {
+				
+				self.staging.mentionsCount[mention] = ++self.staging.mentionsCount[mention] || 1
+				
+				var count = self.staging.mentionsCount[mention]
+				
+				// check whether the number of occurences of this mention is greater than lowest value currently in the top10
+				if (self.stats.topMentions.length < 10 || count >= self.staging.topMentionCountThreshold) {
+					
+					topMentionsChanged = true
+					
+					// check whether this mention was already inside the top10 ranking
+					var mentionIndex = self.stats.topMentions.findIndex(function(topMention) {
+						return topMention.key === mention
+					})
+
+					if (mentionIndex !== -1) {
+						// update count value inside the top10 ranking
+						self.stats.topMentions[mentionIndex].value = count
+					}
+					else {
+						// this mention is new inside the top 10
+						// add new value to the top 10
+						self.stats.topMentions.push({
+							key: mention
+							, value: count
+						})
+					}
+					
+					// update threshold value
+					self.staging.topMentionCountThreshold = self.stats.topMentions.reduce(function(memo, topMention) {
+						return Math.min(memo, topMention.value)
+					}, +Infinity)
+				}
+				
+			})
+			
+			if (topMentionsChanged) {
+				
+				// sort the top ranking
+				self.stats.topMentions.sort(function(a, b) {
+					return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
+				})
+				
+				// timit to top 10 values
+				self.stats.topMentions = self.stats.topMentions.slice(0, 10)
+				
+			}
+		}
+		
+		return topMentionsChanged
+		
+	}
 	
 	/**
 	* 
@@ -291,18 +452,9 @@ function Tweets(model) {
 		self.entitiesGraphWorker.send({op: 'add', data: getTweetEntitiesData(tweet)})
 				
 		updateTweetCounts(tweet)
+		
+		return updateMentionsStats(tweet)
 				
-	}
-
-	/**
-	* 
-	* get all tweets
-	*
-	* @return {object} all tweets
-	* 
-	*/
-	this.getAllTweets = function() {
-		return self.tweets
 	}
 
 	/**
@@ -316,7 +468,17 @@ function Tweets(model) {
 		return self.stats.tweets
 	}
 
-
+	/**
+	* 
+	* get top mentions ranking
+	*
+	* @return {object} trending mentions ranking
+	* 
+	*/
+	this.getTopMentions = function () {
+		return self.stats.topMentions
+	}
+	
 	/**
 	* 
 	* get top entities subgraph

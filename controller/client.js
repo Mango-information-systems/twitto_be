@@ -4,7 +4,7 @@ const d3 = require('d3')
 	, io = require('socket.io-client')
 	, polyfills = require('../controller/polyfills')
 	, LineChart = require('../view/lineChart')
-	//~, BarChart = require('../view/barChart')
+	, BarChart = require('../view/barChart')
 	, DonutChart = require('../view/donutChart')
 	, Force = require('../view/force')
 	, Legend = require('../view/legend')
@@ -22,17 +22,13 @@ let app = {
 app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
 app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
-//~app.view.topHashTags = new BarChart(d3.select('#topHashTags'))
-//~app.view.topMentions = new BarChart(d3.select('#topMentions'))
+app.view.topMentions = new BarChart(d3.select('#topMentions'))
 app.view.force = new Force(d3.select('#graph'), colorScale)
 app.view.legend = new Legend(d3.select('#legend'), colorScale)
 
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
-
-// ask for the historical tweets
-//~app.socket.emit('tweets')
 
 // listener: tweet stats sent by the server
 app.socket.on('tweetStats', function (stats) {
@@ -74,6 +70,17 @@ app.socket.on('timelines', function (stats) {
 	 d3.selectAll('#graph').classed('loading', false)
  
  })
+
+// listener: top mentions sent by the server
+app.socket.on('topMentions', function (stats) {
+	
+	debug('topMentions', stats)
+
+	d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
+
+	app.view.topMentions.render('mentions', stats)
+
+})
 
 // listener: new tweet
 app.socket.on('tweet', function (tweet) {

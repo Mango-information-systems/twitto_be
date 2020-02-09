@@ -48,17 +48,17 @@ function Tweets (app) {
 				, relatedEntities: []
 				, has_link: tweet.entities.urls.length !== 0
 				, has_mention: tweet.entities.user_mentions.length !== 0
+				, mentions: []
 				, has_media: tweet.entities.media && tweet.entities.media.length !== 0
 				, lang: tweet.lang
 			}
 			
-			// tmp - check entities actually present in the tweet. 
-			//~ if (!tweet.entities.hashtags.find(t => t.text.toLowerCase() ==='trump')) {
-				//~ console.log('--------------------------------------------')
-				//~ console.log('missing', tweet.text, JSON.stringify(tweet.entities.hashtags, null, '    '))
-				//~ console.log('related entities', JSON.stringify(tweet, null, '    '))
-			//~ }
-
+			if(tweet.entities.user_mentions.length !== 0) {
+				tweet.entities.user_mentions.forEach(function (m) {
+					data.mentions.push(m.screen_name)
+				})
+			}
+			
 			let entities = tweet.truncated? tweet.extended_tweet.entities : tweet.entities
 			
 			entities.hashtags.forEach(function (h) {
@@ -109,12 +109,17 @@ function Tweets (app) {
 			}
 			
 			//~ console.log('related entities processed', data.relatedEntities)
-			// store new tweet, update stats.
-			app.model.tweets.add(data)
+			
+			// store new tweet, update stats, and check if top mentions ranking has changed
+			var haveTopMentionsChanged = app.model.tweets.add(data)
 			
 			// send new tweet to the clients
 			app.router.io.sockets.emit('tweet', data)
 			
+			if (haveTopMentionsChanged) {
+				// send new top10 mentions rank to the clients
+				app.router.io.sockets.emit('topMentions', app.model.tweets.getTopMentions())
+			}			
 			
 		})
 		
