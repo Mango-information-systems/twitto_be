@@ -16,7 +16,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public/**/*,view/**/*' --reload-delay 2000 --no-open",
     "deploy:prod": "sudo cp -rp ./* /home/srv-node-mango/twitto && sudo chown -R srv-node-mango:srv-node-mango /home/srv-node-mango/twitto && sudo systemctl restart node-twitto && sudo touch /var/ngx_pagespeed_cache/cache.flush",
-    "deploy:test": "sudo cp -rp ./* /home/srv-node-mango/test_twitto && sudo chown -R srv-node-mango:srv-node-mango /home/srv-node-mango/test_twitto && sudo systemctl restart node-test-twitto && sudo touch /var/ngx_pagespeed_cache/cache.flush"
+    "deploy:test": "sudo cp -rp ./* /home/srv-node-mango/test-twitto && sudo chown -R srv-node-mango:srv-node-mango /home/srv-node-mango/test-twitto && sudo systemctl restart node-test-twitto && sudo touch /var/ngx_pagespeed_cache/cache.flush"
   },
   "repository": {
     "type": "git",
