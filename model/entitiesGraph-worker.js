@@ -21,10 +21,10 @@ self.graph = self.filteredGraph = new UndirectedGraph()
 //~ self.graph.import(t)
 //~ console.log('graph stats', self.graph.order, self.graph.size)
 
-// temp: log graph size every minut
+// temp: log graph size every hour
 setInterval(function() {
 	console.log('graph stats', self.graph.order, self.graph.size)
-}, 60000)
+}, 60 * 60000)
 
 
 /********************************************************
@@ -55,9 +55,11 @@ let add = cargo(function(tweets, callback) {
 		tweet.entities.forEach(function(entity) {
 		
 			//~ console.log('entity', entity)
-			self.graph.mergeNode(entity, {x: Math.random(), y: Math.random()}) // TODO move coordinates to calls of updateNodeAttribute
+			self.graph.mergeNode(entity)
 			
 			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
+			self.graph.updateNodeAttribute(entity, 'x', n => n || Math.random())
+			self.graph.updateNodeAttribute(entity, 'y', n => n || Math.random())
 
 		})
 		
@@ -173,15 +175,14 @@ let filterGraph = function() {
 		//~ console.time('FA2')
 		
 		FA2Layout.assign(self.graph, {
-		//~ FA2Layout.assign(self.filteredGraph, {
 			iterations: 50
 			, settings: {
 				adjustSizes: true
 				, barnesHutOptimize: true
 				, gravity: .5
 				, strongGravityMode: true
-				//~, edgeWeightInfluence: 50
-				//~, scalingRatio: 2
+				//~, edgeWeightInfluence: -1
+				//~, scalingRatio: 3
 			}
 		})
 		
@@ -293,7 +294,6 @@ function formatGraph() {
 * Public functions
 * 
 *********************************************************/
-
 
 process.on('message', function(message) {
 	
