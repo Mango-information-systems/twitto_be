@@ -15,8 +15,7 @@ const d3 = require('d3-selection')
 */
 function Control (socket, button, badge, view) {
 
-	let isLive
-
+	let isLive = userPaused = false
 
 	/****************************************
 	 *
@@ -28,12 +27,14 @@ function Control (socket, button, badge, view) {
 	 *
 	 * update status badge and toggle button, based on isLive indicator
 	 * 
+	 * @param {boolean} byUser flag whether the toggle is caused by the user
+	 * 
 	 * @private
 	 *
 	 ************/
-	function updateUI() {
+	function updateUI(byUser) {
 		
-		if (isLive) {
+		if (!isLive) {
 			badge.classed('badge-success', true)
 			badge.html('live')
 			button.html('Pause')
@@ -45,7 +46,8 @@ function Control (socket, button, badge, view) {
 			button.html('Resume')
 			view.tweetsPerSecond.pause()
 			view.tweetsPerMinute.pause()
-			view.force.preventOverlap()
+			if (byUser)
+				view.force.preventOverlap()
 		}
 		
 	}
@@ -54,16 +56,40 @@ function Control (socket, button, badge, view) {
 	 *
 	 * Toggle realtime data stream
 	 * 
+	 * @param {boolean} byUser flag whether the toggle is caused by the user
+	 * 
 	 * @private
 	 *
 	 ************/
-	function toggleStream() {
+	function toggleStream(byUser) {
 		
-		socket.emit(isLive? 'pause' : 'resume')
-		
-		isLive = !isLive
+		if (isLive) {
+			
+			if (byUser)
+				userPaused = true
+			
+			socket.emit('pause')
+			
+			updateUI(byUser)
+			
+			isLive = false
+		}
+		else {
+			
+			if (byUser || !userPaused) {
+			// either user clicked on resume button, or the previous pause 
+			// was triggered by the app, not the user
+					
+				socket.emit('resume')
 
-		updateUI()
+				updateUI(byUser)
+			
+				isLive = true
+				
+				userPaused = false
+			}
+
+		}
 		
 	}
 	
@@ -73,15 +99,35 @@ function Control (socket, button, badge, view) {
 	 *
 	 ****************************************/
 	
+	// activate feature once live feed is connected
 	this.activate = function() {
-		isLive = true
 		
 		button.attr('disabled', null)
-		updateUI()
+		updateUI(true)
+		
+		isLive = true
 	}
+	
+	// pause live stream initiated by software (e.g. when tab gets hidden)
+	this.pause = function() {
+		if (isLive)
+			toggleStream(false)
+	}
+	
+	// resume live stream initiated by software (e.g. when tab gets activated)
+	this.resume = function() {
+		if (!isLive)
+			toggleStream(false)
+	}
+	
+	/****************************************
+	 *
+	 * Event listeners
+	 *
+	 ****************************************/
 
 	button.on('click', function() {
-		toggleStream()
+		toggleStream(true)
 	})
 
 }

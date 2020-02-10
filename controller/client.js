@@ -3,6 +3,7 @@ window.debug = require('debug')
 const d3 = require('d3')
 	, io = require('socket.io-client')
 	, FeedControl = require('../controller/feedControl')
+	, PageVisibility = require('../controller/pageVisibility')
 	, polyfills = require('../controller/polyfills')
 	, LineChart = require('../view/lineChart')
 	, BarChart = require('../view/barChart')
@@ -29,10 +30,12 @@ var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
-// initialize live stream controller
+// initialize controllers
 app.controller.feedControl = new FeedControl(app.socket, d3.select('#feedControl'), d3.select('#feedStatus'), app.view)
+app.controller.pageVisibility = new PageVisibility(app.controller.feedControl)
 
-app.socket.on('tweetStats', function (stats) {
+
+app.socket.on('connect', function (stats) {
 	app.controller.feedControl.activate()
 })
 

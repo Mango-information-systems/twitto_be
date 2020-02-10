@@ -106,7 +106,7 @@ function ForceChart(svg, color) {
 				
 				deltaX = x1 - x2
 				signX = deltaX > 0 ? 1 : -1
-				adjustX = signX * alpha
+				adjustX = signX * alpha / 3
 				
 				da.attr('y', y1 + adjustY)
 				da.attr('x', x1 + adjustX)
@@ -264,7 +264,6 @@ function ForceChart(svg, color) {
 	 *
 	 */
 	this.interruptOverlapPrevention = function() {
-
 		self.stopOverlapPrevention = true
 		
 	}
