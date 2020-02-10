@@ -35,8 +35,6 @@ function LineChart (svg, granularity) {
 		
 	var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 	
-	this.bars = g.append('g')
-	
 	/****************************************
 	* 
 	* Private methods
@@ -126,6 +124,10 @@ function LineChart (svg, granularity) {
 			.domain([0, self.maxCount])
 			.range([height, 0])
 			//~ .nice()
+
+		g.html('')
+
+		this.bars = g.append('g')
 
 		g.append("g")
 			.attr("class", "axis axis--x")

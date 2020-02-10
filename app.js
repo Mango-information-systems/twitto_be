@@ -96,23 +96,22 @@ app.use(function(req, res, next){
 twitto.router.io.on('connection', function(socket) {
 	
 	debug('client connection', socket.id)
-
-	//~socket.on('tweets', function() {
-		
-		// send tweet statistics (for donut chart)
-		socket.emit('tweetStats', twitto.model.tweets.getTweetCounts())
-
-		// send tweet timelines (for timeline chart)
-		socket.emit('timelines', twitto.model.tweets.getTimelines())
-
-		// send top mentions
-		socket.emit('topMentions', twitto.model.tweets.getTopMentions())
-
-		// send top entities graph
-		 socket.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
-
-	//~})
 	
+	socket.join('liveFeed')
+	
+	twitto.controller.tweets.initDataFeed(socket)
+
+	// make it possible to unsubscribe to live data updates
+	socket.on('pause', function() {
+		socket.leave('liveFeed')
+	})
+	
+	socket.on('resume', function() {
+		socket.join('liveFeed')
+		
+		twitto.controller.tweets.initDataFeed(socket)
+	})
+
 })
 
 twitto.model.on('graphUpdate', function(message) {
@@ -123,7 +122,7 @@ twitto.model.on('graphUpdate', function(message) {
 
 //debounced send graph function
 twitto.router.sendGraph = debounce(function() {
-	twitto.router.io.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
+	twitto.router.io.to('liveFeed').emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 }, 750, true)
 
 twitto.router.io.listen(params.ports.socket)

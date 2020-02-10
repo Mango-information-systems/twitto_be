@@ -114,11 +114,11 @@ function Tweets (app) {
 			var haveTopMentionsChanged = app.model.tweets.add(data)
 			
 			// send new tweet to the clients
-			app.router.io.sockets.emit('tweet', data)
+			app.router.io.to('liveFeed').emit('tweet', data)
 			
 			if (haveTopMentionsChanged) {
 				// send new top10 mentions rank to the clients
-				app.router.io.sockets.emit('topMentions', app.model.tweets.getTopMentions())
+				app.router.io.to('liveFeed').emit('topMentions', app.model.tweets.getTopMentions())
 			}			
 			
 		})
@@ -202,6 +202,35 @@ function Tweets (app) {
 		})
 	}
 
+
+	/****************************************
+	* 
+	* public methods
+	* 
+	****************************************/
+
+	/****************************
+	 *
+	 * send current dataset before initializing live feed
+	 *
+	 * @private
+	 *
+	 *****************************/
+	this.initDataFeed = function(socket) {
+		
+		// send tweet statistics (for donut chart)
+		socket.emit('tweetStats', app.model.tweets.getTweetCounts())
+
+		// send tweet timelines (for timeline chart)
+		socket.emit('timelines', app.model.tweets.getTimelines())
+
+		// send top mentions
+		socket.emit('topMentions', app.model.tweets.getTopMentions())
+
+		// send top entities graph
+		 socket.emit('entitiesGraph', app.model.tweets.getEntitiesGraph())
+		
+	}
 
 
 }

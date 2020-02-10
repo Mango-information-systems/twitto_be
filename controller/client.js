@@ -2,6 +2,7 @@ window.debug = require('debug')
 
 const d3 = require('d3')
 	, io = require('socket.io-client')
+	, FeedControl = require('../controller/feedControl')
 	, polyfills = require('../controller/polyfills')
 	, LineChart = require('../view/lineChart')
 	, BarChart = require('../view/barChart')
@@ -12,9 +13,7 @@ const d3 = require('d3')
 	, debug = window.debug('clientApp')
 
 let app = {
-		controller: {
-			stats: {}
-		}
+		controller: {}
 		, view: {}
 	}
 
@@ -29,6 +28,13 @@ app.view.legend = new Legend(d3.select('#legend'), colorScale)
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
+
+// initialize live stream controller
+app.controller.feedControl = new FeedControl(d3.select('#feedControl'), d3.select('#feedStatus'), app.socket)
+
+app.socket.on('tweetStats', function (stats) {
+	app.controller.feedControl.activate()
+})
 
 // listener: tweet stats sent by the server
 app.socket.on('tweetStats', function (stats) {
@@ -56,18 +62,12 @@ app.socket.on('timelines', function (stats) {
 // listener: top entities graph sent by the server
  app.socket.on('entitiesGraph', function (graphData) {
 	 
-	 debug('entitiesGraph', graphData)
- 
-	 //~d3.selectAll('#topEntitiesBarchartsWrap').classed('loading', false)
- 
-	 //~app.view.topHashTags.render('hashtags', stats.topHashtags)
+	debug('entitiesGraph', graphData)
 	 
-	 //~app.view.topMentions.render('mentions', stats.topMentions)
+	app.view.force.update(graphData)
+	app.view.legend.update(graphData.communities)
 	 
-	 app.view.force.update(graphData)
-	 app.view.legend.update(graphData.communities)
-	 
-	 d3.selectAll('#graph').classed('loading', false)
+	d3.selectAll('#graph').classed('loading', false)
  
  })
 
