@@ -12,7 +12,15 @@ let params = require('../params')
 function Tweets (app) {
 	
 	let self = this
-		, searchHashtags = params.track.map( hashtag => hashtag.substr(1).toLowerCase())
+		, searchHashtags = []
+		
+	if (typeof params.track !== 'undefined') {
+		
+		params.track.forEach( term => {
+			if (term[0] === '#')
+				searchHashtags.push(term.substr(1).toLowerCase())
+		})
+	}
 	
 	connectTweetStream()
 	initTweetBot()
