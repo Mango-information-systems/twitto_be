@@ -12,11 +12,11 @@ var d3 = require('d3')
 function BarChart (svg) {
 
 	var self = this
-		, svgWidth = 450
+		, svgWidth = 585
 
 	var margin = {top: 0, right: 20, bottom: 80, left: 0}
 		, width = svgWidth - margin.left - margin.right
-		, height = 300 - margin.top - margin.bottom
+		, height = 330 - margin.top - margin.bottom
 		, defaultBarWidth = 3000
 
 	var x = d3.scaleLinear()
