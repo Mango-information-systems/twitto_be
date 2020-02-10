@@ -95,7 +95,8 @@ function ForceChart(svg, color) {
 					// so they don't collide.
 					return
 
-				if (!overlap ( a, b)) return
+				if (!overlap( a, b))
+					return
 				
 				// If the labels collide, we'll push each 
 				// of the two labels up and down a little bit.
@@ -115,15 +116,29 @@ function ForceChart(svg, color) {
 				db.attr('x', x2 - adjustX)
 			})
 		})
+		
 		// Adjust our line leaders here
 		// so that they follow the labels. 
 		if(!self.stopOverlapPrevention && again &&  iterationCount < 100) {
 			setTimeout(function() {relax(++iterationCount)}, 10)
 		}
-		//~else {
-			//~// both force layout and overlap prevention are finished, display export button
+		else {
+			// Overlap prevention has finished to run
+			
+			// update edges lines
+			// quick and dirty, but at least it does the job
+			self.link.selectAll('.link').transition()
+				  .attr('d', (d, i) => {
+					
+					var dx = textLabels.nodes()[d.target].attributes.x.value - textLabels.nodes()[d.source].attributes.x.value
+						, dy = textLabels.nodes()[d.target].attributes.y.value - textLabels.nodes()[d.source].attributes.y.value
+						, dr = Math.sqrt(dx * dx + dy * dy)
+					
+					return 'M' + textLabels.nodes()[d.source].attributes.x.value + ',' + textLabels.nodes()[d.source].attributes.y.value + 'A' + dr + ',' + dr + ' 0 0,1 ' + textLabels.nodes()[d.target].attributes.x.value + ',' + textLabels.nodes()[d.target].attributes.y.value
+				  })
+			
 			//~d3.select('#exportLink').style('display', 'block')
-		//~}
+		}
 	}
 
 	function overlap (a, b) {
