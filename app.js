@@ -105,6 +105,9 @@ twitto.router.io.on('connection', function(socket) {
 		// send tweet timelines (for timeline chart)
 		socket.emit('timelines', twitto.model.tweets.getTimelines())
 
+		// send top mentions
+		socket.emit('topMentions', twitto.model.tweets.getTopMentions())
+
 		// send top entities graph
 		 socket.emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 
