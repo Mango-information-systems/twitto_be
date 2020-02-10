@@ -36,13 +36,13 @@ function Control (socket, button, badge, view) {
 		
 		if (!isLive) {
 			badge.classed('badge-success', true)
-			badge.html('live')
+			  .html('live')
 			button.html('Pause')
 			view.force.interruptOverlapPrevention()
 		}
 		else {
 			badge.classed('badge-success', false)
-			badge.html('paused')
+			  .html('paused')
 			button.html('Resume')
 			view.tweetsPerSecond.pause()
 			view.tweetsPerMinute.pause()
