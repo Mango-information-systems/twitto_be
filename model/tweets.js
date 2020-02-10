@@ -1,4 +1,6 @@
 const debug = require('debug')('tweetsModel')
+	, cargo = require('async/cargo')
+	, debounce = require('just-debounce')
 	, fork = require('child_process').fork
 	, range = require('d3-array').range
 
@@ -12,10 +14,10 @@ function Tweets(model) {
 
 	let self = this
 	
-	self.graph = {}
-
 	self.tweets = []
+	self.graph = {}
 	
+		
 	// entitiesGraph is in a child process because it is CPU intensive
 	self.entitiesGraphWorker = fork(__dirname + '/entitiesGraph-worker')
 	
@@ -325,7 +327,25 @@ function Tweets(model) {
 		}
 	}
 
-/**
+
+	/********************************************************
+	* 
+	* Add the entities from new tweets to the graph
+	* 
+	* @private
+	*
+	*********************************************************/
+	let persistTweet = cargo(debounce(async function(tweets, callback) {
+
+		debug('persisting new tweets', tweets.length)
+		
+		await model.storage.setItem('' + new Date().valueOf(), {tweets: tweets})
+		
+		callback()
+		
+	}, 30000, true))
+	
+	/**
 	* 
 	* update top mentions statistics
 	*
@@ -442,8 +462,11 @@ function Tweets(model) {
 	* 
 	* store a new tweet's data
 	*
+	* @param {object} tweet new tweet
+	* @param {boolean} whether the tweet is already persisted
+	*
 	*/
-	this.add = function(tweet) {
+	this.add = async function(tweet, fromDisk = false) {
 		
 		debug('adding tweet', tweet)
 		
@@ -452,6 +475,11 @@ function Tweets(model) {
 		self.entitiesGraphWorker.send({op: 'add', data: getTweetEntitiesData(tweet)})
 				
 		updateTweetCounts(tweet)
+		
+		if (!fromDisk) {
+			persistTweet.push(tweet, function(err, res) {
+			})
+		}
 		
 		return updateMentionsStats(tweet)
 				
@@ -512,7 +540,20 @@ function Tweets(model) {
 		
 	}
 	
-	
+	/**
+	* 
+	* load tweets persisted from disk
+	* 
+	* called at server startup in order to recover data from previous run
+	* 
+	*/
+	this.loadPersisted = function() {
+		model.storage.forEach(async function(datum) {
+			datum.value.tweets.forEach(tweet => {
+				self.add(tweet, true)
+			})
+		})
+	}
 
 }
 

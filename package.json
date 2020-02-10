@@ -11,7 +11,7 @@
     "build:skeleton": "cd git_submodules/skeleton-framework && npm run build",
     "postinstall": "mkdir -p public/js & mkdir -p public/css; git submodule update --init --recursive; cd git_submodules/skeleton-framework; npm install;",
     "watch:client": "watchify controller/client.js -o public/js/app.js -v",
-    "watch:server": "nodemon --ignore public/ app.js",
+    "watch:server": "nodemon --ignore public/ --ignore persist/ app.js",
     "watch:skeleton": "cd git_submodules/skeleton-framework && npm run watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public/**/*,view/**/*' --reload-delay 2000 --no-open",
@@ -40,6 +40,7 @@
     "graphology-layout-forceatlas2": "^0.3.1",
     "graphology-metrics": "^1.6.1",
     "just-debounce": "^1.0.0",
+    "node-persist": "^3.0.5",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
     "twit": "^2.2.11"
