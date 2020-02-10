@@ -10,7 +10,8 @@ const d3 = require('d3')
 	, DonutChart = require('../view/donutChart')
 	, Force = require('../view/force')
 	, Legend = require('../view/legend')
-	, colorScale = d3.scaleOrdinal(d3.schemeCategory10)
+	//~, colorScale = d3.scaleOrdinal(d3.schemeCategory10)
+	, colorScale = d3.scaleOrdinal(['#008000', '#000', '#ff0f21', '#00aced', '#fbab00', '#FF7300', '#bb4fe2', '#ac5e1c', '#ec71b5', '#2325d6', '#65c652'])
 	, debug = window.debug('clientApp')
 
 let app = {
