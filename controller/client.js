@@ -30,7 +30,7 @@ var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
 // initialize live stream controller
-app.controller.feedControl = new FeedControl(d3.select('#feedControl'), d3.select('#feedStatus'), app.socket)
+app.controller.feedControl = new FeedControl(app.socket, d3.select('#feedControl'), d3.select('#feedStatus'), app.view.tweetsPerMinute, app.view.tweetsPerSecond)
 
 app.socket.on('tweetStats', function (stats) {
 	app.controller.feedControl.activate()

@@ -7,12 +7,14 @@ const d3 = require('d3-selection')
 *
 * @constructor
 * 
+* @param {object} socket.io connection
 * @param {object} button the d3 selection of toggle button
 * @param {object} badge the d3 selection of status badge
-* @param {object} socket.io connection
+* @param {object} tweetsPerMinute view component
+* @param {object} tweetsPerSecond view component
 * 
 */
-function Control (button, badge, socket) {
+function Control (socket, button, badge, tweetsPerMinute, tweetsPerSecond) {
 
 	let isLive
 
@@ -41,6 +43,8 @@ function Control (button, badge, socket) {
 			badge.classed('badge-success', false)
 			badge.html('paused')
 			button.html('Resume')
+			tweetsPerSecond.pause()
+			tweetsPerMinute.pause()
 		}
 		
 	}

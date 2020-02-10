@@ -150,7 +150,7 @@ function LineChart (svg, granularity) {
 				.style('stroke-width', '1')
 				
 		// launch chart refresh at every time interval
-		setInterval(nextTimeInterval, timeRes)
+		self.refreshInterval = setInterval(nextTimeInterval, timeRes)
 	}
 	
 	/***********
@@ -178,6 +178,21 @@ function LineChart (svg, granularity) {
 					  .attr('height', function(d) { return height - self.y(d.count)})
 		}
 	}
+	
+	/***********
+	 * 
+	 * disable live update of the chart
+	 * 
+	 * resume is done implicitely as chart init is executed
+	 *
+	 ************/
+	this.pause = function() {
+
+		clearInterval(self.refreshInterval)
+
+	}
+
+
 
 	return this	
 }
