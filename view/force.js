@@ -22,7 +22,8 @@ function ForceChart(svg, color) {
 			.range([nodeMargin, height - nodeMargin])
 		, edgeWidthScale = d3.scaleLinear()
 			.range([1, 4])
-			
+	
+	self.stopOverlapPrevention = false		
 		
 	self.svg = svg.html('')
 		.append('svg')
@@ -56,15 +57,16 @@ function ForceChart(svg, color) {
 	/**
 	 * relax position of text labels, whenever they are overlapping.
 	 * 
-	 * @param {object} text Labels d3 selection
+	 * @param {object} iterationCount
 	 * 
 	 * @private
 	 * 
 	 */
-	function relax(textLabels) {
+	function relax(iterationCount) {
 		// relax the position of overlapping labels
-		// only vertical position is modified
 		// based on https://blog.safaribooksonline.com/2014/03/11/solving-d3-label-placement-constraint-relaxing/
+
+		let textLabels = d3.selectAll('.node')
 
 		var alpha = 0.5
 			, spacing = 15
@@ -73,16 +75,18 @@ function ForceChart(svg, color) {
 		textLabels.each(function (d, i) {
 			a = this
 			da = d3.select(a)
-			 y1 = +da.attr('y')
+			y1 = +da.attr('y')
+			x1 = +da.attr('x')
 			
 			textLabels.each(function (d, j) {
 				b = this
 				// a & b are the same element and don't collide.
-				if (a == b) return
+				if (a === b) return
 				
 				db = d3.select(b)
 				// Now let's calculate the distance between these elements. 
-				 y2 = +db.attr('y')
+				y2 = +db.attr('y')
+				x2 = +db.attr('x')
 				
 				deltaY = y1 - y2
 				
@@ -96,18 +100,25 @@ function ForceChart(svg, color) {
 				// If the labels collide, we'll push each 
 				// of the two labels up and down a little bit.
 				again = true
-				sign = deltaY > 0 ? 1 : -1
-				adjust = sign * alpha
 				
-				da.attr('y', y1 + adjust)
+				signY = deltaY > 0 ? 1 : -1
+				adjustY = signY * alpha
+				
+				deltaX = x1 - x2
+				signX = deltaX > 0 ? 1 : -1
+				adjustX = signX * alpha
+				
+				da.attr('y', y1 + adjustY)
+				da.attr('x', x1 + adjustX)
 
-				db.attr('y', y2 - adjust)
+				db.attr('y', y2 - adjustY)
+				db.attr('x', x2 - adjustX)
 			})
 		})
 		// Adjust our line leaders here
 		// so that they follow the labels. 
-		if(again) {
-			setTimeout(function() {relax(textLabels)}, 10)
+		if(!self.stopOverlapPrevention && again &&  iterationCount < 100) {
+			setTimeout(function() {relax(++iterationCount)}, 10)
 		}
 		//~else {
 			//~// both force layout and overlap prevention are finished, display export button
@@ -152,40 +163,6 @@ function ForceChart(svg, color) {
 			
 		return true
 		
-	}
-	
-	// as in http://stackoverflow.com/a/38230545/1006854
-	function getTransformation(transform) {
-	  // Create a dummy g for calculation purposes only. This will never
-	  // be appended to the DOM and will be discarded once this function 
-	  // returns.
-	  var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-	  
-	  // Set the transform attribute to the provided string value.
-	  g.setAttributeNS(null, 'transform', transform);
-	  
-	  // consolidate the SVGTransformList containing all transformations
-	  // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
-	  // its SVGMatrix. 
-	  var matrix = g.transform.baseVal.consolidate().matrix;
-	  
-	  // Below calculations are taken and adapted from the private function
-	  // transform/decompose.js of D3's module d3-interpolate.
-	  // var {a, b, c, d, e, f} = matrix;   // ES6, if this doesn't work, use below assignment
-	  var a=matrix.a, b=matrix.b, c=matrix.c, d=matrix.d, e=matrix.e, f=matrix.f; // ES5
-	  var scaleX, scaleY, skewX;
-	  if (scaleX = Math.sqrt(a * a + b * b)) a /= scaleX, b /= scaleX;
-	  if (skewX = a * c + b * d) c -= a * skewX, d -= b * skewX;
-	  if (scaleY = Math.sqrt(c * c + d * d)) c /= scaleY, d /= scaleY, skewX /= scaleY;
-	  if (a * d < b * c) a = -a, b = -b, skewX = -skewX, scaleX = -scaleX;
-	  return {
-		translateX: e,
-		translateY: f,
-		rotate: Math.atan2(b, a) * 180 / Math.PI,
-		skewX: Math.atan(skewX) * 180 / Math.PI,
-		scaleX: scaleX,
-		scaleY: scaleY
-	  };
 	}
 
 	/**
@@ -233,7 +210,6 @@ function ForceChart(svg, color) {
 		let nodeSelection = self.node.selectAll('.node')
 			  .data(data.nodes, d => d.key)
 			  
-			  
 		nodeSelection.join(
 		  enter => 
 			  enter.append('text')
@@ -250,10 +226,8 @@ function ForceChart(svg, color) {
 				  .style('fill', function(d) {return color(d.community) })
 		)
 		
-		
 		nodeSelection.exit().remove()
-		
-		
+
 		
 		// Apply the general update pattern to the links.
 		let linkSelection = self.link.selectAll('.link')
@@ -282,10 +256,29 @@ function ForceChart(svg, color) {
 		
 		linkSelection.exit().remove()
 
-		// avoid overlapping labels
-		//~relax(nodeSelection)
 	}
 
+
+	/**
+	 * once live feed is resumed, stop the overlap prevention algorithm
+	 *
+	 */
+	this.interruptOverlapPrevention = function() {
+
+		self.stopOverlapPrevention = true
+		
+	}
+
+	/**
+	 * update nodes position in order to avoid overlapping text
+	 *
+	 */
+	this.preventOverlap = function() {
+		
+		self.stopOverlapPrevention = false
+		
+		relax(0)
+	}
 }
 
 module.exports = ForceChart

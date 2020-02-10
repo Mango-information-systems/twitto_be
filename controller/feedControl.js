@@ -10,11 +10,10 @@ const d3 = require('d3-selection')
 * @param {object} socket.io connection
 * @param {object} button the d3 selection of toggle button
 * @param {object} badge the d3 selection of status badge
-* @param {object} tweetsPerMinute view component
-* @param {object} tweetsPerSecond view component
+* @param {object} view app view components
 * 
 */
-function Control (socket, button, badge, tweetsPerMinute, tweetsPerSecond) {
+function Control (socket, button, badge, view) {
 
 	let isLive
 
@@ -38,13 +37,15 @@ function Control (socket, button, badge, tweetsPerMinute, tweetsPerSecond) {
 			badge.classed('badge-success', true)
 			badge.html('live')
 			button.html('Pause')
+			view.force.interruptOverlapPrevention()
 		}
 		else {
 			badge.classed('badge-success', false)
 			badge.html('paused')
 			button.html('Resume')
-			tweetsPerSecond.pause()
-			tweetsPerMinute.pause()
+			view.tweetsPerSecond.pause()
+			view.tweetsPerMinute.pause()
+			view.force.preventOverlap()
 		}
 		
 	}
