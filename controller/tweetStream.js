@@ -1,5 +1,4 @@
 var params = require('../params')
-	, geoSettings = require('../data/geoSettings')
 	, Twit = require('twit')
 	, debug = require('debug')('tweetStream')
 
@@ -47,7 +46,16 @@ function TweetStream () {
 	function streamTweets() {
 		debug('running streamTweets')
 		
-		var stream = twit.stream('statuses/filter', { track: params.track})
+		let trackingConfig = {}
+		
+		if (params.track)
+			trackingConfig.track = params.track
+			
+		if (params.boundingBox)
+			trackingConfig.locations = [params.boundingBox.sw.long, params.boundingBox.sw.lat, params.boundingBox.ne.long, params.boundingBox.ne.lat]
+			
+		
+		var stream = twit.stream('statuses/filter', trackingConfig)
 
 		stream.on('tweet', function(tweet){
 

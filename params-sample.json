@@ -5,6 +5,17 @@
 		, "socket": 3031
 	},
 	"track" : [],
+	, "boundingBox" : {
+		"description": "user-friendly description of the location"
+		, "sw": {
+			"lat": 49.496899
+			, "long": 2.54563
+		}
+		, "ne": {
+			"lat": 51.505081
+			, "long": 6.40791
+		}
+	}
 	"twitter": {
 		"consumer_key": "--fill-me--",
 		"consumer_secret": "--fill-me--",
