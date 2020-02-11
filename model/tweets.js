@@ -1,6 +1,5 @@
 const debug = require('debug')('tweetsModel')
 	, cargo = require('async/cargo')
-	, debounce = require('just-debounce')
 	, fork = require('child_process').fork
 	, range = require('d3-array').range
 
@@ -335,15 +334,14 @@ function Tweets(model) {
 	* @private
 	*
 	*********************************************************/
-	let persistTweet = cargo(debounce(async function(tweets, callback) {
+	let persistTweet = cargo(function(tweets, callback) {
 
 		debug('persisting new tweets', tweets.length)
 		
-		await model.storage.setItem('' + new Date().valueOf(), {tweets: tweets})
+		model.storage.setItem('' + new Date().valueOf(), {tweets: tweets})
 		
-		callback()
-		
-	}, 30000, true))
+		setTimeout(function() {callback()}, 30000)
+	})
 	
 	/**
 	* 
