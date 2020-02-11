@@ -25,9 +25,9 @@ twitto.controller.tweets = new Tweets(twitto)
 app.set('view engine', 'ejs')
 app.set('views', path.resolve(__dirname + '/view'))
 
-console.log('static', __dirname + '/public')
-
 app.use(express.static( __dirname + '/public'))
+
+app.disable('x-powered-by')
 
 // launch express server
 app.listen(params.ports.express)
