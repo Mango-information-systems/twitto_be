@@ -68,8 +68,8 @@ function ForceChart(svg, color) {
 
 		let textLabels = d3.selectAll('.node')
 
-		var alpha = 0.5
-			, spacing = 15
+		var alpha = 2
+			, spacing = 10
 			, again = false
 
 		textLabels.each(function (d, i) {
@@ -120,7 +120,7 @@ function ForceChart(svg, color) {
 		// Adjust our line leaders here
 		// so that they follow the labels. 
 		if(!self.stopOverlapPrevention && again &&  iterationCount < 100) {
-			setTimeout(function() {relax(++iterationCount)}, 10)
+			d3.timeout(function() {relax(++iterationCount)}, 2)
 		}
 		else {
 			// Overlap prevention has finished to run
