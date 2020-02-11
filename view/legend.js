@@ -34,17 +34,18 @@ function Legend (div, color) {
 	this.update = function (data) {
 		
 		debug('legend data', data)
-		
-		const t = div.transition().duration(600)
+
+		const t = div.transition().duration(300)
 
 		// Apply the general update pattern to the nodes.
-		let selection = div.selectAll('.legend')
+		let selection = div.selectAll('.legendItem')
 			  .data(data, d => d)
 			  
 		selection.join(
 		  enter => {
+
 			  let l = enter.append('div')
-				  .attr('class', 'four columns legend')
+				  .attr('class', 'four columns legendItem')
 				  .style('opacity', 0)
 				  
 			  l.append('div')
@@ -57,6 +58,8 @@ function Legend (div, color) {
 			  l.append('div')
 				  .style('display', 'inline-block')
 				  .html(d => d)
+				  
+			  return l
 		  }
 		)
 		.call(all => {
@@ -70,7 +73,7 @@ function Legend (div, color) {
 		)
 		
 		selection.exit().remove()
-		
+
 	}
 
 }
