@@ -149,7 +149,7 @@ function Tweets (app) {
 	function formatTag(text) {
 		
 		if (searchHashtags.includes(text.toLowerCase()))
-			return '#' + text.charAt(0).toUpperCase() + text.slice(1)
+			return '#' + text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
 		else
 			return '#' + text
 	
