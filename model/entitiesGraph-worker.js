@@ -45,47 +45,30 @@ let add = cargo(function(tweets, callback) {
 
 	debug('integrating new tweets in entities graph', tweets.length)
 	
-	tweets.forEach( tweet => {
-		
-		//~console.log('entities', tweet.entities)
+	tweets.forEach( hashtags => {
 		
 		//~ console.time('store nodes')
 		
 		// store nodes
-		tweet.entities.forEach(function(entity) {
+		hashtags.forEach(function(hashtag) {
 		
-			//~ console.log('entity', entity)
-			self.graph.mergeNode(entity)
+			self.graph.mergeNode(hashtag)
 			
-			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
-			self.graph.updateNodeAttribute(entity, 'x', n => n || Math.random())
-			self.graph.updateNodeAttribute(entity, 'y', n => n || Math.random())
+			self.graph.updateNodeAttribute(hashtag, 'count', n => (n || 0) + 1)
+			self.graph.updateNodeAttribute(hashtag, 'x', n => n || Math.random())
+			self.graph.updateNodeAttribute(hashtag, 'y', n => n || Math.random())
 
-		})
-		
-		let extraEntities = tweet.relatedEntities.filter(entity => !tweet.entities.includes(entity))
-		
-		// add extra entities nodes in case they are not yet present in the graph
-		// count is not incremented for these.
-		extraEntities.forEach(function(entity) {
-		
-			self.graph.mergeNode(entity, {x: Math.random(), y: Math.random()})
-			
-			self.graph.updateNodeAttribute(entity, 'count', n => (n || 0) + 1)
-			
 		})
 		
 		//~ console.timeEnd('store nodes')
 		
-		//~ console.log('edge targets', tweet.relatedEntities)
-		
 		//~ console.time('store edges')
 		//compute and store edges
-		tweet.entities.forEach(function(source, i) {
+		hashtags.forEach(function(source, i) {
 		
-			for (var j = i+1; j < tweet.relatedEntities.length; j++) {
+			for (var j = i+1; j < hashtags.length; j++) {
 				
-				let target = tweet.relatedEntities[j]
+				let target = hashtags[j]
 				
 				//~ console.log('saving edge', i, j, source, target)
 				
@@ -97,10 +80,6 @@ let add = cargo(function(tweets, callback) {
 			
 		})
 		//~ console.timeEnd('store edges')
-		
-		//~ console.log('graph stats:')
-		//~ console.log('-- nodes count', self.graph.order)
-		//~ console.log('-- edges count', self.graph.size)
 
 		
 	})
@@ -125,12 +104,12 @@ function clean(tweets) {
 	
 	tweets.forEach( tweet => {
 	
-		tweet.entities.forEach(function(source, i) {
+		hashtags.forEach(function(source, i) {
 		
 			// decrement edge weights and remove obsolete edges
-			for (var j = i+1; j < tweet.relatedEntities.length; j++) {
+			for (var j = i+1; j < hashtags.length; j++) {
 				
-				let target = tweet.relatedEntities[j]
+				let target = hashtags[j]
 				
 				 //~console.log('decrement edge', i, j, source, target)
 				self.graph.updateEdgeAttribute(source, target, 'weight', n => n - 1)
@@ -303,7 +282,7 @@ process.on('message', function(message) {
 			clean(message.data)
 			break
 		case 'add':
-			add.push(message.data, function(err, res) {
+			add.push([message.data], function(err, res) {
 				
 			})
 			break

@@ -90,7 +90,8 @@ function Tweets(model) {
 			if (new Date(Date.parse(tweet.created_at)) <= yesterday) {
 				
 				// store obsolete tweets to send to entitiesGraph child process for cleanup
-				tweetsToCleanup.push(getTweetEntitiesData(tweet))
+				if (tweet.hashtags.length)
+					tweetsToCleanup.push(tweet.hashtags)
 				
 				// remove from self.tweets
 				return false
@@ -307,26 +308,6 @@ function Tweets(model) {
 		
 	}
 
-	/**
-	* 
-	* create object containing only relevant properties for entities graph
-	* This is to decrease the volume of data sent to child process.
-	*
-	* @param {object} tweet
-	* 
-	* @return {object} tweet entities arrays
-	*
-	* @private
-	* 
-	*/	
-	function getTweetEntitiesData(tweet) {
-		return {
-			entities: tweet.entities
-			, relatedEntities: tweet.relatedEntities
-		}
-	}
-
-
 	/********************************************************
 	* 
 	* Add the entities from new tweets to the graph
@@ -470,7 +451,8 @@ function Tweets(model) {
 		
 		self.tweets.push(tweet)
 		
-		self.entitiesGraphWorker.send({op: 'add', data: getTweetEntitiesData(tweet)})
+		if (tweet.hashtags.length)
+			self.entitiesGraphWorker.send({op: 'add', data: tweet.hashtags})
 				
 		updateTweetCounts(tweet)
 		
