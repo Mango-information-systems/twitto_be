@@ -1,19 +1,20 @@
 # Twitto_be
 
-twitto_be is a real-time dashboard of geolocated tweets.
+twitto_be is a real-time twitter monitoring dashboard, performing live social network analysis on hashtags.
 
 ## Installation
 
-Twitto.be is a node.js application.
+Twitto.be is a `node.js` application.
 
-Used ports:
-* 8080: express
-* 3031: socket.io
-
-After cloning the repository, follow these steps
+After cloning the repository, follow these steps:
 
 1. run `npm install`
-2. Enter your twitter app credentials inside a new file `params.json` in the root directory. Use `params-sample.json` to see the expected syntax
+2. Create and complete a `params.json` file in the root directory, using `params-sample.json` as a base:
+  * `ports`: the ports express.js and socket.io should listen to.
+  * `track`: set of keywords to monitor in the twitter streaming API (optional).
+  * `geolocation`: bounding box to monitor in the twitter streaming API (optional).
+  * `twitter`: enter your twitter app credentials.
+  * update the other contents of the file as suitable.
 
 ### Development
 
