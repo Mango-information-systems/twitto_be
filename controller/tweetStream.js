@@ -61,11 +61,12 @@ function TweetStream () {
 
 			debug('received tweet', tweet.id_str)
 
-				// TODO add check for presence of tracked entities in clause below (OR)
-				//~ if (tweet.place.country_code === geoSettings.countryCode && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
+				// Quality filter: only retain tweets containing no more than 6 hashtags
+				// Also exclude blacklisted usernames
+				 if (tweet.entities.hashtags.length <= 6 && params.twitterUsersBlacklist.indexOf(tweet.user.screen_name) === -1) {
 					// send tweet to the parent process
 					process.send(tweet)
-				//~ }
+				 }
 		})
 		
 		stream.on('error', function(err){
