@@ -59,8 +59,11 @@ app.get('/', function (req, res) {
 		, logo: params.content.logo
 		, appText: params.content.appText
 		, ga: params.googleAnalytics
+		, keywords: params.track
+		, geoloc: params.boundingBox.description
 	})
 })
+
 app.get('/502', function (req, res) {
 	res.render('pages/502', {
 		appMeta: params.content.appMeta
