@@ -32,9 +32,10 @@ var suffix = window.location.hostname === 'localhost'? ':3031' : ''
 app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
 
 // initialize controllers
+// feedControl allows to pause / resume the live data feed
 app.controller.feedControl = new FeedControl(app.socket, d3.select('#feedControl'), d3.select('#feedStatus'), app.view)
+// pageVisibility disconnects from the live feed whenever the tab is not active
 app.controller.pageVisibility = new PageVisibility(app.controller.feedControl)
-
 
 app.socket.on('connect', function (stats) {
 	app.controller.feedControl.activate()
@@ -68,10 +69,11 @@ app.socket.on('timelines', function (stats) {
 	 
 	debug('entitiesGraph', graphData)
 	 
-	app.view.force.update(graphData)
+	d3.selectAll('#graph').classed('loading', false)
+	 
 	app.view.legend.update(graphData.communities)
 	 
-	d3.selectAll('#graph').classed('loading', false)
+	app.view.force.update(graphData)
  
  })
 
