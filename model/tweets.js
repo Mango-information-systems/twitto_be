@@ -487,10 +487,9 @@ function Tweets(model) {
 	* @return {object} tweet counts statistics
 	* 
 	*/
-	//~this.getTweetCounts = function() {
-		//~console.log('getTweetCounts', self.stats.tweets)
-		//~return self.stats.tweets
-	//~}
+	this.getTweetCounts = function() {
+		return self.stats.tweets
+	}
 
 	/**
 	* 
