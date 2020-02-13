@@ -1,4 +1,4 @@
-var d3 = require('d3')
+const d3 = Object.assign({}, require('d3-selection'), require('d3-scale'), require('d3-array'), require('d3-transition'))
 	, debug = require('debug')('barChart')
 
 /**

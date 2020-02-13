@@ -1,4 +1,4 @@
-var d3 = require('d3')
+const d3 = Object.assign({}, require('d3-selection'), require('d3-interpolate'), require('d3-transition'), require('d3-ease'), require('d3-shape'))
 	, debug = require('debug')('counter')
 
 /**

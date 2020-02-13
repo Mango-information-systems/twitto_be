@@ -1,4 +1,4 @@
-var d3 = require('d3')
+const d3 =Object.assign({}, require('d3-selection'), require('d3-scale'), require('d3-array'), require('d3-transition'), require('d3-timer'), require('d3-axis'), require('d3-format'))
 	, debug = require('debug')('lineChart')
 
 /**
@@ -150,7 +150,7 @@ function LineChart (svg, granularity) {
 				.style('stroke-width', '1')
 				
 		// launch chart refresh at every time interval
-		self.refreshInterval = setInterval(nextTimeInterval, timeRes)
+		self.refreshInterval = d3.interval(nextTimeInterval, timeRes)
 	}
 	
 	/***********
@@ -188,11 +188,10 @@ function LineChart (svg, granularity) {
 	 ************/
 	this.pause = function() {
 
-		clearInterval(self.refreshInterval)
+		if (self.refreshInterval)
+			self.refreshInterval.stop()
 
 	}
-
-
 
 	return this	
 }

@@ -1,4 +1,4 @@
-var d3 = require('d3')
+const d3 = Object.assign({}, require('d3-selection'), require('d3-scale'), require('d3-array'), require('d3-zoom'), require('d3-transition'), require('d3-timer'))
 
 /**
 * force layout chart view

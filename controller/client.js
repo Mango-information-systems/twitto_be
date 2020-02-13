@@ -1,6 +1,6 @@
 window.debug = require('debug')
 
-const d3 = require('d3')
+const d3 = Object.assign({}, require("d3-selection"), require("d3-scale"))
 	, io = require('socket.io-client')
 	, FeedControl = require('../controller/feedControl')
 	, PageVisibility = require('../controller/pageVisibility')
