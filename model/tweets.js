@@ -500,6 +500,22 @@ function Tweets(model) {
 	
 	/**
 	* 
+	* get top entities (trending hashtags / mentions)
+	*
+	* @return {object} trending entities stats
+	* 
+	*/
+	this.getEntitiesStats = function () {
+		
+		let topHashtags = self.graph.nodes.filter(node => !params.track.includes(node.key)).slice(0, 10).map(node => node.key)
+		
+		return {
+			topMentions: self.stats.topMentions
+			, topHashtags: topHashtags
+		}
+}	
+	/**
+	* 
 	* get tweets timeline
 	* * stats per second are computed on the fly
 	* * stats per minute are retrieved from the cache (updated every minute)
