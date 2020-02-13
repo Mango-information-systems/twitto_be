@@ -157,13 +157,13 @@ function Tweets (app) {
 							)
 
 
-		//~ setTimeout(function () {
-			//~ callTweetbot('hourly')
-		//~ }, this.hourlyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
+		setTimeout(function () {
+			callTweetbot('hourly')
+		}, this.hourlyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
-		//~ setTimeout(function () {
-			//~ callTweetbot('daily')
-		//~ }, nextDate.getTime() - now.getTime())
+		setTimeout(function () {
+			callTweetbot('daily')
+		}, nextDate.getTime() - now.getTime())
 
 	}
 
