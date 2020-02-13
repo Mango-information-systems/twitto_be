@@ -1,4 +1,5 @@
 const d3 = Object.assign({}, require('d3-selection'), require('d3-scale'), require('d3-array'), require('d3-zoom'), require('d3-transition'), require('d3-timer'))
+	, d3Selection = require('d3-selection')
 
 /**
 * force layout chart view
@@ -187,7 +188,7 @@ function ForceChart(svg, color) {
 	 * 
 	 */
 	function zoomed() {
-		self.g.attr("transform", d3.event.transform)
+		self.g.attr("transform", d3Selection.event.transform)
 	}
 	
 	/****************************************
