@@ -25,23 +25,22 @@ function TweetBot() {
 			, topMentions = ''
 			, listOfTweets = []
 
-
 		if(msg.type == 'hourly') {
 
-			if (msg.entities.topMentions.length >= 3) {
-				topMentions = '@' + msg.entities.topMentions[0].key + ', @' + msg.entities.topMentions[1].key + ' and @' + msg.entities.topMentions[2].key
+			if (msg.content.topMentions.length >= 3) {
+				topMentions = '@' + msg.content.topMentions[0].key + ', @' + msg.content.topMentions[1].key + ' and @' + msg.content.topMentions[2].key
 				listOfTweets.push(hourlyMentionsText.replace('$1', topMentions))
 			}
 			
-			if (msg.entities.topHashtags.length >= 3) {
-				topHashtags = '#' + msg.entities.topHashtags[0].key + ', #' + msg.entities.topHashtags[1].key + ' and #' + msg.entities.topHashtags[2].key
+			if (msg.content.topHashtags.length >= 3) {
+				topHashtags = msg.content.topHashtags.join(', ')
 				listOfTweets.push(hourlyHashtagsText.replace('$1', topHashtags))
 			}
 
 		}
-		else if (msg.tweets.totalCount.length > 0){
+		else if (msg.content.tweetCount > 0){
 			// msg.type === 'daily'
-			listOfTweets.push(dailyText.replace('$1', msg.tweets.totalCount))
+			listOfTweets.push(dailyText.replace('$1', msg.content.tweetCount))
 		}
 		
 		debug('# tweets planned to be sent:', listOfTweets.length)

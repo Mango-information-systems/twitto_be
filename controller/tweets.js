@@ -145,6 +145,9 @@ function Tweets (app) {
 		this.tweetBot = fork(__dirname + '/tweetBot')
 		this.hourlyDelay = 2 * 60 * 60 * 1000
 		this.dailyDelay = 24 * 60 * 60 * 1000
+		//~ testing values
+		//~this.hourlyDelay = 6 * 1000
+		//~this.dailyDelay = 10 * 1000
 
 		// Check if we need to send the daily tweet today, or tomorrow
 		let now = new Date()
@@ -156,14 +159,16 @@ function Tweets (app) {
 								, params.tweetBot.autoTweetHour, 0, 0 // ...at 10:00:00
 							)
 
-
 		setTimeout(function () {
+			console.log('calling hourly tweetBot')
 			callTweetbot('hourly')
 		}, this.hourlyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
 		setTimeout(function () {
+			console.log('calling daily tweetBot')
 			callTweetbot('daily')
 		}, nextDate.getTime() - now.getTime())
+		//~}, this.dailyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
 	}
 
@@ -183,8 +188,7 @@ function Tweets (app) {
 
 		this.tweetBot.send({
 			'type': type
-			, 'tweets': app.model.tweets.getTweetCounts()
-			, 'entities': app.model.tweets.getEntitiesStats()
+			, 'content': app.model.tweets.getEntitiesStats()
 		})
 	}
 

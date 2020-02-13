@@ -1,6 +1,7 @@
 const debug = require('debug')('tweetsModel')
-	, cargo = require('async/cargo')
 	, fork = require('child_process').fork
+	, params = require('../params')
+	, cargo = require('async/cargo')
 	, range = require('d3-array').range
 
 /********************************************************
@@ -14,7 +15,9 @@ function Tweets(model) {
 	let self = this
 	
 	self.tweets = []
-	self.graph = {}
+	self.graph = {
+		nodes: []
+	}
 	
 		
 	// entitiesGraph is in a child process because it is CPU intensive
@@ -427,6 +430,18 @@ function Tweets(model) {
 		if (tweet.is_reply)
 			self.stats.tweets.replyCount++
 		
+		if(tweet.has_hashtag)
+			self.stats.tweets.hashtagCount++
+		
+		if(tweet.has_link)
+			self.stats.tweets.linkCount++
+		
+		if(tweet.has_mention)
+			self.stats.tweets.mentionCount++
+		
+		if(tweet.has_media)
+			self.stats.tweets.mediaCount++
+		
 		self.stats.tweets.totalCount++
 		
 	}
@@ -472,9 +487,10 @@ function Tweets(model) {
 	* @return {object} tweet counts statistics
 	* 
 	*/
-	this.getTweetCounts = function() {
-		return self.stats.tweets
-	}
+	//~this.getTweetCounts = function() {
+		//~console.log('getTweetCounts', self.stats.tweets)
+		//~return self.stats.tweets
+	//~}
 
 	/**
 	* 
@@ -507,13 +523,15 @@ function Tweets(model) {
 	*/
 	this.getEntitiesStats = function () {
 		
-		let topHashtags = self.graph.nodes.filter(node => !params.track.includes(node.key)).slice(0, 10).map(node => node.key)
+		 topHashtags = self.graph.nodes.filter(node => !params.track.includes(node.key)).slice(0, 3).map(node => node.key)
 		
 		return {
-			topMentions: self.stats.topMentions
+			tweetCount: self.stats.tweets.totalCount
+			, topMentions: self.stats.topMentions
 			, topHashtags: topHashtags
 		}
-}	
+	}
+	
 	/**
 	* 
 	* get tweets timeline
