@@ -102,7 +102,7 @@ function clean(tweets) {
 	
 	debug('cleanCache: removing entities from obsolete tweets')
 	
-	tweets.forEach( tweet => {
+	tweets.forEach( hashtags => {
 	
 		hashtags.forEach(function(source, i) {
 		
@@ -278,13 +278,10 @@ process.on('message', function(message) {
 	
 	switch(message.op) {
 		case 'clean':
-		console.log('clean', message.data)
 			clean(message.data)
 			break
 		case 'add':
-			add.push([message.data], function(err, res) {
-				
-			})
+			add.push([message.data], function(err, res) {})
 			break
 		default:
 			console.error('--------------------------')
