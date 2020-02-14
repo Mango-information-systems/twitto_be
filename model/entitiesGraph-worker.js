@@ -154,7 +154,7 @@ let filterGraph = function() {
 		//~ console.time('FA2')
 		
 		FA2Layout.assign(self.graph, {
-			iterations: 50
+			iterations: 10
 			, settings: {
 				adjustSizes: true
 				, barnesHutOptimize: true
@@ -174,30 +174,13 @@ let filterGraph = function() {
 		//~ console.timeEnd('louvain')
 		
 		//~console.log('node after layout computation', self.filteredGraph.getNodeAttributes(self.filteredGraph.nodes()[0]))
+	
+		//~ console.time('sortByCount')
 		
-		//~ console.time('degree')
-		const degrees = weightedDegree(self.graph, {weighted: true})
-		//~ console.timeEnd('degree')
-		
-		// alternative: no filter by degree
-		let topNodesKeys = Object.keys(degrees)
-		
-		//~ console.time('filterByDegree')
-		
-		//~ let topNodesKeys = Object.keys(degrees).filter(function(key) {
-			//~ return degrees[key] > 20
-		//~ })
-		
-		//~ console.timeEnd('filterByDegree')
-		
-		
-		//~ console.time('sortByDegree')
-		
-		topNodesKeys = topNodesKeys.sort(function(a, b) {
-			return degrees[b] - degrees[a]
+		let topNodesKeys = self.graph.nodes().sort(function(a, b) {
+			return self.graph.getNodeAttribute(b, 'count') - self.graph.getNodeAttribute(a, 'count')
 		}).slice(0, 200)
-		//~ console.timeEnd('sortByDegree')
-		
+		//~ console.timeEnd('sortByCount')
 		
 		//~console.log('topNodesKeys', topNodesKeys)
 		
