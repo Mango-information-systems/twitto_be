@@ -60,7 +60,7 @@ app.get('/', function (req, res) {
 		, appText: params.content.appText
 		, ga: params.googleAnalytics
 		, keywords: params.track
-		, geoloc: params.boundingBox.description
+		, geoloc: params.boundingBox ? params.boundingBox.description : false
 	})
 })
 
