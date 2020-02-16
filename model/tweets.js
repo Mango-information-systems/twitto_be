@@ -16,7 +16,9 @@ function Tweets(model) {
 	
 	self.tweets = []
 	self.graph = {
-		nodes: []
+		communities: []
+		, nodes: []
+		, edges: []
 	}
 	
 		
