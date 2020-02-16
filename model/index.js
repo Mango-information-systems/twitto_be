@@ -10,14 +10,15 @@ const events = require('events')
 * @constructor
 * 
 *********************************************************/
-function Model() {
+function Model(searchHashtags) {
 
 	let self = this
 	this.storage = storage
 	
 	// event emitter
 	events.EventEmitter.call(this)
-	this.tweets = new tweetsModel(this)
+	
+	this.tweets = new tweetsModel(this, searchHashtags)
 
 
 	async function initStorage() {
