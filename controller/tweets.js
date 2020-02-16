@@ -22,7 +22,11 @@ function Tweets (app) {
 		})
 	}
 	
-	connectTweetStream()
+	if (params.searchTerm)
+		setTimeout(connectTweetSearch, 10000)
+	else
+		connectTweetStream()
+		
 	initTweetBot()
 
 	/****************************************
@@ -31,6 +35,95 @@ function Tweets (app) {
 	* 
 	****************************************/
 	
+	/****************************
+	* 
+	* connect TweetSeach
+	* 
+	* create the tweets extraction child process
+	*
+	* @private
+	* 
+	*****************************/
+	function connectTweetSearch() {
+		
+		this.tweetSearch = fork(__dirname + '/tweetSearch')
+
+		// create listener to 'message' event
+		this.tweetSearch.on('message', function(tweets) {
+
+			tweets.forEach(function(tweet) {
+				let data = {
+					id_str: tweet.id_str
+					, created_at: tweet.created_at
+					, is_reply: tweet.in_reply_to_user_id !== null
+					, has_hashtag: tweet.entities.hashtags.length !== 0
+					, has_mention: tweet.entities.user_mentions.length !== 0
+					, has_link: tweet.entities.urls.length !== 0
+					, has_media: tweet.entities.media && tweet.entities.media.length !== 0
+					, hashtags: []
+					, mentions: []
+				}
+				
+				let entities = tweet.truncated && !tweet.entities ? tweet.extended_tweet.entities : tweet.entities
+				
+				entities.user_mentions.forEach(function (m) {
+					data.mentions.push(m.screen_name)
+				})
+				
+				entities.hashtags.forEach(function (h) {
+
+					data.hashtags.push(formatTag(h.text))
+				})
+					
+				if (data.hashtags.length) {
+				// the current tweet contains new hashtags
+				// record hashtags present in the quoted and/or retweet
+				//  in order to be able to save an edge between these.
+					
+					if (typeof tweet.quoted_status !== 'undefined') {
+						
+						entities = tweet.quoted_status.truncated && !tweet.quoted_status.entities ? tweet.quoted_status.extended_tweet.entities : tweet.quoted_status.entities
+						
+						entities.hashtags.forEach(function (h) {
+							if (!data.hashtags.includes(formatTag(h.text)))
+								data.hashtags.push(formatTag(h.text))
+						})
+					}
+						
+					if (typeof tweet.retweeted_status !== 'undefined') {
+						
+						if (tweet.retweeted_status.truncated)
+							console.log('truncated', JSON.stringify(tweet, null, '  '))
+						
+						entities = tweet.retweeted_status.truncated && !tweet.retweeted_status.entities ? tweet.retweeted_status.extended_tweet.entities : tweet.retweeted_status.entities
+						
+						entities.hashtags.forEach(function (h) {
+							if (!data.hashtags.includes(formatTag(h.text)))
+								data.hashtags.push(formatTag(h.text))
+						})
+					}
+				}
+				
+				// store new tweet, update stats, and check if top mentions ranking has changed
+				let haveTopMentionsChanged = app.model.tweets.add(data)
+				
+				// send new tweet to the clients
+				app.router.io.to('liveFeed').emit('tweet', data)
+				
+				if (haveTopMentionsChanged) {
+					// send new top10 mentions rank to the clients
+					app.router.io.to('liveFeed').emit('topMentions', app.model.tweets.getTopMentions())
+				}
+			})
+			
+		})
+		
+		// create listener to 'disconnect' event
+		this.tweetSearch.on('disconnect', function() {
+			console.log('tweetSearch disconnected')
+		})
+	}
+
 	/****************************
 	* 
 	* connect TweetStream
