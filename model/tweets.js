@@ -10,13 +10,15 @@ const debug = require('debug')('tweetsModel')
 * @constructor
 * 
 *********************************************************/
-function Tweets(model) {
+function Tweets(model, searchHashtags) {
 
 	let self = this
 	
 	self.tweets = []
 	self.graph = {
-		nodes: []
+		communities: []
+		, nodes: []
+		, edges: []
 	}
 	
 		
@@ -522,7 +524,7 @@ function Tweets(model) {
 	*/
 	this.getEntitiesStats = function () {
 		
-		 topHashtags = self.graph.nodes.filter(node => !params.track.includes(node.key)).slice(0, 3).map(node => node.key)
+		 topHashtags = self.graph.nodes.filter(node => !searchHashtags.includes(node.key.slice(1).toLowerCase())).slice(0, 3).map(node => node.key)
 		
 		return {
 			tweetCount: self.stats.tweets.totalCount

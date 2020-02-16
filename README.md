@@ -11,8 +11,10 @@ After cloning the repository, follow these steps:
 1. run `npm install`
 2. Create and complete a `params.json` file in the root directory, using `params-sample.json` as a base:
   * `ports`: the ports express.js and socket.io should listen to.
-  * `track`: set of keywords to monitor in the twitter streaming API (optional).
-  * `geolocation`: bounding box to monitor in the twitter streaming API (optional).
+  * `monitor`: definition of the tweets to monitor, one or more of the following:
+	  * `monitor.track`: set of keywords to monitor in the twitter streaming API. Phrases may be used - see Twitter's [`track` stream parameter documentation for details](https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track) (optional).
+	  * `monitor.list`: Id of a twitter list whose users' tweets should be monitored (optional)
+	  * `monitor.boundingBox`: geolocation coordinates box to monitor in the twitter streaming API (optional).
   * `twitter`: enter your twitter app credentials.
   * update the other contents of the file as suitable.
 

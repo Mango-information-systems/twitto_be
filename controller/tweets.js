@@ -12,15 +12,6 @@ const params = require('../params')
 function Tweets (app) {
 	
 	let self = this
-		, searchHashtags = []
-		
-	if (typeof params.track !== 'undefined') {
-		
-		params.track.forEach( term => {
-			if (term[0] === '#')
-				searchHashtags.push(term.substr(1).toLowerCase())
-		})
-	}
 	
 	connectTweetStream()
 	initTweetBot()
@@ -126,7 +117,7 @@ function Tweets (app) {
 	 *****************************/
 	function formatTag(text) {
 		
-		if (searchHashtags.includes(text.toLowerCase()))
+		if (app.meta.searchHashtags.includes(text.toLowerCase()))
 			return '#' + text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
 		else
 			return '#' + text
@@ -160,12 +151,12 @@ function Tweets (app) {
 							)
 
 		setTimeout(function () {
-			console.log('calling hourly tweetBot')
+			//~console.log('calling hourly tweetBot')
 			callTweetbot('hourly')
 		}, this.hourlyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())
 
 		setTimeout(function () {
-			console.log('calling daily tweetBot')
+			//~console.log('calling daily tweetBot')
 			callTweetbot('daily')
 		}, nextDate.getTime() - now.getTime())
 		//~}, this.dailyDelay - (now.getMinutes() * 60 + now.getSeconds()) * 1000 + now.getMilliseconds())

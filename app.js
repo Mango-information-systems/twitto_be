@@ -11,13 +11,29 @@ const Io = require('socket.io')
 	, app = express()
 	, twitto = {
 		controller: {}
+		, meta: {
+			searchHashtags: []
+		}
 		, model: {}
 		, router: {}
 	}
 
 twitto.router.io = Io({ path: '/ws/'})
 
-twitto.model = new Datastore()
+if (typeof params.monitor.track !== 'undefined') {
+	
+	params.monitor.track.forEach( phrase => {
+		let terms = phrase.split(' ')
+		
+		terms.forEach( term => {
+			if (term[0] === '#')
+				twitto.meta.searchHashtags.push(term.substr(1).toLowerCase())
+		})
+	})
+	
+}
+
+twitto.model = new Datastore(twitto.meta.searchHashtags)
 
 twitto.controller.tweets = new Tweets(twitto)
 
@@ -59,8 +75,7 @@ app.get('/', function (req, res) {
 		, logo: params.content.logo
 		, appText: params.content.appText
 		, ga: params.googleAnalytics
-		, keywords: params.track
-		, geoloc: params.boundingBox.description
+		, monitor: params.monitor.description
 	})
 })
 

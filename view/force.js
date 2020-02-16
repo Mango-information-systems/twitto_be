@@ -236,10 +236,10 @@ function ForceChart(svg, color) {
 				  .style('text-anchor', 'middle')
 		)
 		.call(all => all.transition(t)
-				  .attr('x', d => x(d.x))
-				  .attr('y', d => y(d.y))
-				  .style('font-size', d => textScale(d.count) + 'rem')
-				  .style('fill', function(d) {return color(d.community) })
+		  .attr('x', d => x(d.x))
+		  .attr('y', d => y(d.y))
+		  .style('font-size', d => textScale(d.count) + 'rem')
+		  .style('fill', function(d) {return color(d.community) })
 		)
 		
 		nodeSelection.exit().remove()
@@ -259,8 +259,8 @@ function ForceChart(svg, color) {
 		.call(all => all.transition(t)
 				  .attr('d', (d, i) => {
 
-					var dx = x(data.nodes[d.target].x - data.nodes[d.source].x)
-						, dy = y(data.nodes[d.target].y - data.nodes[d.source].y)
+					var dx = x(data.nodes[d.target].x) - y(data.nodes[d.source].x)
+						, dy = y(data.nodes[d.target].y) - y(data.nodes[d.source].y)
 						, dr = Math.sqrt(dx * dx + dy * dy)
 					
 					return 'M' + x(data.nodes[d.source].x) + ',' + y(data.nodes[d.source].y) + 'A' + dr + ',' + dr + ' 0 0,1 ' + x(data.nodes[d.target].x) + ',' + y(data.nodes[d.target].y)
