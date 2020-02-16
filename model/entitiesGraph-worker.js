@@ -14,10 +14,13 @@ const debug = require('debug')('entitiesGraphWorker')
 let self = this
 
 self.graph = self.filteredGraph = new UndirectedGraph()
-self.iterationCount = 40
+self.iterationCount = 100
 
 // decrease iterationCount after a while: graph should be more stable
-// once enough data is in
+// once more iterations have been executed
+setTimeout(function() {
+	self.iterationCount = 40
+}, 60 * 1000)
 setTimeout(function() {
 	self.iterationCount = 15
 }, 60 * 60 * 1000)
