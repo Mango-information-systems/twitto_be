@@ -41,16 +41,16 @@ function TweetSearch () {
 			searchQuery.max_id = maxId
 		}
 			
-		console.log('--------------------------------------------------------')
-		console.log('--------------------------------------------------------')
-		console.log(searchQuery)
+		//~console.log('--------------------------------------------------------')
+		//~console.log('--------------------------------------------------------')
+		//~console.log(searchQuery)
 		
 		twit.get('search/tweets', searchQuery, function(err, res, response) {
 			debug('search/tweets response', res)
 			
-			console.log('--------------------------------------------------------')
+			//~console.log('--------------------------------------------------------')
 			//~console.log(err)
-			console.log(res.statuses.map(t => t.id_str).join(' '))
+			//~console.log(res.statuses.map(t => t.id_str).join(' '))
 			//~console.log(response.headers)
 			//~console.log(JSON.stringify(response, null, '  '))
 			
@@ -64,7 +64,7 @@ function TweetSearch () {
 				}, 2000)
 			}
 			else
-				console.log('done', res)
+				console.log('search of pas tweets completed')
 		})
 
 	}

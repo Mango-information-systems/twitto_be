@@ -92,9 +92,6 @@ function Tweets (app) {
 						
 					if (typeof tweet.retweeted_status !== 'undefined') {
 						
-						if (tweet.retweeted_status.truncated)
-							console.log('truncated', JSON.stringify(tweet, null, '  '))
-						
 						entities = tweet.retweeted_status.truncated && !tweet.retweeted_status.entities ? tweet.retweeted_status.extended_tweet.entities : tweet.retweeted_status.entities
 						
 						entities.hashtags.forEach(function (h) {
