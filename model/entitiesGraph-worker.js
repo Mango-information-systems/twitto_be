@@ -14,6 +14,13 @@ const debug = require('debug')('entitiesGraphWorker')
 let self = this
 
 self.graph = self.filteredGraph = new UndirectedGraph()
+self.iterationCount = 40
+
+// decrease iterationCount after a while: graph should be more stable
+// once enough data is in
+setTimeout(function() {
+	self.iterationCount = 15
+}, 60 * 60 * 1000)
 
 // temp - read offline graph
 //~ const fs = require('fs')
@@ -154,7 +161,7 @@ let filterGraph = function() {
 		//~ console.time('FA2')
 		
 		FA2Layout.assign(self.graph, {
-			iterations: 10
+			iterations: self.iterationCount
 			, settings: {
 				adjustSizes: true
 				, barnesHutOptimize: true
