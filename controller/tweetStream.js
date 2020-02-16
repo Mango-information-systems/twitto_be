@@ -38,7 +38,7 @@ function TweetStream () {
 	****************************************/
 
 	/**
-	* monitor tweets geolocated in Belgium, using twitter's streaming API
+	* lookup tweets according to settings found in params.json
 	*
 	* @private
 	* 
@@ -48,11 +48,11 @@ function TweetStream () {
 		
 		let trackingConfig = {}
 		
-		if (params.track)
-			trackingConfig.track = params.track
+		if (params.monitor.track)
+			trackingConfig.track = params.monitor.track
 			
-		if (params.boundingBox)
-			trackingConfig.locations = [params.boundingBox.sw.long, params.boundingBox.sw.lat, params.boundingBox.ne.long, params.boundingBox.ne.lat]
+		if (params.monitor.boundingBox)
+			trackingConfig.locations = [params.monitor.boundingBox.sw.long, params.monitor.boundingBox.sw.lat, params.monitor.boundingBox.ne.long, params.monitor.boundingBox.ne.lat]
 			
 		
 		var stream = twit.stream('statuses/filter', trackingConfig)

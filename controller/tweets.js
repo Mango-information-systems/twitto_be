@@ -14,9 +14,9 @@ function Tweets (app) {
 	let self = this
 		, searchHashtags = []
 		
-	if (typeof params.track !== 'undefined') {
+	if (typeof params.monitor.track !== 'undefined') {
 		
-		params.track.forEach( term => {
+		params.monitor.track.forEach( term => {
 			if (term[0] === '#')
 				searchHashtags.push(term.substr(1).toLowerCase())
 		})

@@ -1,16 +1,14 @@
 <div class="card">
 	<h2>FAQ</h2>
 
-	<h3>I am not in Belgium, why is @twitto_be mentioning me?</h3>
+	<h3>Which tweets are included in the dashboard?</h3>
+	<p>Twitto_be monitors tweets <%- monitor %>.</p>
+
+	<h3>I am not in Belgium, why is <a href="https://twitter.com/twitto_be">@twitto_be</a> mentioning me?</h3>
 	<p>This is because people located in Belgium or tweeting about Belgium are mentioning you in their tweets.</p>
 
-	<h3>The hashtags are overlapping in the graph, it is unreadable!</h3>
+	<h3>The hashtags are overlapping in the graph, it is not very readable!</h3>
 	<p>Click on the 'Pause' button at the top right-hand-side of the screen. This will move the text around in order to avoid overlaps.</p>
-
-	<h3>Which tweets are included in the dashboard?</h3>
-	<p>Twitto_be monitors tweets <% if (geoloc){ %>
-		geolocated in <%- geoloc %>, as well as tweets 
-	<% } %> including any of the following keywords: <%- keywords.join(', ') %>.</p>
 
 	<h3>What does the hashtags graph mean?</h3>
 	<p>The graph display the hashtags most frequently seen in the recent tweets about Belgium. Each time two hashtags are used in one tweet, a line is created between them. The following <a href="https://en.wikipedia.org/wiki/Social_network_analysis">Social Network Analysis (SNA)</a> techniques are applied:</p>

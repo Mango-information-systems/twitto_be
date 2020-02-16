@@ -59,8 +59,7 @@ app.get('/', function (req, res) {
 		, logo: params.content.logo
 		, appText: params.content.appText
 		, ga: params.googleAnalytics
-		, keywords: params.track
-		, geoloc: params.boundingBox ? params.boundingBox.description : false
+		, monitor: params.monitor.description
 	})
 })
 

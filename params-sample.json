@@ -4,16 +4,18 @@
 		"express": 8080
 		, "socket": 3031
 	},
-	"track" : [],
-	"boundingBox" : {
-		"description": "user-friendly description of the location"
-		, "sw": {
-			"lat": 49.496899
-			, "long": 2.54563
-		}
-		, "ne": {
-			"lat": 51.505081
-			, "long": 6.40791
+	"monitor": {
+		"description": "related to startups and data science in Belgium",
+		"track" : [],
+		"boundingBox" : {
+			"sw": {
+				"lat": 49.496899
+				, "long": 2.54563
+			}
+			, "ne": {
+				"lat": 51.505081
+				, "long": 6.40791
+			}
 		}
 	},
 	"twitter": {
@@ -26,7 +28,7 @@
 	"twitterUsersBlacklist": [],
 	"content": {
 		"logo": {
-			"src": "img/twitto_be-0.4.0-square-logo-40x40.png",
+			"src": "img/favicon.png",
 			"width": 40,
 			"height": 40
 		},

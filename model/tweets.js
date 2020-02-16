@@ -524,7 +524,7 @@ function Tweets(model) {
 	*/
 	this.getEntitiesStats = function () {
 		
-		 topHashtags = self.graph.nodes.filter(node => !params.track.includes(node.key)).slice(0, 3).map(node => node.key)
+		 topHashtags = self.graph.nodes.filter(node => !params.monitor.track.includes(node.key)).slice(0, 3).map(node => node.key)
 		
 		return {
 			tweetCount: self.stats.tweets.totalCount
