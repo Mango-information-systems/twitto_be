@@ -29,8 +29,7 @@ function BarChart (svg) {
 		.round(0)
 
 	var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-
+	
 	/****************************************
 	* 
 	* Private methods
@@ -147,6 +146,9 @@ function BarChart (svg) {
 			.text(function (d) {
 				return self.prefix + d.key
 			})
+			
+		newRow.transition()
+			.attr('opacity', 1)
 
 
 		////////////////
