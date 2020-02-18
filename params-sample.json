@@ -6,6 +6,7 @@
 	},
 	"monitor": {
 		"description": "related to startups and data science in Belgium",
+		"isLowVolume": true,
 		"track" : [],
 		"list": "",
 		"boundingBox" : {

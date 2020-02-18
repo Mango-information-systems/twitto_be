@@ -9,7 +9,7 @@ const d3 = Object.assign({}, require('d3-selection'), require('d3-scale'), requi
 * @return {string} chart SVG
 * 
 */
-function ForceChart(svg, color) {
+function ForceChart(svg, color, isLowVolume) {
 
 	let self = this
 		, nodeMargin = 55
@@ -125,20 +125,22 @@ function ForceChart(svg, color) {
 		}
 		else {
 			// Overlap prevention has finished to run
-			
-			// update edges lines
-			// quick and dirty, but at least it does the job
-			self.link.selectAll('.link').transition()
-				  .attr('d', (d, i) => {
-					
-					var dx = textLabels.nodes()[d.target].attributes.x.value - textLabels.nodes()[d.source].attributes.x.value
-						, dy = textLabels.nodes()[d.target].attributes.y.value - textLabels.nodes()[d.source].attributes.y.value
-						, dr = Math.sqrt(dx * dx + dy * dy)
-					
-					return 'M' + textLabels.nodes()[d.source].attributes.x.value + ',' + textLabels.nodes()[d.source].attributes.y.value + 'A' + dr + ',' + dr + ' 0 0,1 ' + textLabels.nodes()[d.target].attributes.x.value + ',' + textLabels.nodes()[d.target].attributes.y.value
-				  })
-			
-			//~d3.select('#exportLink').style('display', 'block')
+
+			if(!self.stopOverlapPrevention) {
+				// update edges lines
+				// quick and dirty, but at least it does the job
+				self.link.selectAll('.link').transition()
+					  .attr('d', (d, i) => {
+						
+						var dx = textLabels.nodes()[d.target].attributes.x.value - textLabels.nodes()[d.source].attributes.x.value
+							, dy = textLabels.nodes()[d.target].attributes.y.value - textLabels.nodes()[d.source].attributes.y.value
+							, dr = Math.sqrt(dx * dx + dy * dy)
+						
+						return 'M' + textLabels.nodes()[d.source].attributes.x.value + ',' + textLabels.nodes()[d.source].attributes.y.value + 'A' + dr + ',' + dr + ' 0 0,1 ' + textLabels.nodes()[d.target].attributes.x.value + ',' + textLabels.nodes()[d.target].attributes.y.value
+					  })
+				
+				//~d3.select('#exportLink').style('display', 'block')
+			}
 		}
 	}
 
@@ -209,6 +211,8 @@ function ForceChart(svg, color) {
 		// temp
 		//~window.graph = data
 		
+		self.stopOverlapPrevention = true
+		
 		const t = self.svg.transition().duration(600)
 			, minX = d3.min(data.nodes, function(d) { return d.x})
 			, minY = d3.min(data.nodes, function(d) { return d.y})
@@ -256,21 +260,31 @@ function ForceChart(svg, color) {
 				  .style('stroke-opacity', 0)
 				  .style('fill',  'none')
 		  )
-		.call(all => all.transition(t)
+		.call(all => { 
+			let linksTransition = all.transition(t)
 				  .attr('d', (d, i) => {
 
-					var dx = x(data.nodes[d.target].x) - y(data.nodes[d.source].x)
-						, dy = y(data.nodes[d.target].y) - y(data.nodes[d.source].y)
-						, dr = Math.sqrt(dx * dx + dy * dy)
-					
-					return 'M' + x(data.nodes[d.source].x) + ',' + y(data.nodes[d.source].y) + 'A' + dr + ',' + dr + ' 0 0,1 ' + x(data.nodes[d.target].x) + ',' + y(data.nodes[d.target].y)
+				      let dx = x(data.nodes[d.target].x) - y(data.nodes[d.source].x)
+				      	  , dy = y(data.nodes[d.target].y) - y(data.nodes[d.source].y)
+				      	  , dr = Math.sqrt(dx * dx + dy * dy)
+				      
+				      return 'M' + x(data.nodes[d.source].x) + ',' + y(data.nodes[d.source].y) + 'A' + dr + ',' + dr + ' 0 0,1 ' + x(data.nodes[d.target].x) + ',' + y(data.nodes[d.target].y)
 				  })
 				  .style('stroke',  d => color(data.nodes[d.source].community))
 				  .attr('stroke-width', function(d) {return edgeWidthScale(d.weight)})
 				  .style('stroke-opacity', 1)
-		)
+				  
+			linksTransition.end().then(() => {
+			  if (isLowVolume) {
+				  self.stopOverlapPrevention = false
+				  relax(0)
+			}
+			}).catch(() => null)
+		})
 		
 		linkSelection.exit().remove()
+		
+
 
 	}
 
@@ -280,7 +294,8 @@ function ForceChart(svg, color) {
 	 *
 	 */
 	this.interruptOverlapPrevention = function() {
-		self.stopOverlapPrevention = true
+		if (!isLowVolume)
+			self.stopOverlapPrevention = true
 		
 	}
 
