@@ -38,7 +38,8 @@ function Control (socket, button, badge, view) {
 			badge.classed('badge-success', true)
 			  .html('live')
 			button.html('Pause')
-			view.force.interruptOverlapPrevention()
+			if (byUser)
+				view.force.interruptOverlapPrevention()
 		}
 		else {
 			badge.classed('badge-success', false)

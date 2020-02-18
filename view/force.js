@@ -9,7 +9,7 @@ const d3 = Object.assign({}, require('d3-selection'), require('d3-scale'), requi
 * @return {string} chart SVG
 * 
 */
-function ForceChart(svg, color, isLowVolume) {
+function ForceChart(svg, color) {
 
 	let self = this
 		, nodeMargin = 55
@@ -275,10 +275,8 @@ function ForceChart(svg, color, isLowVolume) {
 				  .style('stroke-opacity', 1)
 				  
 			linksTransition.end().then(() => {
-			  if (isLowVolume) {
 				  self.stopOverlapPrevention = false
 				  relax(0)
-			}
 			}).catch(() => null)
 		})
 		
@@ -294,7 +292,6 @@ function ForceChart(svg, color, isLowVolume) {
 	 *
 	 */
 	this.interruptOverlapPrevention = function() {
-		if (!isLowVolume)
 			self.stopOverlapPrevention = true
 		
 	}

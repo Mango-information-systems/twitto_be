@@ -2,7 +2,6 @@ window.debug = require('debug')
 
 const d3 = Object.assign({}, require("d3-selection"), require("d3-scale"))
 	, io = require('socket.io-client')
-	, isLowVolume = require('../params.json').monitor.isLowVolume
 	, FeedControl = require('./feedControl')
 	, PageVisibility = require('./pageVisibility')
 	, polyfills = require('./polyfills')
@@ -25,7 +24,7 @@ app.view.tweetsPerMinute = new LineChart(d3.select('#tweetsPerMinute'), 'm')
 app.view.tweetsPerSecond = new LineChart(d3.select('#tweetsPerSecond'), 's')
 app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
 app.view.topMentions = new BarChart(d3.select('#topMentions'))
-app.view.force = new Force(d3.select('#graph'), colorScale, isLowVolume)
+app.view.force = new Force(d3.select('#graph'), colorScale)
 app.view.legend = new Legend(d3.select('#legend'), colorScale)
 
 var suffix = window.location.hostname === 'localhost'? ':3031' : ''

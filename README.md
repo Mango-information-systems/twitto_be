@@ -13,7 +13,6 @@ After cloning the repository, follow these steps:
   * `ports`: the ports express.js and socket.io should listen to.
   * `monitor`: definition of the tweets to monitor, one or more of the following:
 	 * `monitor.description`: user-friendly description of the tracked topics.
-	 * `monitor.isLowVolume` (boolean): whether or not the volume of tweets is expected to be important. If `false`, then the overlap prevention will be disabled during realtime mode, and only enabled when in pause.
 	  * `monitor.track`: set of keywords to monitor in the twitter streaming API. Phrases may be used - see Twitter's [`track` stream parameter documentation for details](https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters#track) (optional).
 	  * `monitor.list`: Id of a twitter list whose users' tweets should be monitored (optional)
 	  * `monitor.boundingBox`: geolocation coordinates box to monitor in the twitter streaming API (optional).
