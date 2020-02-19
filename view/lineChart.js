@@ -113,17 +113,17 @@ function LineChart (svg, granularity) {
 		
 		this.timeline = timeline
 
-		this.maxCount = d3.max(self.timeline, function(d) {return d.count})
-
 		this.x = d3.scaleLinear()
 			.domain([-(barCount-1), 0])
 			.range([0, width])
 			.nice()
 
+		// set maxCount be at least greater than 0, in order to have x axis correctly placed even when there are no recent tweets
+		this.maxCount = Math.max(5, d3.max(self.timeline, function(d) {return d.count}))
+
 		this.y = d3.scaleLinear()
 			.domain([0, self.maxCount])
 			.range([height, 0])
-			//~ .nice()
 
 		g.html('')
 
