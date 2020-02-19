@@ -26,7 +26,7 @@
 		"access_token_secret": "--fill-me--"
 	},
 	"googleAnalytics": "",
-	"twitterUsersBlacklist": [],
+	"twitterUsersBlacklist": ["twitto_be"],
 	"content": {
 		"logo": {
 			"src": "img/favicon.png",
@@ -36,12 +36,12 @@
 		"appText": {
 			"title": "twitto.be",
 			"subtitle": "Real time dashboard of Belgian tweets",
-			"about": "Twitto.be is a live dashboard providing analytics about the tweets related to or geolocated in Belgium. The data you're seeing is what is happening right now on twitter, it's real real-time.",
+			"about": "Twitto.be is a live dashboard providing analytics about the tweets related to entrepreneurship in Belgium. The data you're seeing is what is happening right now on twitter, it's real real-time.",
 			"cta": "<h2>Need your own dashboard?</h2><p>Let us help you <strong>make sense of business data</strong>.</p><p>We design business-centric solutions using analytics and modern web visualizations.</p><a class=\"button button-primary u-full-width\" href=\"https://mango-is.com/contact/\">Hire us!</a>"
 		},
 		"appMeta": {
 			"title": "Twitto.be - realtime hashtags network graph analytics - SNA",
-			"description": "Twitto.be is a live dashboard providing analytics about the tweets related to Belgium. Curious about the trending topics right now? Come have a look",
+			"description": "Twitto is a live analytics dashboard of the tweets related to entrepreneurship in Belgium. Curious about the trending topics right now? Come have a look.",
 			"title502": "Twitto.be - down for maintenance",
 			"description502": "Twitto.be is temporarily unavailable - please try again in a few seconds",
 			"url": "https://twitto.be",
