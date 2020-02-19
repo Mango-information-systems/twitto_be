@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0-pre",
+  "version": "4.0.0",
   "name": "twitto_be",
   "description": "real-time dashboard of geolocated tweets",
   "main": "app.js",
