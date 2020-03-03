@@ -28,12 +28,13 @@ function TweetBot() {
 		if(msg.type == 'hourly') {
 
 			if (msg.content.topMentions.length >= 3) {
-				topMentions = '@' + msg.content.topMentions[0].key + ', @' + msg.content.topMentions[1].key + ' and @' + msg.content.topMentions[2].key
+				//~topMentions = '@' + msg.content.topMentions[0].key + ', @' + msg.content.topMentions[1].key + ' and @' + msg.content.topMentions[2].key
+				topMentions = msg.content.topMentions.map(stat => '@' + stat.key).slice(0, 3).join(', ')
 				listOfTweets.push(hourlyMentionsText.replace('$1', topMentions))
 			}
 			
 			if (msg.content.topHashtags.length >= 3) {
-				topHashtags = msg.content.topHashtags.join(', ')
+				topHashtags = msg.content.topHashtags.map(stat => stat.key).join(', ')
 				listOfTweets.push(hourlyHashtagsText.replace('$1', topHashtags))
 			}
 

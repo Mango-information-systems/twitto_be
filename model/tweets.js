@@ -406,25 +406,25 @@ function Tweets(model, searchHashtags) {
 					topHashtagsChanged = true
 					
 					//check whether this hashtag was already inside the top ranking
-					var hashtagIndex = self.stats.entities.topHashtags.findIndex(function(topHashtag) {
+					var hashtagIndex = self.stats.topHashtags.findIndex(function(topHashtag) {
 						return topHashtag.key === hashtag
 					})
 
 					if (hashtagIndex !== -1) {
 						// update count value inside the top ranking
-						self.stats.entities.topHashtags[hashtagIndex].value = count
+						self.stats.topHashtags[hashtagIndex].value = count
 					}
 					else {
 						// this hashtag is new inside the top 
 						// add new value to the top 5
-						self.stats.entities.topHashtags.push({
+						self.stats.topHashtags.push({
 							key: hashtag
 							, value: count
 						})
 					}
 					
 					// update threshold value
-					self.staging.topHashtagCountThreshold = self.stats.entities.topHashtags.reduce(function(memo, topHashtag) {
+					self.staging.topHashtagCountThreshold = self.stats.topHashtags.reduce(function(memo, topHashtag) {
 						return Math.min(memo, topHashtag.value)
 					}, +Infinity)
 				}
@@ -434,12 +434,12 @@ function Tweets(model, searchHashtags) {
 			if (topHashtagsChanged) {
 				
 				// sort the top ranking
-				self.stats.entities.topHashtags.sort(function(a, b) {
+				self.stats.topHashtags.sort(function(a, b) {
 					return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
 				})
 				
 				// timit to top 5 values
-				self.stats.entities.topHashtags = self.stats.entities.topHashtags.slice(0, 5)
+				self.stats.topHashtags = self.stats.topHashtags.slice(0, 5)
 				
 			}
 		}
