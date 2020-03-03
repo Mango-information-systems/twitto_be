@@ -34,11 +34,12 @@ function Tweets(model, searchHashtags) {
 	self.stats = {
 		tweets: {} // tweets counts (# replies, hashtags, links etc)
 		, topMentions: []
+		, topHashtags: []
 	}
 	
 	// compute tweet statistics
 	calculateTweetCounts()
-	calculateTopMentions()
+	calculateTopEntities()
 
 	// compute tweets time series
 	//  TODO do this 60 seconds after server start - init to empty timeline in the mean time
@@ -113,7 +114,7 @@ function Tweets(model, searchHashtags) {
 	
 		// recompute statistics after a cache cleanup
 		calculateTweetCounts()
-		calculateTopMentions()
+		calculateTopEntities()
 		
 	}
 
@@ -191,19 +192,22 @@ function Tweets(model, searchHashtags) {
 
 	/**
 	 *
-	 * Calculate top mentions
+	 * Calculate top entities stats
 	 *
 	 * @private
 	 *
 	 */
-	function calculateTopMentions() {
+	function calculateTopEntities() {
 
-		// staging area keeping the number of occurence of each mention, and threshold count to enter in the top 10
+		// staging area keeping the number of occurence of each entity, and threshold count to enter in the top 5 / top 10
 		self.staging = {
-			mentionsCount: {}
+			hashtagsCount: {}
+			, topHashtagCountThreshold: 0
+			, mentionsCount: {}
 			, topMentionCountThreshold: 0
 		}
 		
+		self.stats.topHashtags = []
 		self.stats.topMentions = []
 
 		var now = new Date()
@@ -223,6 +227,15 @@ function Tweets(model, searchHashtags) {
 			}
 			else {
 			// populate the staging array with count of each mention from recent tweets
+			
+				if(tweet.has_hashtag) {
+					
+					tweet.hashtags.forEach(function (hashtag) {
+						
+						self.staging.hashtagsCount[hashtag] = ++self.staging.hashtagsCount[hashtag] || 1
+						
+					})
+				}
 				
 				if(tweet.has_mention) {
 					
@@ -237,6 +250,38 @@ function Tweets(model, searchHashtags) {
 			}
 
 		}
+
+		// TODO make the following DRY: run the same code for mentions and for hashtags
+		
+		// extract the top5 hashtags
+		Object.keys(self.staging.hashtagsCount).forEach( function(hashtag) {
+			
+			var count = self.staging.hashtagsCount[hashtag]
+			
+			// check whether the number of occurences of this hashtag is greater than lowest value currently in the top5
+			if (self.stats.topHashtags.length < 5 || count >= self.staging.topHashtagCountThreshold) {
+				
+				// add new value to the top 5
+				self.stats.topHashtags.push({
+					key: hashtag
+					, value: count
+				})
+				
+				// update threshold value: get the lowest value from the array
+				self.staging.topHashtagCountThreshold = self.stats.topHashtags.reduce(function(memo, topHashtag) {
+					return Math.min(memo, topHashtag.value)
+				}, +Infinity)
+			}
+			
+		})
+		
+		// sort the top ranking
+		self.stats.topHashtags.sort(function(a, b) {
+			return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
+		})
+		
+		// timit to top 5 values
+		self.stats.topHashtags = self.stats.topHashtags.slice(0, 5)
 		
 		// extract the top10 mentions
 		Object.keys(self.staging.mentionsCount).forEach( function(mention) {
@@ -331,21 +376,73 @@ function Tweets(model, searchHashtags) {
 	
 	/**
 	* 
-	* update top mentions statistics
+	* update top hashtags and mentions statistics
 	*
 	* @param {object} tweet new tweet
 	* 
-	* @return {boolean} has any of the top10 rankings changed
+	* @return {boolean} has the top10 mentions ranking changed
 	* 
 	* @private
 	* 
 	*/	
-	function updateMentionsStats(tweet){
+	function updateEntitiesStats(tweet){
 		
 		// update mentions counts, and if appropriate, the top 10 ranking
 		
-		var  topMentionsChanged = false
-		
+		let topHashtagsChanged = false
+			, topMentionsChanged = false
+			
+		if(tweet.has_hashtag) {
+			
+			tweet.hashtags.forEach(function (hashtag) {
+				
+				self.staging.hashtagsCount[hashtag] = ++self.staging.hashtagsCount[hashtag] || 1
+				
+				var count = self.staging.hashtagsCount[hashtag]
+				
+				// check whether the number of occurences of this hashtag is greater than lowest value currently in the top5
+				if (self.stats.topHashtags.length < 5 || count >= self.staging.topHashtagCountThreshold) {
+					
+					topHashtagsChanged = true
+					
+					//check whether this hashtag was already inside the top ranking
+					var hashtagIndex = self.stats.entities.topHashtags.findIndex(function(topHashtag) {
+						return topHashtag.key === hashtag
+					})
+
+					if (hashtagIndex !== -1) {
+						// update count value inside the top ranking
+						self.stats.entities.topHashtags[hashtagIndex].value = count
+					}
+					else {
+						// this hashtag is new inside the top 
+						// add new value to the top 5
+						self.stats.entities.topHashtags.push({
+							key: hashtag
+							, value: count
+						})
+					}
+					
+					// update threshold value
+					self.staging.topHashtagCountThreshold = self.stats.entities.topHashtags.reduce(function(memo, topHashtag) {
+						return Math.min(memo, topHashtag.value)
+					}, +Infinity)
+				}
+				
+			})
+			
+			if (topHashtagsChanged) {
+				
+				// sort the top ranking
+				self.stats.entities.topHashtags.sort(function(a, b) {
+					return b.value !== a.value? b.value - a.value : b.key.toLowerCase() < a.key.toLowerCase()
+				})
+				
+				// timit to top 5 values
+				self.stats.entities.topHashtags = self.stats.entities.topHashtags.slice(0, 5)
+				
+			}
+		}
 		if(tweet.has_mention) {
 			
 			tweet.mentions.forEach(function (mention) {
@@ -478,7 +575,7 @@ function Tweets(model, searchHashtags) {
 			})
 		}
 		
-		return updateMentionsStats(tweet)
+		return updateEntitiesStats(tweet)
 				
 	}
 
@@ -524,12 +621,10 @@ function Tweets(model, searchHashtags) {
 	*/
 	this.getEntitiesStats = function () {
 		
-		 topHashtags = self.graph.nodes.filter(node => !searchHashtags.includes(node.key.slice(1).toLowerCase())).slice(0, 5).map(node => node.key)
-		
 		return {
 			tweetCount: self.stats.tweets.totalCount
 			, topMentions: self.stats.topMentions
-			, topHashtags: topHashtags
+			, topHashtags: self.stats.topHashtags
 		}
 	}
 	
