@@ -32,9 +32,9 @@ setTimeout(function() {
 //~ console.log('graph stats', self.graph.order, self.graph.size)
 
 // temp: log graph size every hour
-setInterval(function() {
-	console.log('graph stats', self.graph.order, self.graph.size)
-}, 60 * 60000)
+//setInterval(function() {
+//	console.log('graph stats', self.graph.order, self.graph.size)
+//}, 60 * 60000)
 
 
 /********************************************************
