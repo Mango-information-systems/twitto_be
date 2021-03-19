@@ -25,9 +25,7 @@ app.view.donutChart = new DonutChart(d3.select('#tweetStats'))
 app.view.topMentions = new BarChart(d3.select('#topMentions'))
 app.view.force = new Force(d3.select('#graph'), colorScale)
 
-var suffix = window.location.hostname === 'localhost'? ':3031' : ''
-
-app.socket = io(window.location.hostname + suffix, {path: '/ws/'})
+app.socket = io()
 
 // initialize controllers
 // feedControl allows to pause / resume the live data feed

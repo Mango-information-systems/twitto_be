@@ -18,7 +18,9 @@ const Io = require('socket.io')
 		, router: {}
 	}
 
-twitto.router.io = Io({ path: '/ws/'})
+const server = require('http').Server(app)
+
+twitto.router.io = Io(server, { allowEIO3: true })
 
 if (typeof params.monitor.track !== 'undefined') {
 	
@@ -46,7 +48,7 @@ app.use(express.static( __dirname + '/public'))
 app.disable('x-powered-by')
 
 // launch express server
-app.listen(params.ports.express)
+server.listen(params.port)
 
 console.log('Express server started')
 
@@ -142,5 +144,3 @@ twitto.model.on('graphUpdate', function(message) {
 twitto.router.sendGraph = debounce(function() {
 	twitto.router.io.to('liveFeed').emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
 }, 750, true)
-
-twitto.router.io.listen(params.ports.socket)

@@ -1,9 +1,6 @@
 {
 	"profileName": "local dev version",
-	"ports": {
-		"express": 8080
-		, "socket": 3031
-	},
+	"port": 8080,
 	"monitor": {
 		"description": "related to startups and data science in Belgium",
 		"track" : [],

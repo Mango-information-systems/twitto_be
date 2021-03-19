@@ -14,7 +14,7 @@
     "watch:server": "nodemon --ignore public/ --ignore persist/ app.js",
     "watch:skeleton": "cd git_submodules/skeleton-framework && npm run watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "browsersync": "browser-sync start --proxy '127.0.0.1:8080' --files 'public/**/*,view/**/*' --reload-delay 2000 --no-open",
+    "browsersync": "browser-sync start --proxy '127.0.0.1:8080' --ws --cors --files 'public/**/*,view/**/*' --reload-delay 2000 --no-open",
     "deploy:prod": "./bin/deploy.sh prod",
     "deploy:test": "./bin/deploy.sh test"
   },
@@ -41,12 +41,12 @@
     "graphology-metrics": "^1.6.1",
     "just-debounce": "^1.0.0",
     "node-persist": "^3.0.5",
-    "socket.io": "^2.4.0",
-    "socket.io-client": "^2.2.0",
+    "socket.io": "^4.0.0",
+    "socket.io-client": "^4.0.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {
-    "browser-sync": "^2.26.12",
+    "browser-sync": "^2.26.14",
     "browserify": "^16.5.1",
     "nodemon": "^2.0.2",
     "uglify-es": "^3.3.9",
