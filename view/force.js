@@ -16,9 +16,9 @@ function ForceChart(svg, color) {
 		, width = 650
 		, height = 650
 		, nodeScale = d3.scaleLinear()
-			.range([4, 12])
+			.range([3, 12])
 		, textScale = d3.scaleLinear()
-			.range([.6, 1.5])
+			.range([.8, 1.5])
 		, x = d3.scaleLinear()
 			.range([nodeMargin, width - nodeMargin])
 		, y = d3.scaleLinear()
@@ -207,7 +207,7 @@ function ForceChart(svg, color) {
 		
 		self.stopOverlapPrevention = true
 		
-		const t = self.svg.transition().duration(600)
+		const t = self.svg.transition().duration(500)
 			, minX = d3.min(data.nodes, function(d) { return d.x})
 			, minY = d3.min(data.nodes, function(d) { return d.y})
 			, maxX = d3.max(data.nodes, function(d) { return d.x})
@@ -231,14 +231,17 @@ function ForceChart(svg, color) {
 		  enter => 
 			  enter.append('circle')
 				  .attr('class', 'node')
-				  .attr( 'title', d => d.key )
-				  .style('r', '.01px')
+				  .attr('cx', d => x(d.x))
+				  .attr('cy', d => y(d.y))
+				  .attr('r', '.01px')
+				  .append('title')
+					.html(d => d.key)
 		)
 		.call(all => all.transition(t)
 		  .attr('cx', d => x(d.x))
 		  .attr('cy', d => y(d.y))
-		  .style('r', d => nodeScale(d.count) + 'px')
 		  .style('fill', function(d) {return color(d.community) })
+		  .attr('r', d => nodeScale(d.count) + 'px')
 		)
 		
 		nodeSelection.exit().remove()
@@ -251,6 +254,9 @@ function ForceChart(svg, color) {
 		  enter => 
 			  enter.append('text')
 				  .attr('class', 'textLabel')
+				  .attr('x', d => x(d.x))
+				  .attr('y', d => y(d.y))
+				  .style('font-size', '.1rem')
 				  .attr('dy', '10px')
 				  .text( d => d.key )
 		)
