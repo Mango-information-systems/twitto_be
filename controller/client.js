@@ -1,6 +1,6 @@
 window.debug = require('debug')
 
-const d3 = Object.assign({}, require("d3-selection"), require("d3-scale"))
+const d3 = Object.assign({}, require('d3-selection'), require('d3-scale'), require('d3-scale-chromatic'))
 	, io = require('socket.io-client')
 	, FeedControl = require('./feedControl')
 	, PageVisibility = require('./pageVisibility')
@@ -9,8 +9,7 @@ const d3 = Object.assign({}, require("d3-selection"), require("d3-scale"))
 	, BarChart = require('../view/barChart')
 	, DonutChart = require('../view/donutChart')
 	, Force = require('../view/force')
-	//~, colorScale = d3.scaleOrdinal(d3.schemeCategory10)
-	, colorScale = d3.scaleOrdinal(['#008000', '#000', '#ff0f21', '#00aced', '#fbab00', '#FF7300', '#bb4fe2', '#ac5e1c', '#ec71b5', '#2325d6', '#65c652'])
+	, colorScale = d3.scaleOrdinal(d3.schemeCategory10)
 	, debug = window.debug('clientApp')
 
 let app = {
