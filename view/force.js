@@ -46,8 +46,8 @@ function ForceChart(svg, color) {
 		.attr('id', 'links')
 		.style('opacity', .3)
 	
-	self.node = self.g.append('g')
-		.attr('id', 'nodes')
+	self.textLabel = self.g.append('g')
+		.attr('id', 'nodeLabels')
 
 	/****************************************
 	 *
@@ -67,7 +67,7 @@ function ForceChart(svg, color) {
 		// relax the position of overlapping labels
 		// based on https://blog.safaribooksonline.com/2014/03/11/solving-d3-label-placement-constraint-relaxing/
 
-		let textLabels = d3.selectAll('.node')
+		let textLabels = d3.selectAll('.textLabel')
 
 		var alpha = 2
 			, spacing = 10
@@ -207,7 +207,7 @@ function ForceChart(svg, color) {
 	 */
 	this.update = function (data) {
 		
-		//~ console.log('graph data', data)
+		//~console.log('graph data', data)
 		// temp
 		//~window.graph = data
 		
@@ -227,13 +227,13 @@ function ForceChart(svg, color) {
 		edgeWidthScale.domain(d3.extent(data.edges, function (d) { return d.weight }))
 
 		// Apply the general update pattern to the nodes.
-		let nodeSelection = self.node.selectAll('.node')
+		let nodeSelection = self.textLabel.selectAll('.textLabel')
 			  .data(data.nodes, d => d.key)
 			  
 		nodeSelection.join(
 		  enter => 
 			  enter.append('text')
-				  .attr('class', 'node')
+				  .attr('class', 'textLabel')
 				  .text( d => d.key )
 				  .attr('dy', '2.5')
 				  .style('font-size', '1.5rem')
