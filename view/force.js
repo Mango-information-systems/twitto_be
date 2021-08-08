@@ -201,6 +201,9 @@ function ForceChart(svg, color) {
 	 */
 	this.update = function (data) {
 		
+		//~console.log('-----------------------')
+		//~console.log('-----------------------')
+		//~console.log('graph update')
 		//~console.log('graph data', data)
 		// temp
 		//~window.graph = data
@@ -228,14 +231,18 @@ function ForceChart(svg, color) {
 			  .data(data.nodes, d => d.key)
 			  
 		nodeSelection.join(
-		  enter => 
-			  enter.append('circle')
+		  enter => {
+			  let circle = enter.append('circle')
 				  .attr('class', 'node')
 				  .attr('cx', d => x(d.x))
 				  .attr('cy', d => y(d.y))
-				  .attr('r', '.01px')
-				  .append('title')
-					.html(d => d.key)
+				  .style('fill', function(d) {return color(d.community) })
+				  .attr('r', '.1px')
+				  
+			  circle.append('title')
+				.html(d => d.key)
+				
+				return circle }
 		)
 		.call(all => all.transition(t)
 		  .attr('cx', d => x(d.x))
