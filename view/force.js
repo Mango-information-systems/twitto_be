@@ -216,7 +216,7 @@ function ForceChart(svg, color) {
 			, maxX = d3.max(data.nodes, function(d) { return d.x})
 			, maxY = d3.max(data.nodes, function(d) { return d.y})
 			
-		const labelData = data.nodes.slice(0, 15)
+		const labelData = data.nodes.slice(0, 20)
 
 		nodeScale.domain([d3.min(data.nodes, function(d) { return d.count}), d3.max(data.nodes, function(d) { return d.count})])
 		textScale.domain([d3.min(labelData, function(d) { return d.count}), d3.max(labelData, function(d) { return d.count})])
