@@ -35,7 +35,7 @@
     "d3-color": "^1.4.0",
     "debug": "^2.6.9",
     "ejs": "^2.7.4",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphology": "^0.14.1",
     "graphology-communities-louvain": "^0.1.1",
     "graphology-layout-forceatlas2": "^0.3.1",
