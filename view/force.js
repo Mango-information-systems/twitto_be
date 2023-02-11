@@ -15,9 +15,9 @@ function ForceChart(svg, color) {
 		, nodeMargin = 55
 		, width = 650
 		, height = 650
-		, nodeScale = d3.scaleLinear()
+		, nodeScale = d3.scalePow().exponent(.15)
 			.range([3, 12])
-		, textScale = d3.scaleLinear()
+		, textScale = d3.scalePow().exponent(.15)
 			.range([.8, 1.5])
 		, x = d3.scaleLinear()
 			.range([nodeMargin, width - nodeMargin])
@@ -300,7 +300,7 @@ function ForceChart(svg, color) {
 				  })
 				  .style('stroke',  d => color(data.nodes[d.source].community))
 				  .attr('stroke-width', function(d) {return edgeWidthScale(d.weight)})
-				  .style('stroke-opacity', 1)
+				  .style('stroke-opacity', .5)
 				  
 			linksTransition.end().then(() => {
 				  self.stopOverlapPrevention = false
