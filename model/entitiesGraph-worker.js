@@ -166,7 +166,7 @@ let filterGraph = function() {
 		FA2Layout.assign(self.graph, {
 			iterations: self.iterationCount
 			, settings: {
-				adjustSizes: true
+				adjustSizes: false
 				, barnesHutOptimize: true
 				, gravity: .5
 				, strongGravityMode: true
