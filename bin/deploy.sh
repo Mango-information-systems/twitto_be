@@ -13,7 +13,6 @@ else
 	&& sudo rsync -ua --exclude=".*" --exclude="persist/*" ./* /home/srv-node-mango/$target \
 	&& cd /home/srv-node-mango/$target \
 	&& sudo chown -R srv-node-mango:srv-node-mango /home/srv-node-mango/$target \
-	&& sudo systemctl restart node-$target \
 	&& sudo touch /var/ngx_pagespeed_cache/cache.flush \
 	&& echo "done";
 fi

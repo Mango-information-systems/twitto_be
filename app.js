@@ -1,11 +1,7 @@
 const Io = require('socket.io')
 	, path = require('path')
-	, debounce = require('just-debounce')
 	, fs = require('fs')
 	, express = require('express')
-	, utils = require('./controller/utils')
-	, Tweets = require('./controller/tweets')
-	, Datastore = require('./model/index')
 	, params = require('./params')
 	, debug = require('debug')('server')
 	, app = express()
@@ -20,25 +16,6 @@ const Io = require('socket.io')
 
 const server = require('http').Server(app)
 
-twitto.router.io = Io(server, { allowEIO3: true })
-
-if (typeof params.monitor.track !== 'undefined') {
-	
-	params.monitor.track.forEach( phrase => {
-		let terms = phrase.split(' ')
-		
-		terms.forEach( term => {
-			if (term[0] === '#')
-				twitto.meta.searchHashtags.push(term.substr(1).toLowerCase())
-		})
-	})
-	
-}
-
-twitto.model = new Datastore(twitto.meta.searchHashtags)
-
-twitto.controller.tweets = new Tweets(twitto)
-
 // set the view engine to ejs
 app.set('view engine', 'ejs')
 app.set('views', path.resolve(__dirname + '/view'))
@@ -52,19 +29,20 @@ server.listen(params.port)
 
 console.log('Express server started')
 
-app.render('pages/502', {
-		appMeta: params.content.appMeta
+// Render home page to static file
+app.render('pages/index', {
+		appMeta : params.content.appMeta
 		, logo: params.content.logo
 		, appText: params.content.appText
 		, ga: params.googleAnalytics
-		, maintenance: true
+		, monitor: params.monitor.description
 	}, function(err, res) {
 	if (err)
-		console.log('Error rendering 502.html', err)
+		console.log('Error rendering index.html', err)
 	else {
-		fs.writeFile(__dirname + '/public/502.html', res, function(err, res) {
+		fs.writeFile(__dirname + '/public/index.html', res, function(err, res) {
 			if (err)
-				console.log('error saving 502.html file', err)
+				console.log('error saving index.html file', err)
 		})
 	}
 })
@@ -78,16 +56,6 @@ app.get('/', function (req, res) {
 		, appText: params.content.appText
 		, ga: params.googleAnalytics
 		, monitor: params.monitor.description
-	})
-})
-
-app.get('/502', function (req, res) {
-	res.render('pages/502', {
-		appMeta: params.content.appMeta
-		, logo: params.content.logo
-		, appText: params.content.appText
-		, ga: params.googleAnalytics
-		, maintenance: true
 	})
 })
 
@@ -111,36 +79,3 @@ app.use(function(req, res, next){
 	// default to plain-text. send()
 	res.type('txt').send('Not found')
 })
-
-// visitor connection, send all tweets
-twitto.router.io.on('connection', function(socket) {
-	
-	debug('client connection', socket.id)
-	
-	socket.join('liveFeed')
-	
-	twitto.controller.tweets.initDataFeed(socket)
-
-	// make it possible to unsubscribe to live data updates
-	socket.on('pause', function() {
-		socket.leave('liveFeed')
-	})
-	
-	socket.on('resume', function() {
-		socket.join('liveFeed')
-		
-		twitto.controller.tweets.initDataFeed(socket)
-	})
-
-})
-
-twitto.model.on('graphUpdate', function(message) {
-	// send updated graph to clients
-	twitto.router.sendGraph()	
-	
-})
-
-//debounced send graph function
-twitto.router.sendGraph = debounce(function() {
-	twitto.router.io.to('liveFeed').emit('entitiesGraph', twitto.model.tweets.getEntitiesGraph())
-}, 750, true)
