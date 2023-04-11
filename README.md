@@ -1,6 +1,9 @@
 # Twitto_be
 
-twitto_be is a real-time twitter monitoring dashboard, performing live social network analysis on hashtags.
+twitto_be was a real-time twitter monitoring dashboard, performing live social network analysis on hashtags.
+
+:warning: Twitto_be is now an archived project, since twitter shutdown its streaming API v1.1.
+
 
 ## Installation
 
